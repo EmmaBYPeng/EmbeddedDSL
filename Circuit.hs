@@ -17,7 +17,7 @@ data GCircuit inn out = GCircuit {
   gabove    :: inn -> inn -> out, 
   gbeside   :: inn -> inn -> out, 
   gstretch  :: [Int] -> inn -> out
-} -}
+}-}
 
 data Proxy a = Proxy
 

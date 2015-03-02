@@ -10,6 +10,7 @@ data CircuitF r =
   | Stretch [Int] r
 
 newtype Width     = Width     {width :: Int}
+newtype Depth     = Depth     {depth :: Int}
 newtype WellSized = WellSized {wellSized :: Bool}
 
 -- F-Algebra
@@ -19,6 +20,13 @@ widthAlg (Fan w)        = Width w
 widthAlg (Above x y)    = Width (gwidth x)
 widthAlg (Beside x y)   = Width (gwidth x + gwidth y)
 widthAlg (Stretch xs x) = Width (sum xs)
+
+depthAlg :: (Depth :<: r) => CircuitF r -> Depth
+depthAlg (Identity w)   = Depth 0
+depthAlg (Fan w)        = Depth 1
+depthAlg (Above x y)    = Depth (gdepth x + gdepth y)
+depthAlg (Beside x y)   = Depth (gdepth x `max` gdepth y)
+depthAlg (Stretch xs x) = Depth (gdepth x)
 
 wsAlg :: (WellSized :<: r, Width :<: r) => CircuitF r -> WellSized
 wsAlg (Identity w)   = WellSized True
@@ -56,6 +64,9 @@ instance (i :<: i2) => i :<: (Compose i1 i2) where
 gwidth :: (Width :<: e) => e -> Int
 gwidth = width . inter
 
+gdepth :: (Depth :<: e) => e -> Int
+gdepth = depth . inter
+
 gwellSized :: (WellSized :<: e) => e -> Bool 
 gwellSized = wellSized . inter
 
@@ -77,6 +88,7 @@ comp = widthAlg <+> wsAlg
 
 test1 = gwellSized $ fold comp c1 
 test2 = gwidth $ fold comp c1
+test3 = gdepth $ fold depthAlg c1
 
 c1 :: Fix CircuitF
 c1 = In (Above (In (Beside (In (Fan 2)) (In (Fan 2)))) 

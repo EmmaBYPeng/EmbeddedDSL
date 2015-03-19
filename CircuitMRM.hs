@@ -1,14 +1,52 @@
-{-# OPTIONS -XTypeSynonymInstances -XFlexibleInstances -XTypeOperators -XMultiParamTypeClasses -XFlexibleContexts -XOverlappingInstances -XIncoherentInstances -XNoMonomorphismRestriction -XDeriveFunctor #-}
+{-# OPTIONS -XTypeSynonymInstances -XFlexibleInstances -XTypeOperators -XMultiParamTypeClasses -XFlexibleContexts -XOverlappingInstances -XIncoherentInstances -XNoMonomorphismRestriction -XDeriveFunctor -XKindSignatures -XDataKinds -XGADTs #-}
 
-module CircuitF where
+module CircuitMRM where
 
--- Deep embedding?
+-- Fixpoint of List-of-Functors
+data Fix (fs :: [* -> *]) where
+  In :: Functor f => Elem f fs -> f (Fix fs) -> Fix fs
+
+data Elem (f :: * -> *) (fs :: [* -> *]) where
+  Here  :: Elem f (f ': fs)
+  There :: Elem f fs -> Elem f (g ': fs)
+
+class f :< fs where
+  witness :: Elem f fs
+instance f :< (f ': fs) where
+  witness = Here
+instance (f :< fs) => f :< (g ': fs) where
+  witness = There witness
+
+-- Smart fixpoint constructor
+inn :: (f :< fs, Functor f) => f (Fix fs) -> Fix fs
+inn = In witness
+
+-- The Matches datatype
+data Matches (fs :: [* -> *]) (a :: *) (b :: *) where
+  Void  :: Matches '[] a b
+  (:::) :: Functor f => (f a -> b) -> Matches fs a b -> Matches (f ': fs) a b
+
+extractAt :: Elem f fs -> Matches fs a b -> (f a -> b)
+extractAt Here        (f ::: _) = f
+extractAt (There pos) (_ ::: fs) = extractAt pos fs
+
+match :: Matches fs (Fix fs) b -> Fix fs -> b
+match fs (In pos xs) = extractAt pos fs xs
+
+-- Fold for List-of-Functors Datatypes
+type Algebras fs a = Matches fs a a
+
+fold :: Algebras fs a -> Fix fs -> a
+fold ks (In pos xs) = extractAt pos ks (fmap (fold ks) xs)
+
+-- Deep embedding
 data CircuitF r = 
     Identity Int
   | Fan Int
   | Above r r 
   | Beside r r
   | Stretch [Int] r
+  deriving Functor
 
 newtype Width     = Width     {width :: Int}
 newtype Depth     = Depth     {depth :: Int}
@@ -72,29 +110,34 @@ gdepth = depth . inter
 gwellSized :: (WellSized :<: e) => e -> Bool 
 gwellSized = wellSized . inter
 
--- Fold
-data Fix f = In {out :: f (Fix f)}
+-- Smart construction 
+type Circuit = Fix '[CircuitF]
 
-instance Functor CircuitF where
-  fmap f (Identity w)   = Identity w
-  fmap f (Fan w)        = Fan w
-  fmap f (Above x y)    = Above (f x) (f y)
-  fmap f (Beside x y)   = Beside (f x) (f y)
-  fmap f (Stretch xs x) = Stretch xs (f x)
+identity :: (CircuitF :< fs) => Int -> Fix fs
+identity = inn . Identity
 
-fold :: Functor f => (f a -> a) -> Fix f -> a
-fold alg = alg . fmap (fold alg) . out
+fan :: (CircuitF :< fs) => Int -> Fix fs
+fan = inn . Fan
+
+above :: (CircuitF :< fs) => Fix fs -> Fix fs -> Fix fs
+above x y = inn (Above x y)
+
+beside :: (CircuitF :< fs) => Fix fs -> Fix fs -> Fix fs
+beside x y = inn (Beside x y)
+
+stretch :: (CircuitF :< fs) => [Int] -> Fix fs -> Fix fs
+stretch xs x = inn (Stretch xs x)
 
 -- Test
 comp = widthAlg <+> wsAlg
 
-test1 = gwellSized $ fold comp c1 
-test2 = gwidth $ fold comp c1
-test3 = gdepth $ fold depthAlg c1
+eval :: Circuit -> Compose Width WellSized
+eval = fold (comp ::: Void)
 
-c1 :: Fix CircuitF
-c1 = In (Above (In (Beside (In (Fan 2)) (In (Fan 2)))) 
-               (In (Above (In (Stretch [2, 2] (In (Fan 2)))) 
-                          (In (Beside (In (Identity 1)) 
-                                      (In (Beside (In (Fan 2)) 
-                                                  (In (Identity 1))))))))) 
+c1 = above (beside (fan 2) (fan 2)) 
+           (above (stretch [2, 2] (fan 2))
+                  (beside (identity 1) (beside (fan 2) (identity 1))))
+
+test1 = gwidth $ eval c1
+test2 = gwellSized $ eval c1
+

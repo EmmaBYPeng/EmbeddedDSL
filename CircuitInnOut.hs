@@ -1,4 +1,4 @@
-{-# OPTIONS -XTypeSynonymInstances -XFlexibleInstances -XTypeOperators -XMultiParamTypeClasses -XFlexibleContexts -XOverlappingInstances -XScopedTypeVariables -XUndecidableInstances -XIncoherentInstances #-}
+{-# OPTIONS -XTypeSynonymInstances -XFlexibleInstances -XTypeOperators -XMultiParamTypeClasses -XFlexibleContexts -XOverlappingInstances -XScopedTypeVariables -XUndecidableInstances #-}
 
 module CircuitInnOut where
 
@@ -44,10 +44,10 @@ instance (Circuit inn WellSized, Width :<: inn, WellSized :<: inn)
 instance (Circuit inn inn1, Circuit inn inn2) => Circuit inn (Compose inn1 inn2) where
   identity (Proxy :: Proxy inn) w = ((identity (Proxy :: Proxy inn) w) :: inn1,
                                      (identity (Proxy :: Proxy inn) w) :: inn2)
-  fan      (Proxy :: Proxy inn) w = ((fan (Proxy :: Proxy inn) w) :: inn1,
-                                     (fan (Proxy :: Proxy inn) w) :: inn2)
-  above x y    = ((above x y) :: inn1, (above x y) :: inn2)
-  beside x y   = ((beside x y) :: inn1, (beside x y) :: inn2)
+  fan      (Proxy :: Proxy inn) w = ((fan (Proxy :: Proxy inn) w)      :: inn1,
+                                     (fan (Proxy :: Proxy inn) w)      :: inn2)
+  above x y    = ((above x y)    :: inn1, (above x y)    :: inn2)
+  beside x y   = ((beside x y)   :: inn1, (beside x y)   :: inn2)
   stretch xs x = ((stretch xs x) :: inn1, (stretch xs x) :: inn2)
 
 class i :<: e where
@@ -74,11 +74,11 @@ gwellSized = wellSized . inter
 -- Test
 type ComposedType = Compose Depth (Compose Width WellSized)
 
-gfan w        = fan (Proxy :: Proxy ComposedType) w :: ComposedType
+gfan w        = fan (Proxy :: Proxy ComposedType) w      :: ComposedType
 gidentity w   = identity (Proxy :: Proxy ComposedType) w :: ComposedType 
-gbeside x y   = (beside x y) :: ComposedType
-gabove x y    = (above x y) :: ComposedType
-gstretch xs x = (stretch xs x) :: ComposedType
+gbeside x y   = (beside x y)                             :: ComposedType
+gabove x y    = (above x y)                              :: ComposedType
+gstretch xs x = (stretch xs x)                           :: ComposedType
 
 c = (gfan 2 `gbeside` gfan 2) `gabove`
     gstretch [2,2] (gfan 2) `gabove`

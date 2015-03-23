@@ -52,6 +52,7 @@ data CircuitFD r =
   deriving Functor
 
 newtype Width     = Width     {width :: Int}
+newtype Depth     = Depth     {depth :: Int}
 newtype WellSized = WellSized {wellSized :: Bool}
 
 -- F-Algebra
@@ -61,6 +62,11 @@ widthAlg :: (Width :<: r) => CircuitFB r -> Width
 widthAlg (Identity w)   = Width w
 widthAlg (Fan w)        = Width w
 widthAlg (Beside x y)   = Width (gwidth x + gwidth y)
+
+depthAlg :: (Depth :<: r) => CircuitFB r -> Depth
+depthAlg (Identity w)   = Depth 0
+depthAlg (Fan w)        = Depth 1
+depthAlg (Beside x y)   = Depth (gdepth x `max` gdepth y)
 
 wsAlg :: (Width :<: r, WellSized :<: r) => CircuitFB r -> WellSized
 wsAlg (Identity w)   = WellSized True
@@ -79,6 +85,10 @@ type GAlgD r a = CircuitFD r -> a
 widthAlgD :: (Width :<: r) => CircuitFD r -> Width
 widthAlgD (Above x y)    = Width (gwidth x)
 widthAlgD (Stretch xs x) = Width (sum xs)
+
+depthAlgD :: (Depth :<: r) => CircuitFD r -> Depth
+depthAlgD (Above x y)    = Depth (gdepth x + gdepth y)
+depthAlgD (Stretch xs x) = Depth (gdepth x)
 
 wsAlgD :: (Width :<: r, WellSized :<: r) => CircuitFD r -> WellSized
 wsAlgD (Above x y)    =  WellSized (gwellSized x && gwellSized y && 
@@ -108,6 +118,9 @@ instance (i :<: i2) => i :<: (Compose i1 i2) where
 gwidth :: (Width :<: e) => e -> Int
 gwidth = width . inter
 
+gdepth :: (Depth :<: e) => e -> Int
+gdepth = depth . inter
+
 gwellSized :: (WellSized :<: e) => e -> Bool 
 gwellSized = wellSized . inter
 
@@ -130,11 +143,11 @@ stretch xs x = inn (Stretch xs x)
 -- Test
 type Circuit = Fix '[CircuitFB, CircuitFD]
 
-compAlgB = widthAlg <+> wsAlg
-compAlgD = widthAlgD <++> wsAlgD
+compAlgB = depthAlg <+> (widthAlg <+> wsAlg)
+compAlgD = depthAlgD <++> (widthAlgD <++> wsAlgD)
 
 -- Need () here
-eval :: Circuit -> Compose Width WellSized
+eval :: Circuit -> Compose Depth (Compose Width WellSized)
 eval = fold (compAlgB ::: (compAlgD ::: Void))
 
 c1 = above (beside (fan 2) (fan 2)) 
@@ -143,3 +156,4 @@ c1 = above (beside (fan 2) (fan 2))
 
 test1 = gwidth $ eval c1
 test2 = gwellSized $ eval c1
+test3 = gdepth $ eval c1

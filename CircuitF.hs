@@ -9,6 +9,7 @@ data CircuitF r =
   | Above r r 
   | Beside r r
   | Stretch [Int] r
+  deriving Functor
 
 newtype Width     = Width     {width :: Int}
 newtype Depth     = Depth     {depth :: Int}
@@ -72,29 +73,34 @@ gdepth = depth . inter
 gwellSized :: (WellSized :<: e) => e -> Bool 
 gwellSized = wellSized . inter
 
--- Fold
+-- Fold and smart constructors
 data Fix f = In {out :: f (Fix f)}
-
-instance Functor CircuitF where
-  fmap f (Identity w)   = Identity w
-  fmap f (Fan w)        = Fan w
-  fmap f (Above x y)    = Above (f x) (f y)
-  fmap f (Beside x y)   = Beside (f x) (f y)
-  fmap f (Stretch xs x) = Stretch xs (f x)
 
 fold :: Functor f => (f a -> a) -> Fix f -> a
 fold alg = alg . fmap (fold alg) . out
 
+identity :: Int -> Fix CircuitF
+identity = In . Identity
+
+fan :: Int -> Fix CircuitF
+fan = In . Fan
+
+above :: Fix CircuitF -> Fix CircuitF -> Fix CircuitF
+above x y = In (Above x y)
+
+beside :: Fix CircuitF -> Fix CircuitF -> Fix CircuitF
+beside x y = In (Beside x y)
+
+stretch :: [Int] -> Fix CircuitF -> Fix CircuitF
+stretch xs x = In (Stretch xs x)
+
 -- Test
 comp = widthAlg <+> wsAlg
+
+c1 = above (beside (fan 2) (fan 2)) 
+           (above (stretch [2, 2] (fan 2))
+                  (beside (identity 1) (beside (fan 2) (identity 1)))) 
 
 test1 = gwellSized $ fold comp c1 
 test2 = gwidth $ fold comp c1
 test3 = gdepth $ fold depthAlg c1
-
-c1 :: Fix CircuitF
-c1 = In (Above (In (Beside (In (Fan 2)) (In (Fan 2)))) 
-               (In (Above (In (Stretch [2, 2] (In (Fan 2)))) 
-                          (In (Beside (In (Identity 1)) 
-                                      (In (Beside (In (Fan 2)) 
-                                                  (In (Identity 1))))))))) 

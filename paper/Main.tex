@@ -98,6 +98,7 @@ keywordstyle=\ttfamily\bfseries,
 \end{abstract}
 
 \section{Introduction}
+% Basic approach without dependency or composition. F-Algebra for deep embedding.
 
 \section{Composable Interpretations}
 Additional interpretations can be added naturally for deep embedding. For instance, if we also want to obtain the depth of a circuit, we can define the following interpretation easily.
@@ -165,11 +166,11 @@ instance (Circuit i1, Circuit i2) => Circuit (Compose i1 i2) where
   stretch xs x = (stretch xs (inter x), stretch xs (inter x))
 \end{verbatim}
 
-Following is the construction of the Brent-Kung parallel prefix circuit:
+Following is a flexibly typed Brent-Kung parallel prefix circuit:
 
 \begin{verbatim}
-c1 :: Circuit circuit => circuit
-c1 = (fan 2 `beside` fan 2) `above`
+c2 :: Circuit circuit => circuit
+c2 = (fan 2 `beside` fan 2) `above`
      stretch [2,2] (fan 2) `above`
      (identity 1 `beside` fan 2 `beside` identity 1)
 \end{verbatim}
@@ -184,7 +185,7 @@ gdepth :: (Depth :<: e) => e -> Int
 gdepth = depth . inter
 \end{verbatim}
 
-Then we can use the above functions to get  different properties of c1, depending on its type. For example, \textit{gwidth (c1 :: Compose Width Depth)} and \textit{gdepth (c1 :: Compose Width Depth)} will give us its width and depth,  respectively. 
+Then we can use the above functions to get  different properties of c2, depending on its type. For example, \textit{gwidth (c1 :: Compose Width Depth)} and \textit{gdepth (c2 :: Compose Width Depth)} will give us its width and depth,  respectively. 
 
 \section{Dependent interpretations}
 The composable interpretation for shallow embedding in the previous section works well with independent circuits. However, when an interpretation depends on other interpretations, the previous approach becomes clumsy as well. 
@@ -340,7 +341,7 @@ wsAlg (Beside x y)   = WellSized (gwellSized x && gwellSized y)
 wsAlg (Stretch xs x) = WellSized (gwellSized x && length xs == gwidth x)
 \end{verbatim} 
 
-For composition, we introduce the operator (\textbf{$<$+$>$}), which takes two algebras as inputs and gives back an algebra that returns a composed type:
+For composition, we introduce the operator (\textbf{$<+>$}), which takes two algebras as inputs and gives back an algebra that returns a composed type:
 
 \begin{verbatim}
 (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (Compose a b)
@@ -353,6 +354,21 @@ For composition, we introduce the operator (\textbf{$<$+$>$}), which takes two a
 (<+>) a1 a2 (Stretch xs x) = (a1 (Stretch xs (inter x)), 
                               a2 (Stretch xs (inter x)))
 \end{verbatim} 
+
+An algebra that returns \textit{Compose Width WellSized} is simply:
+\begin{verbatim}
+cAlg2 = widthAlg <+> wsAlg
+\end{verbatim}
+
+Then we can evaluate circuit c1 defined earlier and get its width by:
+\begin{verbatim}
+gwidth (fold cAlg2 c1)
+\end{verbatim}
+
+And check whether it is well-formed or not by:
+\begin{verbatim}
+gwellSized (fold cAlg2 c1)
+\end{verbatim}
 
 \subsection{Modular Reifiable Matching}
 

@@ -304,10 +304,57 @@ cAlg :: Circuit (Compose Depth (Compose Width WellSized))
 cAlg = depthAlg <+> (widthAlg <+> wsAlg)
 \end{verbatim}
 
-\subsection{F-Algebras}
-
 \section{Extensibility in Both Dimensions}
 So far we've only talked about extensibility in one dimension: 
+
+\subsection{F-Algebras}
+We've shown that the type class
+
+\begin{verbatim}
+class i :<: e where
+  inter :: e -> i
+\end{verbatim}
+
+works well with both composable and dependent interpretations for shallow embedding. In this section, we will show that it also allows adding and composing interpretations modularly for deep embedding. We will still use the CircuitF functor for circuit construction, while incorporating our observation functions (i.e. algebras for CircuitF) with the above type class. An algebra for CircuitF is defined as:
+
+\begin{verbatim}
+type GAlg r a = CircuitF r -> a
+\end{verbatim}
+
+It consists of type r and a, and a function taking a CircuitF of r-values to an a-value. For example, algebras for \textit{width} and \textit{wellSized} can be defined as follows:
+
+\begin{verbatim}
+widthAlg :: (Width :<: r) => GAlg r Width
+widthAlg (Identity w)   = Width w
+widthAlg (Fan w)        = Width w
+widthAlg (Above x y)    = Width (gwidth x)
+widthAlg (Beside x y)   = Width (gwidth x + gwidth y)
+widthAlg (Stretch xs x) = Width (sum xs)
+
+wsAlg :: (WellSized :<: r, Width :<: r) => GAlg r WellSized
+wsAlg (Identity w)   = WellSized True
+wsAlg (Fan w)        = WellSized True
+wsAlg (Above x y)    = WellSized (gwellSized x && gwellSized y && 
+                                  gwidth x == gwidth y)
+wsAlg (Beside x y)   = WellSized (gwellSized x && gwellSized y)
+wsAlg (Stretch xs x) = WellSized (gwellSized x && length xs == gwidth x)
+\end{verbatim} 
+
+For composition, we introduce the operator (\textbf{$<$+$>$}), which takes two algebras as inputs and gives back an algebra that returns a composed type:
+
+\begin{verbatim}
+(<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (Compose a b)
+(<+>) a1 a2 (Identity w)   = (a1 (Identity w), a2 (Identity w))
+(<+>) a1 a2 (Fan w)        = (a1 (Fan w), a2 (Fan w))
+(<+>) a1 a2 (Above x y)    = (a1 (Above (inter x) (inter y)), 
+                              a2 (Above (inter x) (inter y)))
+(<+>) a1 a2 (Beside x y)   = (a1 (Beside (inter x) (inter y)), 
+                              a2 (Beside (inter x) (inter y)))
+(<+>) a1 a2 (Stretch xs x) = (a1 (Stretch xs (inter x)), 
+                              a2 (Stretch xs (inter x)))
+\end{verbatim} 
+
+\subsection{Modular Reifiable Matching}
 
 \section{Related Work}
 

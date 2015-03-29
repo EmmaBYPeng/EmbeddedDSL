@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  29 MAR 2015 11:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  29 MAR 2015 15:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -816,7 +816,19 @@ Overfull \hbox (32.9967pt too wide) in paragraph at lines 297--297
 s (inter x))[] 
  []
 
-[5] [6] (./Main.aux) ) 
+[5]
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 341--341
+[]\OT1/cmtt/m/n/10 wsAlg (Stretch xs x) = WellSized (gwellSized x && length xs 
+== gwidth x)[] 
+ []
+
+
+Overfull \hbox (48.74657pt too wide) in paragraph at lines 355--355
+[]\OT1/cmtt/m/n/10 (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg 
+r (Compose a b)[] 
+ []
+
+[6] [7] (./Main.aux) ) 
 Here is how much of TeX's memory you used:
  13008 strings out of 493117
  258844 string characters out of 6135433
@@ -829,15 +841,16 @@ Here is how much of TeX's memory you used:
 sfonts/cm/cmbx10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmbx12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmbx9.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmr17.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmti10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mtt10.pfb>
-Output written on Main.pdf (6 pages, 115599 bytes).
+ts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmr12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr17.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mti10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+tt10.pfb>
+Output written on Main.pdf (7 pages, 125603 bytes).
 PDF statistics:
- 55 PDF objects out of 1000 (max. 8388607)
- 38 compressed objects within 1 object stream
+ 64 PDF objects out of 1000 (max. 8388607)
+ 45 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

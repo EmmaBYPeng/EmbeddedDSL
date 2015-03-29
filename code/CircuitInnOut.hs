@@ -8,9 +8,9 @@ data Proxy a = Proxy
 class Circuit inn out where
   identity :: Proxy inn -> Int -> out
   fan      :: Proxy inn -> Int -> out
-  above    :: inn -> inn -> out
-  beside   :: inn -> inn -> out
-  stretch  :: [Int] -> inn -> out
+  above    :: inn       -> inn -> out
+  beside   :: inn       -> inn -> out
+  stretch  :: [Int]     -> inn -> out
 
 newtype Width     = Width     {width :: Int}
 newtype Depth     = Depth     {depth :: Int}
@@ -32,20 +32,24 @@ instance (Circuit inn Depth, Depth :<: inn) => Circuit inn Depth where
   beside x y                      = Depth (gdepth x `max` gdepth y)
   stretch xs x                    = Depth (gdepth x)
 
-instance (Circuit inn WellSized, Width :<: inn, WellSized :<: inn)
-         => Circuit inn WellSized where
+instance (Circuit inn WellSized, Width :<: inn, WellSized :<: inn) => 
+          Circuit inn WellSized where
   identity (Proxy :: Proxy inn) w = WellSized True
   fan      (Proxy :: Proxy inn) w = WellSized True
-  above x y    = WellSized (gwellSized x && gwellSized y && gwidth x == gwidth y)
+  above x y    = WellSized (gwellSized x && gwellSized y 
+                            && gwidth x == gwidth y)
   beside x y   = WellSized (gwellSized x && gwellSized y)
   stretch xs x = WellSized (gwellSized x && length xs == gwidth x)
 
 -- x, y :: inn, no need to use inter here
-instance (Circuit inn inn1, Circuit inn inn2) => Circuit inn (Compose inn1 inn2) where
-  identity (Proxy :: Proxy inn) w = ((identity (Proxy :: Proxy inn) w) :: inn1,
-                                     (identity (Proxy :: Proxy inn) w) :: inn2)
-  fan      (Proxy :: Proxy inn) w = ((fan (Proxy :: Proxy inn) w)      :: inn1,
-                                     (fan (Proxy :: Proxy inn) w)      :: inn2)
+instance (Circuit inn inn1, Circuit inn inn2) => 
+          Circuit inn (Compose inn1 inn2) where
+  identity (Proxy :: Proxy inn) w = 
+           ((identity (Proxy :: Proxy inn) w) :: inn1,
+            (identity (Proxy :: Proxy inn) w) :: inn2)
+  fan      (Proxy :: Proxy inn) w = 
+           ((fan (Proxy :: Proxy inn) w)      :: inn1,
+            (fan (Proxy :: Proxy inn) w)      :: inn2)
   above x y    = ((above x y)    :: inn1, (above x y)    :: inn2)
   beside x y   = ((beside x y)   :: inn1, (beside x y)   :: inn2)
   stretch xs x = ((stretch xs x) :: inn1, (stretch xs x) :: inn2)

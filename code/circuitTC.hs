@@ -19,28 +19,6 @@ data GCircuit inn out = GCircuit {
   gstretch  :: [Int] -> inn -> out
 }-}
 
-data Proxy a = Proxy
-
--- Alternative 2
-class GCircuit inn out where 
-  gidentity :: Proxy inn -> Int -> out
-  gfan      :: Proxy inn -> Int -> out
-  gabove    :: inn -> inn -> out 
-  gbeside   :: inn -> inn -> out 
-  gstretch  :: [Int] -> inn -> out
- 
-gid :: GCircuit inn out => Proxy inn -> Int -> out
-gid = gidentity 
-
-gid2 :: GCircuit Width out => Int -> out
-gid2 = gidentity (Proxy :: Proxy Width)
-
-data CircuitF r = Identity Int | Fan Int | Above r r | Beside r r | Stretch [Int] r
-
--- Alternative 3
-class FCircuit inn out where
-   alg :: CircuitF inn -> out
-
 newtype Width     = Width     {width :: Int}
 newtype Depth     = Depth     {depth :: Int}
 newtype WellSized = WellSized {wellSized :: Bool}
@@ -64,24 +42,23 @@ instance Circuit Depth where
   stretch xs x = x
 
 -- Dependent case 1
-instance (Circuit width, Width :<: width) => Circuit (Compose WellSized width) where
+{-instance (Circuit width, Width :<: width) => Circuit (Compose WellSized width) where
   identity w   = (WellSized True, identity w)
-  fan w        = (WellSized True, identity w)
-  above x y    = (WellSized (ws x && ws y && (wd x == wd y))
+  fan w        = (WellSized True, fan w)
+  above x y    = (WellSized (gwellSized x && gwellSized y && (gwidth x == gwidth y))
                   , above (inter x) (inter y))
-  beside x y   = (WellSized (ws x && ws y)
+  beside x y   = (WellSized (gwellSized x && gwellSized y)
                   , beside (inter x) (inter y))
-  stretch xs x = (WellSized (ws x && length xs == wd x)
+  stretch xs x = (WellSized (gwellSized x && length xs == gwidth x)
                   , stretch xs (inter x))
+-}
 
-{-
-instance (Circuit inn, Width :<: inn, WellSized :<: inn) => Circuit inn WellSized where
+instance (Width :<: inn, WellSized :<: inn) => Circuit inn WellSized where
   identity w   = WellSized True
   fan w        = WellSized True
-  above x y    = WellSized (ws x && ws y && (wd x == wd y))
-  beside x y   = WellSized (ws x && ws y)
-  stretch xs x = WellSized (ws x && length xs == wd x)
--}
+  above x y    = WellSized (gwellSized x && gwellSized y && (gwidth x == gwidth y))
+  beside x y   = WellSized (gwellSized x && gwellSized y)
+  stretch xs x = WellSized (gwellSized x && length xs == gwidth x)
 
 -- Dependent case 2
 instance Circuit (Compose Layout1 Width) where
@@ -89,7 +66,7 @@ instance Circuit (Compose Layout1 Width) where
   fan w        = (Layout1 [[(0,i) | i <- [1..w-1]]], identity w)
   above x y    = (Layout1 (lo1 x ++ lo1 y) 
                   , above (inter x) (inter y)) 
-  beside x y   = (Layout1 (lzw (++) (lo1 x) (shift (wd x) (lo1 y)))
+  beside x y   = (Layout1 (lzw (++) (lo1 x) (shift (gwidth x) (lo1 y)))
                   , beside (inter x) (inter y))
   stretch xs x = (Layout1 (map (map (connect xs)) (lo1 x))
                   , stretch xs (inter x))
@@ -100,7 +77,7 @@ lzw f xs []         = xs
 lzw f (x:xs) (y:ys) = f x y : lzw f xs ys
 
 shift w = map (map (pmap (w+)))
-connect ws = pmap (pred . ((scanl1 (+) ws)!!))
+connect gwellSized = pmap (pred . ((scanl1 (+) gwellSized)!!))
 
 pmap :: (a -> b) -> (a, a) -> (b, b)
 pmap f (x,y) = (f x, f y)
@@ -111,7 +88,7 @@ instance Circuit (Compose Layout2 Width) where
   fan w        = (Layout2 (\f -> [[(f 0, f i) | i <- [1..w-1]]]), fan w) 
   above x y    = (Layout2 (\f -> (lo2 x f ++ lo2 y f)) 
                   , above (inter x) (inter y))
-  beside x y   = (Layout2 (\f -> lzw (++) (lo2 x f) (lo2 y (((wd x)+) . f)))
+  beside x y   = (Layout2 (\f -> lzw (++) (lo2 x f) (lo2 y (((gwidth x)+) . f)))
                   , beside (inter x) (inter y)) 
   stretch xs x = (Layout2 (\f -> lo2 x (pred . (vs!!) . f))
                   , stretch xs (inter x))
@@ -136,14 +113,14 @@ instance i :<: (Compose i i2) where
 instance (i :<: i2) => i :<: (Compose i1 i2) where
   inter = inter . snd
 
-wd :: (Width :<: e) => e -> Int
-wd = width . inter
+gwidth :: (Width :<: e) => e -> Int
+gwidth = width . inter
 
-dp :: (Depth :<: e) => e -> Int
-dp = depth . inter
+gdepth :: (Depth :<: e) => e -> Int
+gdepth = depth . inter
 
-ws :: (WellSized :<: e) => e -> Bool
-ws = wellSized . inter
+gwellSized :: (WellSized :<: e) => e -> Bool
+gwellSized = wellSized . inter
 
 lo1 :: (Layout1 :<: e) => e -> [[(Int, Int)]]
 lo1 = layout1 . inter
@@ -160,10 +137,10 @@ c1 = (fan 2 `beside` fan 2) `above`
      stretch [2,2] (fan 2) `above`
      (identity 1 `beside` fan 2 `beside` identity 1)
 
-test1 = wd (c1 :: Width)
-test2 = dp (c1 :: Compose Width Depth)
-test3 = dp (c1 :: Compose Depth Width)
-test4 = ws (c1 :: Compose WellSized Width) 
+test1 = gwidth (c1 :: Width)
+test2 = gdepth (c1 :: Compose Width Depth)
+test3 = gdepth (c1 :: Compose Depth Width)
+test4 = gwellSized (c1 :: Compose WellSized Width) 
 test5 = lo1 (c1 :: Compose Layout1 Width)
 test6 = lo2_id (c1 :: Compose Layout2 Width)
 

@@ -337,3 +337,218 @@
 \subsection{Records}
 \label{sec:records}
 
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\mathbf{data}\;\Conid{Circuit}\;\Varid{inn}\;\Varid{out}\mathrel{=}\Conid{Circuit}\;\{\mskip1.5mu {}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{identity}\mathbin{::}\ty{Int}\to \Varid{out},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{fan}{}\<[14]%
+\>[14]{}\mathbin{::}\ty{Int}\to \Varid{out},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{above}{}\<[14]%
+\>[14]{}\mathbin{::}\Varid{inn}\to \Varid{inn}\to \Varid{out},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{beside}{}\<[14]%
+\>[14]{}\mathbin{::}\Varid{inn}\to \Varid{inn}\to \Varid{out},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{stretch}{}\<[14]%
+\>[14]{}\mathbin{::}[\mskip1.5mu \ty{Int}\mskip1.5mu]\to \Varid{inn}\to \Varid{out}{}\<[E]%
+\\
+\>[3]{}\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{widthAlg}\mathbin{::}(\Conid{Width2}\mathbin{:<:}\Varid{inn})\Rightarrow \Conid{Circuit}\;\Varid{inn}\;\Conid{Width2}{}\<[E]%
+\\
+\>[3]{}\Varid{widthAlg}\mathrel{=}\Conid{Circuit}\;\{\mskip1.5mu {}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{identity}\mathrel{=}\lambda \Varid{w}{}\<[22]%
+\>[22]{}\to \Conid{Width2}\;\Varid{w},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{fan}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{w}{}\<[22]%
+\>[22]{}\to \Conid{Width2}\;\Varid{w},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{above}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{x}\;\Varid{y}{}\<[22]%
+\>[22]{}\to \Conid{Width2}\;(\Varid{gwidth}\;\Varid{x}),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{beside}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{x}\;\Varid{y}{}\<[22]%
+\>[22]{}\to \Conid{Width2}\;(\Varid{gwidth}\;\Varid{x}\opsym{+}\Varid{gwidth}\;\Varid{y}),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{stretch}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{xs}\;\Varid{x}\to \Conid{Width2}\;(\id{sum}\;\Varid{xs}){}\<[E]%
+\\
+\>[3]{}\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{13}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{36}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{wsAlg}\mathbin{::}(\Conid{Width2}\mathbin{:<:}\Varid{inn},\Conid{WellSized2}\mathbin{:<:}\Varid{inn})\Rightarrow {}\<[E]%
+\\
+\>[3]{}\hsindent{10}{}\<[13]%
+\>[13]{}\Conid{Circuit}\;\Varid{inn}\;\Conid{WellSized2}{}\<[E]%
+\\
+\>[3]{}\Varid{wsAlg}\mathrel{=}\Conid{Circuit}\;\{\mskip1.5mu {}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{identity}\mathrel{=}\lambda \Varid{w}{}\<[22]%
+\>[22]{}\to \Conid{WellSized2}\;\con{True},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{fan}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{w}{}\<[22]%
+\>[22]{}\to \Conid{WellSized2}\;\con{True},{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{above}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{x}\;\Varid{y}{}\<[22]%
+\>[22]{}\to \Conid{WellSized2}\;(\Varid{gwellSized}\;\Varid{x}\opsym{\&\&}\Varid{gwellSized}\;\Varid{y}\opsym{\&\&}{}\<[E]%
+\\
+\>[22]{}\hsindent{14}{}\<[36]%
+\>[36]{}\Varid{gwidth}\;\Varid{x}\opsym{\doubleequals}\Varid{gwidth}\;\Varid{y}),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{beside}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{x}\;\Varid{y}{}\<[22]%
+\>[22]{}\to \Conid{WellSized2}\;(\Varid{gwellSized}\;\Varid{x}\opsym{\&\&}\Varid{gwellSized}\;\Varid{y}),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{stretch}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{xs}\;\Varid{x}\to \Conid{WellSized2}\;(\Varid{gwellSized}\;\Varid{x}\opsym{\&\&}{}\<[E]%
+\\
+\>[14]{}\hsindent{22}{}\<[36]%
+\>[36]{}\id{length}\;\Varid{xs}\opsym{\doubleequals}\Varid{gwidth}\;\Varid{x}){}\<[E]%
+\\
+\>[3]{}\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{13}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{26}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}(\mathbin{<+>})\mathbin{::}(\Varid{inn1}\mathbin{:<:}\Varid{inn},\Varid{inn2}\mathbin{:<:}\Varid{inn})\Rightarrow {}\<[E]%
+\\
+\>[3]{}\hsindent{10}{}\<[13]%
+\>[13]{}\Conid{Circuit}\;\Varid{inn}\;\Varid{inn1}\to \Conid{Circuit}\;\Varid{inn}\;\Varid{inn2}\to {}\<[E]%
+\\
+\>[3]{}\hsindent{10}{}\<[13]%
+\>[13]{}\Conid{Circuit}\;\Varid{inn}\;(\Conid{Compose}\;\Varid{inn1}\;\Varid{inn2}){}\<[E]%
+\\
+\>[3]{}(\mathbin{<+>})\;\Varid{a1}\;\Varid{a2}\mathrel{=}\Conid{Circuit}\;\{\mskip1.5mu {}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{identity}\mathrel{=}\lambda \Varid{w}{}\<[22]%
+\>[22]{}\to (\Varid{identity}\;\Varid{a1}\;\Varid{w},\Varid{identity}\;\Varid{a2}\;\Varid{w}),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{fan}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{w}{}\<[22]%
+\>[22]{}\to (\Varid{fan}\;\Varid{a1}\;\Varid{w},\Varid{fan}\;\Varid{a2}\;\mathrm{2}),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{above}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{x}\;\Varid{y}{}\<[22]%
+\>[22]{}\to (\Varid{above}\;\Varid{a1}\;(\Varid{inter}\;\Varid{x})\;(\Varid{inter}\;\Varid{y}),{}\<[E]%
+\\
+\>[22]{}\hsindent{4}{}\<[26]%
+\>[26]{}\Varid{above}\;\Varid{a2}\;(\Varid{inter}\;\Varid{x})\;(\Varid{inter}\;\Varid{y})),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{beside}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{x}\;\Varid{y}{}\<[22]%
+\>[22]{}\to (\Varid{beside}\;\Varid{a1}\;(\Varid{inter}\;\Varid{x})\;(\Varid{inter}\;\Varid{y}),{}\<[E]%
+\\
+\>[22]{}\hsindent{4}{}\<[26]%
+\>[26]{}\Varid{beside}\;\Varid{a2}\;(\Varid{inter}\;\Varid{x})\;(\Varid{inter}\;\Varid{y})),{}\<[E]%
+\\
+\>[3]{}\hsindent{2}{}\<[5]%
+\>[5]{}\Varid{stretch}{}\<[14]%
+\>[14]{}\mathrel{=}\lambda \Varid{xs}\;\Varid{x}\to (\Varid{stretch}\;\Varid{a1}\;\Varid{xs}\;(\Varid{inter}\;\Varid{x}),{}\<[E]%
+\\
+\>[14]{}\hsindent{12}{}\<[26]%
+\>[26]{}\Varid{stretch}\;\Varid{a2}\;\Varid{xs}\;(\Varid{inter}\;\Varid{x})){}\<[E]%
+\\
+\>[3]{}\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{19}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{cAlg}\mathbin{::}\Conid{Circuit}\;(\Conid{Compose}\;\Conid{Width2}\;\Conid{WellSized2})\;{}\<[E]%
+\\
+\>[3]{}\hsindent{16}{}\<[19]%
+\>[19]{}(\Conid{Compose}\;\Conid{Width2}\;\Conid{WellSized2}){}\<[E]%
+\\
+\>[3]{}\Varid{cAlg}\mathrel{=}\Varid{widthAlg}\mathbin{<+>}\Varid{wsAlg}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{cidentity}\mathrel{=}\Varid{identity}\;\Varid{cAlg}{}\<[E]%
+\\
+\>[3]{}\Varid{cfan}\mathrel{=}\Varid{fan}\;\Varid{cAlg}{}\<[E]%
+\\
+\>[3]{}\Varid{cabove}\mathrel{=}\Varid{above}\;\Varid{cAlg}{}\<[E]%
+\\
+\>[3]{}\Varid{cbeside}\mathrel{=}\Varid{beside}\;\Varid{cAlg}{}\<[E]%
+\\
+\>[3]{}\Varid{cstretch}\mathrel{=}\Varid{stretch}\;\Varid{cAlg}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}\Varid{c}\mathrel{=}(\Varid{cfan}\;\mathrm{2}\mathbin{`\Varid{cbeside}`}\Varid{cfan}\;\mathrm{2})\mathbin{`\Varid{cabove}`}{}\<[E]%
+\\
+\>[3]{}\hsindent{4}{}\<[7]%
+\>[7]{}\Varid{cstretch}\;[\mskip1.5mu \mathrm{2},\mathrm{2}\mskip1.5mu]\;(\Varid{cfan}\;\mathrm{2})\mathbin{`\Varid{cabove}`}{}\<[E]%
+\\
+\>[3]{}\hsindent{4}{}\<[7]%
+\>[7]{}(\Varid{cidentity}\;\mathrm{1}\mathbin{`\Varid{cbeside}`}\Varid{cfan}\;\mathrm{2}\mathbin{`\Varid{cbeside}`}\Varid{cidentity}\;\mathrm{1}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+
+
+

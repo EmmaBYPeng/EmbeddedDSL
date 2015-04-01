@@ -1,0 +1,36 @@
+%format :- = "\mathbin{\thinspace''" : "}"
+%format Patterns = "\Varid{Matches}"
+%format MatchesNil = Matches "\mathbin{\thinspace''" [] "}"
+%format SUB = Sub "\mathbin{\thinspace''" [] "}"
+%format <: = "\prec"
+%%format e1' = "e_{1}\'"
+%format Mem f fs = f " \in " fs
+
+%format NIL = "\mathbin{\thinspace''" [] "}"
+%format OpenTList = "\thinspace''[\!"
+%format CloseTList = "\!]"
+%format extends = "{\bf extends}"
+
+%format >:: = "\mathbin{\succ\!\!\!::}"
+%format :+: = "\oplus"
+
+%format <<^ = "\mathbin{\ll^{\!\wedge}}"
+%format ^<< = "\mathbin{{}^{\wedge}\!\!\!\ll}"
+%format &&& = "\mathbin{\&\!\&\!\&}"
+%format <=< = "\mathbin{<\!\!=\!<}"
+
+%format <=> = "\mathrel{\equiv}"
+%format <== = "\mathrel{\Leftarrow}"
+%format ==> = "\mathrel{\Rightarrow}"
+%format `mem` = "\mathrel{\in}"
+%format numA = "\Varid{num_{Arith}}"
+%format addA = "\Varid{add_{Arith}}"
+%format ppArith1
+%format ppArith2
+%format freeVars1
+%format freeVars2
+%format f1
+%format fn = "\Varid{f_{n}}"
+%format times = "\times"
+%format plus = "+"
+%format dots = "\ldots"

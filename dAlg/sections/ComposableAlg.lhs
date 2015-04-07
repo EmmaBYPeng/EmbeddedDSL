@@ -88,11 +88,11 @@ back an algebra with a composed carrier type.
 > (<+>) a1 a2 (StretchF xs x) = 
 >   (a1 (StretchF xs (inter x)), a2 (StretchF xs (inter x)))
 
-Since a circuit now can consist of subcircuits with composed semantic domain, 
-we need to modify our definition of algebras. 
-With the help of {\em newtype} wrapper which is needed to allow multiple 
+Since now a circuit can be made up of subcircuits with composed semantic domain, 
+we need to slightly modify our constructs of algebras. 
+With the help of the {\em newtype} wrapper which is needed to allow multiple 
 interpretations over the same underlying type, we define {\em gwidth} and {\em gdepth}
-to help us obtain the target evaluation type from a composed type: 
+to help us retrieve the target evaluation type from a composed type: 
 
 > newtype Width2 = Width2 {width :: Int}
 > newtype Depth2 = Depth2 {depth :: Int}
@@ -117,7 +117,10 @@ to help us obtain the target evaluation type from a composed type:
 > depthAlg2 (BesideF x y)   = Depth2 (gdepth x `max` gdepth y)
 > depthAlg2 (StretchF xs x) = Depth2 (gdepth x)
  
+Now it is straightforward to compose algebras together: 
 > cAlg = widthAlg2 <+> depthAlg2
+|cAlg| is composed of |widthAlg2| and |depthAlg2|, with a carrier type of 
+|(Compose Width2 Depth2)|.
 
 %if False
 
@@ -128,11 +131,13 @@ to help us obtain the target evaluation type from a composed type:
 
 %endif
 
-> width1 :: Circuit -> Int
-> width1 x = gwidth (fold cAlg x) 
+\noindent The observation functions for our circuit can be defined as:
 
-> depth1 :: Circuit -> Int
-> depth1 x = gdepth (fold cAlg x) 
+> width3 :: Circuit -> Int
+> width3 x = gwidth (fold cAlg x) 
+
+> depth3 :: Circuit -> Int
+> depth3 x = gdepth (fold cAlg x) 
 
 
 

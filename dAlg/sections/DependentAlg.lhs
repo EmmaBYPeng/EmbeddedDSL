@@ -7,6 +7,14 @@
 \section{Dependent Algebras}
 \label{sec:dependentAlg}
 
+In the previous section we talked about how algebras can be composed together to allow
+multiple interpretations. In this section, we will introduce an approach that allows 
+multiple interpretations with dependencies. With our approach, each property we want 
+to evaluate has a corresponding algebra. There is no need to construct a pair of 
+interpretations when one depends on the other. 
+For example, unlike |wswAlg| in section 4.1, we have |wsAlg| that corresponds to 
+|wellSized|, where the definition of |widthAlg| is no longer needed. 
+
 %if False
 
 > {-# OPTIONS
@@ -51,9 +59,17 @@
 
 %endif
 
-> newtype WellSized2 = WellSized2 {wellSized :: Bool}
-
+The first step is to change our definition of alegebra from |CircuitAlg| to |GAlg|:
 > type GAlg r a = CircuitF r -> a
+|GAlg| consists of two types |r| and |a|, and a function taking |CiruictF| of 
+r-vlaues to an a-value, where |a :<: r|.
+For |wsAlg|, the first type |r| represents a collection of types that contains 
+both |WellSized2| and |Width2|. Since each child of |AboveF|, |BesideF| and |StretchF|
+is of type r (specified by |(WellSized2 :<: r, Width2 :<: r)|), 
+|gwidth| can be used to retrieve the width of a circuit. Therefore, |wsAlg| can be
+defined as follows:
+
+%if False
 
 > widthAlg2 :: (Width2 :<: r) => GAlg r Width2
 > widthAlg2 (IdentityF w)   = Width2 w
@@ -61,6 +77,10 @@
 > widthAlg2 (AboveF x y)    = Width2 (gwidth x)
 > widthAlg2 (BesideF x y)   = Width2 (gwidth x + gwidth y)
 > widthAlg2 (StretchF xs x) = Width2 (sum xs)
+
+%endif
+
+> newtype WellSized2 = WellSized2 {wellSized :: Bool}
 
 > wsAlg :: (WellSized2 :<: r, Width2 :<: r) => GAlg r WellSized2
 > wsAlg (IdentityF w)   = WellSized2 True
@@ -72,6 +92,14 @@
 > wsAlg (StretchF xs x) = 
 >   WellSized2 (gwellSized x && length xs == gwidth x)
 
+Here we also need the |(<+>)| operator for composing two algebras together to allow
+dependent interpretations with |fold|. 
+While it is very similar to the one defined in the previous section, we need to 
+specify the relationships between types of algebras we are compsoing. 
+Given an algebra from type r to type a, and another from type r to type b, 
+where r contains both a and b, it gives back a new algebra from type r to type 
+|(Compose a b)|.
+  
 > (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> 
 >                                GAlg r (Compose a b)
 > (<+>) a1 a2 (IdentityF w)   = 
@@ -110,6 +138,8 @@
 
 %endif
 
+Now we can define |cAlg2| that is composed of |widthAlg2| and |wsAlg|:
+
 > cAlg2 = widthAlg2 <+> wsAlg
 
 %if False
@@ -120,6 +150,8 @@
 >                   (beside (identity 1) (beside (fan 2) (identity 1)))) 
 
 %endif
+
+\noindent With observation functions |width2| and |wellSized2| defined as:
 
 > width2 :: Circuit -> Int
 > width2 x = gwidth (fold cAlg2 x) 

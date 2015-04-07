@@ -101,11 +101,11 @@
 
 %if False
 
-> width3 :: (Width2 :<: e) => e -> Int
-> width3 = gwidth
+> width4 :: (Width2 :<: e) => e -> Int
+> width4 = gwidth
 
-> wellSized3 :: (WellSized2 :<: e) => e -> Bool
-> wellSized3 = gwellSized
+> wellSized4 :: (WellSized2 :<: e) => e -> Bool
+> wellSized4 = gwellSized
 
 %endif
 

@@ -88,21 +88,23 @@
 
 > type ComposedType = Compose Width2 WellSized2
 
-> gfan w        = fan (Proxy :: Proxy ComposedType) w      :: ComposedType
-> gidentity w   = identity (Proxy :: Proxy ComposedType) w :: ComposedType 
-> gbeside x y   = (beside x y)                             :: ComposedType
-> gabove x y    = (above x y)                              :: ComposedType
-> gstretch xs x = (stretch xs x)                           :: ComposedType
+> gfan w        = 
+>   fan (Proxy :: Proxy ComposedType) w      :: ComposedType
+> gidentity w   = 
+>   identity (Proxy :: Proxy ComposedType) w :: ComposedType 
+> gbeside x y   = (beside x y)   :: ComposedType
+> gabove x y    = (above x y)    :: ComposedType
+> gstretch xs x = (stretch xs x) :: ComposedType
 
 > c = (gfan 2 `gbeside` gfan 2) `gabove`
->      gstretch [2,2] (gfan 2) `gabove`
->      (gidentity 1 `gbeside` gfan 2 `gbeside` gidentity 1)
+>     gstretch [2,2] (gfan 2) `gabove`
+>     (gidentity 1 `gbeside` gfan 2 `gbeside` gidentity 1)
 
-> width3 :: (Width2 :<: e) => e -> Int
-> width3 = gwidth
+> width4 :: (Width2 :<: e) => e -> Int
+> width4 = gwidth
 
-> wellSized3 :: (WellSized2 :<: e) => e -> Bool
-> wellSized3 = gwellSized
+> wellSized4 :: (WellSized2 :<: e) => e -> Bool
+> wellSized4 = gwellSized
 
 
 

@@ -65,22 +65,25 @@
 > wsAlg :: (WellSized2 :<: r, Width2 :<: r) => GAlg r WellSized2
 > wsAlg (IdentityF w)   = WellSized2 True
 > wsAlg (FanF w)        = WellSized2 True
-> wsAlg (AboveF x y)    = WellSized2 (gwellSized x && gwellSized y && 
->                                     gwidth x == gwidth y)
-> wsAlg (BesideF x y)   = WellSized2 (gwellSized x && gwellSized y)
-> wsAlg (StretchF xs x) = WellSized2 (gwellSized x &&
->                                     length xs == gwidth x)
+> wsAlg (AboveF x y)    = 
+>   WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
+> wsAlg (BesideF x y)   =
+>   WellSized2 (gwellSized x && gwellSized y)
+> wsAlg (StretchF xs x) = 
+>   WellSized2 (gwellSized x && length xs == gwidth x)
 
 > (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> 
 >                                GAlg r (Compose a b)
-> (<+>) a1 a2 (IdentityF w)   = (a1 (IdentityF w), a2 (IdentityF w))
-> (<+>) a1 a2 (FanF w)        = (a1 (FanF w), a2 (FanF w))
-> (<+>) a1 a2 (AboveF x y)    = (a1 (AboveF (inter x) (inter y)) ,
->                                a2 (AboveF (inter x) (inter y)))
-> (<+>) a1 a2 (BesideF x y)   = (a1 (BesideF (inter x) (inter y)), 
->                                a2 (BesideF (inter x) (inter y)))
-> (<+>) a1 a2 (StretchF xs x) = (a1 (StretchF xs (inter x)),
->                                a2 (StretchF xs (inter x)))
+> (<+>) a1 a2 (IdentityF w)   = 
+>   (a1 (IdentityF w), a2 (IdentityF w))
+> (<+>) a1 a2 (FanF w)        = 
+>   (a1 (FanF w), a2 (FanF w))
+> (<+>) a1 a2 (AboveF x y)    = 
+>   (a1 (AboveF (inter x) (inter y)), a2 (AboveF (inter x) (inter y)))
+> (<+>) a1 a2 (BesideF x y)   = 
+>   (a1 (BesideF (inter x) (inter y)), a2 (BesideF (inter x) (inter y)))
+> (<+>) a1 a2 (StretchF xs x) = 
+>   (a1 (StretchF xs (inter x)), a2 (StretchF xs (inter x)))
 
 %if False
 

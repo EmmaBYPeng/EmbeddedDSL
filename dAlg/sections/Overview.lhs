@@ -7,11 +7,11 @@
 \section{Existing Approaches}
 \label{sec:overview}
 
-The first approach is to
+To allow multiple interpretations and dependent interpretations, Jeremy Gibbons 
+proposed two approaches based on F-Algebra. The first one is to
 construct a tuple as the semantics of an expression and project the desired 
 interpretation from the tuple. The second one uses church encoding to provide a 
-universal generic interpretation. However, the first approach is clumsy and not 
-modular, while the second one does not support dependent interpretations.
+universal generic interpretation.
 
 %if False
 
@@ -27,7 +27,7 @@ modular, while the second one does not support dependent interpretations.
 \label{sec:pair-for-composing-algebras}
 
 While it is straightforward to add additional interpretaions that are independent 
-of the previously defined ones~\cite{Gibbons:14:Folding}, adding an interpretaion
+of previously defined ones~\cite{Gibbons:14:Folding}, adding an interpretaion
 that depends on 'secondary' interpretations of its parts can be tricky.
 
 For example, whether a circuit is well formed or not depends on the widths of its

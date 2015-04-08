@@ -7,6 +7,14 @@
 \section{Extensibility in Both Dimensions}
 \label{sec:extensibility}
 
+So far we have only talked about extensibility in one dimension, namely, 
+how to add new observation functions in a modular way with algebras for our DSL.
+What if we want to extend our grammer by adding new constructors, which also brings
+in dependencies at the same time? In this sections, we will show that our approach of
+composing algebras while incorporating dependencies works well with the 
+Modular Refiable Matching (MRM) approach, which allows us to add additional 
+constructors modularly.
+
 %if False
 
 > {-# OPTIONS
@@ -57,18 +65,25 @@
 
 %endif
 
+For example, say at first we only have three constructs in our DSL of circuits: 
+{\em Identity}, {\em Fan}, and {\em Beside}. We can define a functor {\em CircuitFB}
+to represent this datatype, where B stands for {\em Base}: 
+
 > data CircuitFB r = 
 >     Identity Int
 >   | Fan Int
 >   | Beside r r
 >   deriving Functor
 
-> data CircuitFD r = 
->     Above r r
->   | Stretch [Int] r
->   deriving Functor
+There is no dependencies involved for the algebras of this ciruict, since with only
+{\em Identity}, {\em Fan} and {\em Beside}, whether a circuit is well formed or not
+is no dependent on the width of its parts. However, we will keep our 
+representation for dependent algebras to be consistent with the algera we will define
+later for extended datatypes. 
 
 > type GAlgB r a = CircuitFB r -> a
+
+{\em widthAlgB} and {\em wsAlg} are also exactly the same as before:
 
 > widthAlgB :: (Width2 :<: r) => CircuitFB r -> Width2
 > widthAlgB (Identity w)   = Width2 w
@@ -81,12 +96,18 @@
 > wsAlgB (Fan w)        = WellSized2 True
 > wsAlgB (Beside x y)   = WellSized2 (gwellSized x && gwellSized y)
 
-> (<+>) :: (a :<: r, b :<: r) => 
->   GAlgB r a -> GAlgB r b -> GAlgB r (Compose a b)
-> (<+>) a1 a2 (Identity w)   = (a1 (Identity w), a2 (Identity w))
-> (<+>) a1 a2 (Fan w)        = (a1 (Fan w), a2 (Fan w))
-> (<+>) a1 a2 (Beside x y)   = 
->   (a1 (Beside (inter x) (inter y)), a2 (Beside (inter x) (inter y)))
+Now suppose we want to extend our circuits by adding new constructs {\em Above} and
+{\em Stretch}. We add the datatype constructors as a functor {\em CircuitFD}: 
+
+> data CircuitFD r = 
+>     Above r r
+>   | Stretch [Int] r
+>   deriving Functor
+
+Algebras correspond to this functor are similar to the ones above. The only difference
+is that the interpretation for checking if a circuit is well formed depends on the 
+widths of its part. Same as in section 6, we use {\em gwidth} to retrieve the width
+of a circuit:
 
 > type GAlgE r a = CircuitFD r -> a
 
@@ -101,12 +122,20 @@
 > wsAlgE (Stretch xs x) = 
 >   WellSized2 (gwellSized x && length xs == gwidth x)
 
-> (<++>) :: (a :<: r, b :<: r) => 
->   GAlgE r a -> GAlgE r b -> GAlgE r (Compose a b)
-> (<++>) a1 a2 (Above x y)    = 
->   (a1 (Above (inter x) (inter y)), a2 (Above (inter x) (inter y)))
-> (<++>) a1 a2 (Stretch xs x) = 
->   (a1 (Stretch xs (inter x)), a2 (Stretch xs (inter x)))
+> class Comb f r a b where
+>   (<+>) :: (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
+
+> instance (a :<: r, b :<: r) =>  Comb CircuitFB r a b where
+>   (<+>) a1 a2 (Identity w)   = (a1 (Identity w), a2 (Identity w))
+>   (<+>) a1 a2 (Fan w)        = (a1 (Fan w), a2 (Fan w))
+>   (<+>) a1 a2 (Beside x y)   = 
+>     (a1 (Beside (inter x) (inter y)), a2 (Beside (inter x) (inter y)))
+
+> instance (a :<: r, b :<: r) => Comb CircuitFD r a b where
+>   (<+>) a1 a2 (Above x y)    = 
+>     (a1 (Above (inter x) (inter y)), a2 (Above (inter x) (inter y)))
+>   (<+>) a1 a2 (Stretch xs x) = 
+>     (a1 (Stretch xs (inter x)), a2 (Stretch xs (inter x)))
 
 %if False
 
@@ -155,7 +184,7 @@
 %endif
 
 > compAlgB = widthAlgB <+> wsAlgB
-> compAlgE = widthAlgE <++> wsAlgE
+> compAlgE = widthAlgE <+> wsAlgE
 
 > eval :: Circuit2 -> Compose Width2 WellSized2
 > eval = fold (compAlgB ::: (compAlgE ::: Void))

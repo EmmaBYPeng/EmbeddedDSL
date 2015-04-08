@@ -103,6 +103,8 @@ to help us retrieve the target evaluation type from a composed type:
 > gdepth :: (Depth2 :<: e) => e -> Int
 > gdepth = depth . inter
 
+Then we can define {\em widAlg2} and {\em depthAlg2} as:
+
 > widthAlg2 :: CircuitAlg Width2
 > widthAlg2 (IdentityF w)   = Width2 w
 > widthAlg2 (FanF w)        = Width2 w

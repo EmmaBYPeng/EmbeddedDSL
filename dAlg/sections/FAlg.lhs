@@ -34,13 +34,13 @@ We can recover the Circuit datatype from its shape functor {\em CircuitF}:
 
 > data Circuit = In (CircuitF Circuit)
 
-An algebra for a functor f consists of a type a and a function taking an f-structure 
-of a-values to an a-value. For {\em CircuitF}, this is:
+An algebra for CircuitF consists of a type a and a function taking a CircuitF 
+of a-values to an a-value:
 
 > type CircuitAlg a = CircuitF a -> a
 
 Suppose we want to obtain the width of a circuit, we can pick {\em Width} as our 
-evaluation target, which is also the carrier type of the algebra {\em widthAlg}:
+evaluation target (i.e. the carrier type of the algebra {\em widthAlg}):
 
 > type Width = Int
 
@@ -51,8 +51,8 @@ evaluation target, which is also the carrier type of the algebra {\em widthAlg}:
 > widthAlg (BesideF x y)   = x + y
 > widthAlg (StretchF xs x) = sum xs
 
-{\em widthAlg} here will give us the final evaluation result of a circuit, 
-assuming all children of {\em AboveF}, {\em BesideF} and {\em StretchF} 
+{\em widthAlg} here will give us the final evaluation result (i.e. the width) 
+of a circuit, assuming all children of {\em AboveF}, {\em BesideF} and {\em StretchF} 
 are already evaluated and are of type {\em Width}. 
 
 Similarly, we can define {\em depthAlg} to get the depth of a circuit:

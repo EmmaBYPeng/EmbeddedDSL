@@ -73,11 +73,11 @@ wsAlg (Identity w)   = WellSized True
 wsAlg (Fan w)        = WellSized True
 wsAlg (Beside x y)   = WellSized (gwellSized x && gwellSized y)
 
-(<+>) :: (a :<: r, b :<: r) => GAlgB r a -> GAlgB r b -> GAlgB r (Compose a b)
+{-(<+>) :: (a :<: r, b :<: r) => GAlgB r a -> GAlgB r b -> GAlgB r (Compose a b)
 (<+>) a1 a2 (Identity w)   = (a1 (Identity w), a2 (Identity w))
 (<+>) a1 a2 (Fan w)        = (a1 (Fan w), a2 (Fan w))
 (<+>) a1 a2 (Beside x y)   = (a1 (Beside (inter x) (inter y)), 
-                              a2 (Beside (inter x) (inter y)))
+                              a2 (Beside (inter x) (inter y)))-}
 
 -- F-Algebras for extended datatype
 type GAlgD r a = CircuitFD r -> a
@@ -95,10 +95,28 @@ wsAlgD (Above x y)    =  WellSized (gwellSized x && gwellSized y &&
                                     gwidth x == gwidth y)
 wsAlgD (Stretch xs x) = WellSized (gwellSized x && length xs == gwidth x)
 
+{-
 (<++>) :: (a :<: r, b :<: r) => GAlgD r a -> GAlgD r b -> GAlgD r (Compose a b)
 (<++>) a1 a2 (Above x y)    = (a1 (Above (inter x) (inter y)), 
                                a2 (Above (inter x) (inter y)))
 (<++>) a1 a2 (Stretch xs x) = (a1 (Stretch xs (inter x)), a2 (Stretch xs (inter x)))
+-}
+
+-- Composing algebras
+class Comb f r a b where
+  (<+>) :: (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
+
+instance (a :<: r, b :<: r) =>  Comb CircuitFB r a b where
+  (<+>) a1 a2 (Identity w)   = (a1 (Identity w), a2 (Identity w))
+  (<+>) a1 a2 (Fan w)        = (a1 (Fan w), a2 (Fan w))
+  (<+>) a1 a2 (Beside x y)   = 
+    (a1 (Beside (inter x) (inter y)), a2 (Beside (inter x) (inter y)))
+
+instance (a :<: r, b :<: r) => Comb CircuitFD r a b where
+  (<+>) a1 a2 (Above x y)    = 
+    (a1 (Above (inter x) (inter y)), a2 (Above (inter x) (inter y)))
+  (<+>) a1 a2 (Stretch xs x) = 
+    (a1 (Stretch xs (inter x)), a2 (Stretch xs (inter x)))
 
 -- Type class
 type Compose x y = (x, y)
@@ -143,8 +161,9 @@ stretch xs x = inn (Stretch xs x)
 -- Test
 type Circuit = Fix '[CircuitFB, CircuitFD]
 
+
 compAlgB = depthAlg <+> (widthAlg <+> wsAlg)
-compAlgD = depthAlgD <++> (widthAlgD <++> wsAlgD)
+compAlgD = depthAlgD <+> (widthAlgD <+> wsAlgD)
 
 -- Need () here
 eval :: Circuit -> Compose Depth (Compose Width WellSized)
@@ -157,3 +176,4 @@ c1 = above (beside (fan 2) (fan 2))
 test1 = gwidth $ eval c1
 test2 = gwellSized $ eval c1
 test3 = gdepth $ eval c1
+

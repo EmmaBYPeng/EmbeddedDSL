@@ -97,9 +97,9 @@ later for extended datatypes.
 > wsAlgB (Beside x y)   = WellSized2 (gwellSized x && gwellSized y)
 
 Now suppose we want to extend our circuits by adding new constructs {\em Above} and
-{\em Stretch}. We add the datatype constructors as a functor {\em CircuitFD}: 
+{\em Stretch}. We add the datatype constructors as a functor {\em CircuitFE}: 
 
-> data CircuitFD r = 
+> data CircuitFE r = 
 >     Above r r
 >   | Stretch [Int] r
 >   deriving Functor
@@ -109,18 +109,24 @@ is that the interpretation for checking if a circuit is well formed depends on t
 widths of its part. Same as in section 6, we use {\em gwidth} to retrieve the width
 of a circuit:
 
-> type GAlgE r a = CircuitFD r -> a
+> type GAlgE r a = CircuitFE r -> a
 
-> widthAlgE :: (Width2 :<: r) => CircuitFD r -> Width2
+> widthAlgE :: (Width2 :<: r) => CircuitFE r -> Width2
 > widthAlgE (Above x y)    = Width2 (gwidth x)
 > widthAlgE (Stretch xs x) = Width2 (sum xs)
 
 > wsAlgE :: (Width2 :<: r, WellSized2 :<: r) => 
->           CircuitFD r -> WellSized2
+>           CircuitFE r -> WellSized2
 > wsAlgE (Above x y)    = 
 >   WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
 > wsAlgE (Stretch xs x) = 
 >   WellSized2 (gwellSized x && length xs == gwidth x)
+
+Unlike the |<+>| operator defined in previous sections, here we associate it with a
+type class to compose algebras correponding to different functors. With this approach,
+we don't have to define a different operator for algebra composition each time a 
+new functor is added. Instead, all we have to do is to make a new instance of 
+type class {\em Comb} and define the corresponding behavior of |<+>|.
 
 > class Comb f r a b where
 >   (<+>) :: (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
@@ -131,7 +137,7 @@ of a circuit:
 >   (<+>) a1 a2 (Beside x y)   = 
 >     (a1 (Beside (inter x) (inter y)), a2 (Beside (inter x) (inter y)))
 
-> instance (a :<: r, b :<: r) => Comb CircuitFD r a b where
+> instance (a :<: r, b :<: r) => Comb CircuitFE r a b where
 >   (<+>) a1 a2 (Above x y)    = 
 >     (a1 (Above (inter x) (inter y)), a2 (Above (inter x) (inter y)))
 >   (<+>) a1 a2 (Stretch xs x) = 
@@ -168,10 +174,10 @@ of a circuit:
 > beside :: (CircuitFB :< fs) => Fix fs -> Fix fs -> Fix fs
 > beside x y = inn (Beside x y)
 
-> above :: (CircuitFD :< fs) => Fix fs -> Fix fs -> Fix fs
+> above :: (CircuitFE :< fs) => Fix fs -> Fix fs -> Fix fs
 > above x y = inn (Above x y)
 
-> stretch :: (CircuitFD :< fs) => [Int] -> Fix fs -> Fix fs
+> stretch :: (CircuitFE :< fs) => [Int] -> Fix fs -> Fix fs
 > stretch xs x = inn (Stretch xs x)
 
 > -- Sample circuit
@@ -179,7 +185,7 @@ of a circuit:
 >            (above (stretch [2, 2] (fan 2))
 >                   (beside (identity 1) (beside (fan 2) (identity 1)))) 
 
-> type Circuit2 = Fix '[CircuitFB, CircuitFD]
+> type Circuit2 = Fix '[CircuitFB, CircuitFE]
 
 %endif
 

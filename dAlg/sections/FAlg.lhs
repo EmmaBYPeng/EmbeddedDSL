@@ -18,7 +18,7 @@
 
 %endif
 
-The circuit mentioned above can be constructed using F-Algebras. 
+The circuit mentioned above can be represented using F-Algebras. 
 The shape of the circuit is given by functor {\em CircuitF} as follows, 
 where r marks the recursive spots:
 

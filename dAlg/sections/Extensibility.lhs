@@ -13,7 +13,7 @@ What if we want to have extensibility in a second dimension, which is to extend 
 grammer by adding new constructors modularly? To make the problem more interesting,
 these additional constructors may also bring dependencies in their corresponding
 observation functions at the same time. 
-In this sections, we will show that our approach of composing algebras while 
+In this section, we will show that our approach of composing algebras while 
 incorporating dependencies works well with the Modular Refiable Matching (MRM) 
 approach, which allows us to add additional constructors modularly. We will present
 a two-level composition of algebras: for each modular component, we compose its
@@ -210,13 +210,13 @@ for evaluation.
 
 Then we use |(:::)| to combine algebras correspond to different functors together
 ~\cite{Gibbons:14:Folding}. Since the algebras in the list constructed by |(:::)|
-need to have the same carrier return type, we compose {\em widthAlgB} and 
+need to have the same carrier and return type, we compose {\em widthAlgB} and 
 {\em wsAlgB} for {\em CircuitFB} and get {\em compAlgB}:
 
 > compAlgB = widthAlgB <+> wsAlgB
 
 The {\em fold} operator defined in MRM library~\cite{Gibbons:14:Folding} takes an 
-|fs|-algebra and |Fix fs| arguments. Then we define the evaluation function for our 
+|fs|-algebra and |Fix fs| arguments. We define the evaluation function for our 
 circuit as a fold using the combined algebras:
 
 > eval :: Circuit2 -> Compose Width2 WellSized2

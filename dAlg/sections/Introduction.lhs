@@ -18,13 +18,17 @@
 %format MinusSrc  = "\Varid{Minus_{Src}}"
 %format NegSrc  = "\Varid{Neg_{Src}}"
 
-Algebras can often be used to evaluate expressions. 
-However, sometimes we might want to compose algebras together to provide multiple
-interpretations, especially when the construction of one algebra depends on another. 
+Algebras can often be used with {\em fold} to evaluate recursive expressions. 
+However, {\em fold} supports only compositional interpretations, meaning that
+an interpretation of a whole is determined solely from the interpretations of its 
+parts. The compositionality of an interpretaion is a significant limitation to 
+expressivity: sometimes a 'primary' interpretation of the whole depends also on 
+'secondary' interpretaions of its parts. 
+
 In the context of Embedded Domain Specific Languages (DSL), 
 Jeremy Gibbons~\cite{Gibbons:14:Folding} proposed two approaches on F-Algebra to 
-tackle the problems of compositionality and dependencies. We will examine the two
-approaches in detail in section 4.
+tackle the problems of compositionality with dependencies. We will examine the two
+approaches in section 4.
 In this paper, we will also use F-Algebra as the primary representation of algebras. 
 In section 6, we will show that the problem can be handled using other representations
 of algebras as well.

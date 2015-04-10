@@ -7,11 +7,8 @@
 \section{Existing Approaches}
 \label{sec:overview}
 
-To allow multiple interpretations and dependent interpretations, Jeremy Gibbons 
-proposed two approaches based on F-Algebra. The first one is to
-construct a tuple as the semantics of an expression and project the desired 
-interpretation from the tuple. The second one uses church encoding to provide a 
-universal generic interpretation.
+To maintain the compositionality of an interpretation while bringing in dependencies,
+Jeremy Gibbons proposed two approaches based on F-Algebra. 
 
 %if False
 
@@ -47,7 +44,8 @@ Gibbons~\cite{Gibbons:14:Folding} proposed the following {\em zygomorphism}
 > wswAlg (BesideF x y)   = (fst x && fst y, snd x + snd y)
 > wswAlg (StretchF ws x) = (fst x && length ws == snd x, sum ws)
 
-Individual interpretations can then be recovered as follows:
+In this way, {\em fold wswAlg} is still a fold, and individual interpretations can be
+recovered as follows:
 
 > wellSized1 :: Circuit -> WellSized
 > wellSized1 x = fst (fold wswAlg x)
@@ -58,7 +56,7 @@ Individual interpretations can then be recovered as follows:
 \subsection{Church encoding for multiple interpretations}
 \label{sec:church-encoding}
 
-From the previous section we can see that it is possible to provide multiple 
+From the previous section we can see that it is possible to provide dependent 
 interpretaions by pairing semantics up and projecting the desired interpretation 
 from the tuple. However, it is still clumsy and not modular: existing code needs 
 to be revised every time a new interpretations is added. Moreover, for more than 
@@ -77,7 +75,7 @@ interpretation, which provides a universal generic interpretation as the
 > beside1 x y   = C1 (\alg -> alg (BesideF (unC1 x alg) (unC1 y alg)))
 > stretch1 ws x = C1 (\alg -> alg (StretchF ws (unC1 x alg)))
 
-Then it can specialize to {\em width} and {\em depth}:
+It can then specialize to {\em width} and {\em depth}:
 
 > width2 :: Circuit1 -> Width
 > width2 x = unC1 x widthAlg

@@ -55,14 +55,45 @@
 
 %endif
 
-To allow composing algebras modularly, we first use the following type class to state
-that a semantic domain of type i is part of a larger collection of types:
+Our first goal is to compose algebras modularly. It will work as the 
+foundation for letting us to bring in dependent interpretions in later sections. 
+By composing two algebras together, we can get a new algebra with a carrier
+type containing the types of its components. 
+In this section, we will use algebras for {\em width} and {\em depth} as examples 
+and show how we can compose the two together.
+
+Since a composed algebra has a composed carrier type, instead of using {\em Width} 
+and {\em Depth} defined earlier to represent the semantic domain of each 
+interpretation, we make use of the {\em newtype} wrapper to allow multiple 
+interpretations over the same underlying type:
+  
+> newtype Width2 = Width2 {width :: Int}
+> newtype Depth2 = Depth2 {depth :: Int}
+
+Algebras can be defined in the same way as before:
+
+> widthAlg2 :: CircuitAlg Width2
+> widthAlg2 (IdentityF w)   = Width2 w
+> widthAlg2 (FanF w)        = Width2 w
+> widthAlg2 (AboveF x y)    = Width2 (width x)
+> widthAlg2 (BesideF x y)   = Width2 (width x + width y)
+> widthAlg2 (StretchF xs x) = Width2 (sum xs)
+
+> depthAlg2 :: CircuitAlg Depth2
+> depthAlg2 (IdentityF w)   = Depth2 0
+> depthAlg2 (FanF w)        = Depth2 1
+> depthAlg2 (AboveF x y)    = Depth2 (depth x + depth y)
+> depthAlg2 (BesideF x y)   = Depth2 (depth x `max` depth y)
+> depthAlg2 (StretchF xs x) = Depth2 (depth x)
+
+Next we introduce the following type class to state a membership relationship
+between type i and e:
 
 > class i :<: e where
 >   inter :: e -> i
 
-Here |i :<: e| means that i is a component of e, and gives the corresponding 
-projection functions as follows:
+Here |i :<: e| means that type i is a component of a larger collection of types 
+represented by e, and gives the corresponding projection functions:
 
 > instance i :<: i where
 >   inter = id
@@ -73,8 +104,7 @@ projection functions as follows:
 > instance (i :<: i2) => i :<: (Compose i1 i2) where
 >   inter = inter . snd
 
-Then we introduce the operator |(<+>)| that takes two algebras as inputs and gives 
-back an algebra with a composed carrier type.
+To actually compose two algebras together, we define the operator |(<+>)|: 
 
 > type Compose i1 i2 = (i1, i2)
 
@@ -88,39 +118,16 @@ back an algebra with a composed carrier type.
 > (<+>) a1 a2 (StretchF xs x) = 
 >   (a1 (StretchF xs (inter x)), a2 (StretchF xs (inter x)))
 
-Since now a circuit can be made up of subcircuits with composed semantic domain, 
-we need to slightly modify our constructs of algebras. 
-With the help of the {\em newtype} wrapper which is needed to allow multiple 
-interpretations over the same underlying type, we define {\em gwidth} and {\em gdepth}
-to help us retrieve the target evaluation type from a composed type: 
+|(<+>)| takes two algebras with carrier types |a| and |b| as inputs and gives back an 
+algebra with a composed carrier type |(Compose a b)|. For {\em AboveF}, {\em BesideF}
+and {\em StretchF}, their children |x| and |y| are of type |e|, where |Width2 :<: e|
+and |WellSized2 :<: e|. Therefore, in the output tuple, |inter x| and |inter y| will 
+have types correspond to the carrier type of a1 and a2 respectively. 
 
-> newtype Width2 = Width2 {width :: Int}
-> newtype Depth2 = Depth2 {depth :: Int}
-
-> gwidth :: (Width2 :<: e) => e -> Int
-> gwidth = width . inter
-
-> gdepth :: (Depth2 :<: e) => e -> Int
-> gdepth = depth . inter
-
-Then we can define {\em widAlg2} and {\em depthAlg2} as:
-
-> widthAlg2 :: CircuitAlg Width2
-> widthAlg2 (IdentityF w)   = Width2 w
-> widthAlg2 (FanF w)        = Width2 w
-> widthAlg2 (AboveF x y)    = Width2 (gwidth x)
-> widthAlg2 (BesideF x y)   = Width2 (gwidth x + gwidth y)
-> widthAlg2 (StretchF xs x) = Width2 (sum xs)
-
-> depthAlg2 :: CircuitAlg Depth2
-> depthAlg2 (IdentityF w)   = Depth2 0
-> depthAlg2 (FanF w)        = Depth2 1
-> depthAlg2 (AboveF x y)    = Depth2 (gdepth x + gdepth y)
-> depthAlg2 (BesideF x y)   = Depth2 (gdepth x `max` gdepth y)
-> depthAlg2 (StretchF xs x) = Depth2 (gdepth x)
- 
 Now it is straightforward to compose algebras together: 
+
 > cAlg = widthAlg2 <+> depthAlg2
+
 |cAlg| is composed of |widthAlg2| and |depthAlg2|, with a carrier type of 
 |(Compose Width2 Depth2)|.
 
@@ -133,13 +140,32 @@ Now it is straightforward to compose algebras together:
 
 %endif
 
-\noindent The observation functions for our circuit can be defined as:
+We can define the evaluation function of our circuit as a {\em fold}:
+
+> eval = fold cAlg
+
+To retrieve a target evaluation type from a composed type, we define {\em gwidth} and
+{\em gdepth}: 
+
+> gwidth :: (Width2 :<: e) => e -> Int
+> gwidth = width . inter
+
+> gdepth :: (Depth2 :<: e) => e -> Int
+> gdepth = depth . inter
+
+\noindent Now the individual interpretations can be defined as:
 
 > width3 :: Circuit -> Int
-> width3 x = gwidth (fold cAlg x) 
+> width3 = gwidth . eval 
 
 > depth3 :: Circuit -> Int
-> depth3 x = gdepth (fold cAlg x) 
+> depth3 = gdepth . eval  
+
+They can be used to evaluate the Brent-Kung parallel prefix circuit we defined in 
+section 3:
+
+> test1 = width3 c1
+> test2 = depth3 c1
 
 
 

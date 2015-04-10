@@ -66,7 +66,7 @@ Similarly, we can define {\em depthAlg} to get the depth of a circuit:
 > depthAlg (BesideF x y)   = x `max` y
 > depthAlg (StretchF xs x) = x
 
-Given a nested circuit, we also need to define a fold to traverse the recursive 
+Given a nested circuit, we also need a fold to traverse the recursive 
 data structure, using the algebra defined earlier for evaluation at each recursive
 step:
 

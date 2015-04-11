@@ -18,7 +18,7 @@
 
 %endif
 
-The circuit mentioned above can be represented using F-Algebras. 
+Alternatively, the circuit presented above can be represented using functors. 
 The shape of the circuit is given by functor {\em CircuitF} as follows, 
 where r marks the recursive spots:
 
@@ -40,7 +40,7 @@ of a-values to an a-value:
 > type CircuitAlg a = CircuitF a -> a
 
 Suppose we want to obtain the width of a circuit, we can pick {\em Width} as our 
-evaluation target (i.e. the carrier type of the algebra {\em widthAlg}):
+evaluation target (i.e. the carrier type of {\em widthAlg}):
 
 > type Width = Int
 
@@ -55,7 +55,7 @@ evaluation target (i.e. the carrier type of the algebra {\em widthAlg}):
 of a circuit, assuming all children of {\em AboveF}, {\em BesideF} and {\em StretchF} 
 are already evaluated and are of type {\em Width}. 
 
-Similarly, we can define {\em depthAlg} to get the depth of a circuit:
+Similarly, we can define {\em depthAlg} to obtain the depth of a circuit:
 
 > type Depth = Int
 
@@ -66,17 +66,20 @@ Similarly, we can define {\em depthAlg} to get the depth of a circuit:
 > depthAlg (BesideF x y)   = x `max` y
 > depthAlg (StretchF xs x) = x
 
-Given a nested circuit, we also need a fold to traverse the recursive 
-data structure, using the algebra defined earlier for evaluation at each recursive
+Given a nested circuit, we need a fold to traverse the recursive 
+data structure, using algebras defined earlier for evaluation at each recursive
 step:
 
 > fold :: CircuitAlg a -> Circuit -> a
 > fold alg (In x) = alg (fmap (fold alg) x)
 
-Now a compositional observation function for our circuit can be defined as:
+Now compositional observation functions for our circuit can be defined as:
 
 > width :: Circuit -> Width
 > width = fold widthAlg
+
+> depth :: Circuit -> Depth
+> depth = fold depthAlg
 
 In order to conveniently construct circuits with {\em CircuitF}, we define the 
 following smart constructos: 
@@ -101,4 +104,9 @@ Therefore, the Brent-Kung parallel prefix circuit in Figure 1 can be constructed
 > circuit1 = above (beside (fan 2) (fan 2)) 
 >                  (above (stretch [2, 2] (fan 2))
 >                         (beside (identity 1) (beside (fan 2) (identity 1))))
+
+It can be directly evaluated by the observation functions defined earlier:
+
+> test1 = width circuit1
+> test2 = depth circuit2
 

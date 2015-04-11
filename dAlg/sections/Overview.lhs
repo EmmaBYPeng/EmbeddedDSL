@@ -60,7 +60,7 @@ From the previous section we can see that it is possible to provide dependent
 interpretaions by pairing semantics up and projecting the desired interpretation 
 from the tuple. However, it is still clumsy and not modular: existing code needs 
 to be revised every time a new interpretations is added. Moreover, for more than 
-two interpretations, we have to either create combinations for each pair of 
+two interpretations, we have to either create a combination for each pair of 
 interpretations, or use tuples which generally lack good language support.
 
 Therefore, Gibbons~\cite{Gibbons:14:Folding} presented a single parametrized 

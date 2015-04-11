@@ -60,10 +60,12 @@ For example, unlike |wswAlg| in section 4.1, we have |wsAlg| that corresponds to
 %endif
 
 The first step is to change our definition of alegebra from |CircuitAlg| to |GAlg|:
+
 > type GAlg r a = CircuitF r -> a
+
 |GAlg| stands for {\em generic algebra}. It consists of two types |r| and |a|, 
 and a function taking |CiruictF| of r-vlaues to an a-value, where |a :<: r|.
-For |wsAlg|, the first type |r| represents a collection of types that contains 
+For |wsAlg|, the first type |r| represents a collection of types containing
 both |WellSized2| and |Width2| (specified by |(WellSized2 :<: r, Width2 :<: r)|). 
 Since each child of |AboveF|, |BesideF| and |StretchF| is of type r, 
 |gwidth| can be used to retrieve the width of a circuit. Therefore, |wsAlg| can be
@@ -92,10 +94,11 @@ defined as follows:
 > wsAlg (StretchF xs x) = 
 >   WellSized2 (gwellSized x && length xs == gwidth x)
 
-Here we also need the |(<+>)| operator for composing two algebras together for 
-dependent interpretations with |fold|. 
-While it is very similar to the one defined in the previous section, we need to 
-specify the relationships between types of algebras we are compsoing. 
+Since {\em Width2} needs to be part of the carrier type of wsAlg such that we can
+retreive the width of a circuit and test if it is well-formed, we need to compose 
+{\em widthAlg2} and {\em wsAlg} together for evaluation. 
+While the |(<+>)| operator is very similar to the one defined in the previous section,
+we need to specify the relationships between types of algebras we are compsoing. 
 Given an algebra from type r to type a, and another from type r to type b, 
 where r contains both a and b, it gives back a new algebra from type r to type 
 |(Compose a b)|.

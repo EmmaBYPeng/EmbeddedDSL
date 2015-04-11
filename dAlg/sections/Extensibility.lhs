@@ -232,10 +232,10 @@ Invidual interpretations can then be retrieved by {\em gwidth} and {\em gwellSiz
 
 They can be used with smart constructors to evaluate a concrete circuit:
 
-> c1 = above (beside (fan 2) (fan 2)) 
->            (above (stretch [2, 2] (fan 2))
->                   (beside (identity 1) (beside (fan 2) (identity 1)))) 
+> circuit2 = above (beside (fan 2) (fan 2)) 
+>                  (above (stretch [2, 2] (fan 2))
+>                         (beside (identity 1) (beside (fan 2) (identity 1)))) 
 
-> test1 = width3 c1
-> test2 = wellSized3 c1
+> test1 = width3 circuit2
+> test2 = wellSized3 circuit2
 

@@ -73,7 +73,7 @@ step:
 > fold :: CircuitAlg a -> Circuit -> a
 > fold alg (In x) = alg (fmap (fold alg) x)
 
-Now compositional observation functions for our circuit can be defined as:
+Compositional observation functions for our circuit can be defined as:
 
 > width :: Circuit -> Width
 > width = fold widthAlg
@@ -101,12 +101,13 @@ following smart constructos:
 
 Therefore, the Brent-Kung parallel prefix circuit in Figure 1 can be constructed as:
 
-> circuit1 = above (beside (fan 2) (fan 2)) 
->                  (above (stretch [2, 2] (fan 2))
->                         (beside (identity 1) (beside (fan 2) (identity 1))))
+> circuit1 = 
+>   (fan 2 `beside` fan 2) `above`
+>   stretch [2, 2] (fan 2) `above`
+>   (identity 1 `beside` fan 2 `beside` identity 1)
 
-It can be directly evaluated by the observation functions defined earlier:
+It can be directly evaluated using observation functions defined earlier:
 
 > test1 = width circuit1
-> test2 = depth circuit2
+> test2 = depth circuit1
 

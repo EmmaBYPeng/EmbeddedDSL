@@ -56,7 +56,7 @@
 %endif
 
 Our first goal is to compose algebras modularly. It will work as the 
-foundation for letting us to bring in dependent interpretions in later sections. 
+foundation for letting us bring in dependent interpretions in later sections. 
 By composing two algebras together, we can get a new algebra with a carrier
 type containing the types of its components. 
 In this section, we will use algebras for {\em width} and {\em depth} as examples 
@@ -121,10 +121,10 @@ To actually compose two algebras together, we define the operator |(<+>)|:
 |(<+>)| takes two algebras with carrier types |a| and |b| as inputs and gives back an 
 algebra with a composed carrier type |(Compose a b)|. For {\em AboveF}, {\em BesideF}
 and {\em StretchF}, their children |x| and |y| are of type |e|, where |Width2 :<: e|
-and |WellSized2 :<: e|. Therefore, in the output tuple, |inter x| and |inter y| will 
-have types correspond to the carrier type of a1 and a2 respectively. 
+and |WellSized2 :<: e|. In the output tuple, |(inter x)| and |(inter y)| will 
+have types corresponding to the carrier type of a1 and a2 respectively. 
 
-Now it is straightforward to compose algebras together: 
+\noindent Now it is straightforward to compose algebras together: 
 
 > cAlg = widthAlg2 <+> depthAlg2
 
@@ -134,13 +134,13 @@ Now it is straightforward to compose algebras together:
 %if False
 
 > -- Sample circuit
-> c1 = above (beside (fan 2) (fan 2)) 
->            (above (stretch [2, 2] (fan 2))
->                   (beside (identity 1) (beside (fan 2) (identity 1)))) 
+> circuit1 = above (beside (fan 2) (fan 2)) 
+>                  (above (stretch [2, 2] (fan 2))
+>                         (beside (identity 1) (beside (fan 2) (identity 1)))) 
 
 %endif
 
-We can define the evaluation function of our circuit as a {\em fold}:
+\noindent We can define the evaluation function of our circuit as a {\em fold}:
 
 > eval = fold cAlg
 
@@ -153,7 +153,7 @@ To retrieve a target evaluation type from a composed type, we define {\em gwidth
 > gdepth :: (Depth2 :<: e) => e -> Int
 > gdepth = depth . inter
 
-\noindent Now the individual interpretations can be defined as:
+\noindent Individual interpretations can be defined as:
 
 > width3 :: Circuit -> Int
 > width3 = gwidth . eval 
@@ -161,11 +161,11 @@ To retrieve a target evaluation type from a composed type, we define {\em gwidth
 > depth3 :: Circuit -> Int
 > depth3 = gdepth . eval  
 
-They can be used to evaluate the Brent-Kung parallel prefix circuit we defined in 
+They can be used to evaluate the Brent-Kung parallel prefix circuit defined in 
 section 3:
 
-> test1 = width3 c1
-> test2 = depth3 c1
+> test1 = width3 circuit1
+> test2 = depth3 circuit1
 
 
 

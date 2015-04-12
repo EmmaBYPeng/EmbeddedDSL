@@ -7,10 +7,10 @@
 \section{DSL for parallel prefix circuits}
 \label{sec:scans}
 
-In Jeremy Gibbons's paper, parallel prefix circuit is used as am example of a DSL.
-To make better comparison between his and our approaches, we will also proceed on top
+In Jeremy Gibbons's paper, parallel prefix circuit is used as an example of a DSL.
+To make better comparison between his and our approaches, we will also work on top
 of the DSL of circuits. 
-Given an associative binary operator |.|, a prefix computation of width n > 0 takes a sequence |x1, x1, ..., xn| of inputs and produces the sequence 
+Given an associative binary operator |.|, a prefix computation of width |n > 0| takes a sequence |x1, x1, ..., xn| of inputs and produces the sequence 
 |x1, x1.x2, ..., x1.x2. ... .xn| of outputs. A parallel prefix circuit performs this
 computation in parallel, in a fixed format independent of the input value |xi|.
 
@@ -44,8 +44,8 @@ of the same width, and connects the outputs of c to the inputs of d.
 leaving them unconnected. There are no width constraints on c and d.
 \item{\bf Stretch: }
 {\em Stretch ws x} takes a non-empty list of positive widths ws = [w1, ..., wn] of 
-length n, and "stretchs" c out to width {\em sum ws} by interleaving some additional
-some additional wires. Of the first bundle of w1 inputs, the last is routed to the 
+length n, and "stretchs" c out to width {\em sum ws} by interleaving some additional 
+wires. Of the first bundle of w1 inputs, the last is routed to the 
 first input of c and the rest pass straight through; of the next bundle of w2 inputs,
 the last is routed to the second input of c and the rest pass straight through; and 
 so on. 

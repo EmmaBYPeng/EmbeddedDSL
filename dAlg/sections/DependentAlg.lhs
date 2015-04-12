@@ -71,17 +71,6 @@ Since each child of |AboveF|, |BesideF| and |StretchF| is of type r,
 |gwidth| can be used to retrieve the width of a circuit. Therefore, |wsAlg| can be
 defined as follows:
 
-%if False
-
-> widthAlg2 :: (Width2 :<: r) => GAlg r Width2
-> widthAlg2 (IdentityF w)   = Width2 w
-> widthAlg2 (FanF w)        = Width2 w
-> widthAlg2 (AboveF x y)    = Width2 (gwidth x)
-> widthAlg2 (BesideF x y)   = Width2 (gwidth x + gwidth y)
-> widthAlg2 (StretchF xs x) = Width2 (sum xs)
-
-%endif
-
 > newtype WellSized2 = WellSized2 {wellSized :: Bool}
 
 > wsAlg :: (WellSized2 :<: r, Width2 :<: r) => GAlg r WellSized2
@@ -96,7 +85,7 @@ defined as follows:
 
 Since {\em Width2} needs to be part of the carrier type of wsAlg such that we can
 retreive the width of a circuit and test if it is well-formed, we need to compose 
-{\em widthAlg2} and {\em wsAlg} together for evaluation. 
+{\em widthAlg3} and {\em wsAlg} together for evaluation. 
 While the |(<+>)| operator is very similar to the one defined in the previous section,
 we need to specify the relationships between types of algebras we are compsoing. 
 Given an algebra from type r to type a, and another from type r to type b, 
@@ -115,6 +104,13 @@ where r contains both a and b, it gives back a new algebra from type r to type
 >   (a1 (BesideF (inter x) (inter y)), a2 (BesideF (inter x) (inter y)))
 > (<+>) a1 a2 (StretchF xs x) = 
 >   (a1 (StretchF xs (inter x)), a2 (StretchF xs (inter x)))
+
+> widthAlg3 :: (Width2 :<: r) => GAlg r Width2
+> widthAlg3 (IdentityF w)   = Width2 w
+> widthAlg3 (FanF w)        = Width2 w
+> widthAlg3 (AboveF x y)    = Width2 (gwidth x)
+> widthAlg3 (BesideF x y)   = Width2 (gwidth x + gwidth y)
+> widthAlg3 (StretchF xs x) = Width2 (sum xs)
 
 %if False
 
@@ -143,7 +139,7 @@ where r contains both a and b, it gives back a new algebra from type r to type
 
 Now we can define |cAlg2| that is composed of |widthAlg2| and |wsAlg|:
 
-> cAlg2 = widthAlg2 <+> wsAlg
+> cAlg2 = widthAlg3 <+> wsAlg
 
 %if False
 

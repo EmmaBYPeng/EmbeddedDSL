@@ -52,9 +52,10 @@ so on.
 
 On possible construction of the Brent-Kung parallel prefix circuit in Figure 1 is:
 
-> circuit = Above (Beside (Fan 2) (Fan 2)) 
->                 (Above (Stretch [2, 2] (Fan 2))
->                        (Beside (Identity 1) (Beside (Fan 2) (Identity 1))))
+> circuit = 
+>   Above (Beside (Fan 2) (Fan 2)) 
+>   (Above (Stretch [2, 2] (Fan 2))
+>   (Beside (Identity 1) (Beside (Fan 2) (Identity 1))))
 
 
 \end{itemize}

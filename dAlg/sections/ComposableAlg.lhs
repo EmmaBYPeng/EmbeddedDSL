@@ -55,8 +55,8 @@
 
 %endif
 
-Our first goal is to compose algebras modularly. It will work as the 
-foundation for letting us bring in dependent interpretions in later sections. 
+Our first goal is to compose algebras modularly. It will allow us to bring in 
+dependent interpretions in later sections. 
 By composing two algebras together, we can get a new algebra with a carrier
 type containing the types of its components. 
 In this section, we will use algebras for {\em width} and {\em depth} as examples 

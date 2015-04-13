@@ -30,10 +30,10 @@ that depends on 'secondary' interpretations of its parts can be tricky.
 For example, whether a circuit is well formed or not depends on the widths of its
 constituent parts. Since the interpretation is non-compositional
 ~\cite{Gibbons:14:Folding}, there is no corresponding {\em CircuitAlg}. To allow 
-multiple interpretations with dependencies using algebras, 
+multiple interpretations with dependencies using {\em fold}, 
 Gibbons~\cite{Gibbons:14:Folding} proposed the following {\em zygomorphism}
 ~\cite{Fokkinga:90:Tupling}, making the semantic domain of the interpretaion 
-(i.e. the carrier type of the algebra) a pair:
+(i.e. the carrier type of an algebra) a pair:
 
 > type WellSized = Bool
 

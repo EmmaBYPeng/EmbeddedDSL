@@ -15,7 +15,8 @@
 
 %endif
 
-> data Proxy a = Proxy
+One way to represent the circuit is to use a type class. The two class type
+variables stand for the input and output domains of an interpretation: 
 
 > class Circuit inn out where
 >   identity :: Proxy inn -> Int -> out
@@ -23,6 +24,13 @@
 >   above    :: inn       -> inn -> out
 >   beside   :: inn       -> inn -> out
 >   stretch  :: [Int]     -> inn -> out
+
+Due to the restriction of Haskell's type classes, all of the class type variables 
+must be reachable from the free variables of each method type. Therefore, we need the
+{\em Proxy} here for {\em identity} and {\em fan} to allow the use of class type 
+{\em inn}:  
+
+> data Proxy a = Proxy
 
 %if False
 
@@ -33,8 +41,10 @@
 
 %endif
 
+For example, the interpretation for {\em width} can be defined as:
+
 > instance (Circuit inn Width2, Width2:<: inn) => 
->           Circuit inn Width2 where
+>   Circuit inn Width2 where
 >   identity (Proxy :: Proxy inn) w = Width2 w
 >   fan      (Proxy :: Proxy inn) w = Width2 w
 >   above x y                       = Width2(gwidth x)
@@ -42,24 +52,24 @@
 >   stretch xs x                    = Width2(sum xs)
 
 > instance (Circuit inn WellSized2, 
->           Width2:<: inn, 
->           WellSized2:<: inn) => Circuit inn WellSized2 where
+>   Width2:<: inn, WellSized2:<: inn) => 
+>   Circuit inn WellSized2 where
 >   identity (Proxy :: Proxy inn) w = WellSized2 True
 >   fan      (Proxy :: Proxy inn) w = WellSized2 True
->   above x y    = WellSized2(gwellSized x && gwellSized y && 
->                             gwidth x == gwidth y)
+>   above x y    = 
+>     WellSized2(gwellSized x && gwellSized y && gwidth x == gwidth y)
 >   beside x y   = WellSized2(gwellSized x && gwellSized y)
->   stretch xs x = WellSized2(gwellSized x && 
->                             length xs == gwidth x)
+>   stretch xs x =
+>     WellSized2(gwellSized x && length xs == gwidth x)
 
 > instance (Circuit inn inn1, Circuit inn inn2) => 
->           Circuit inn (Compose inn1 inn2) where
+>   Circuit inn (Compose inn1 inn2) where
 >   identity (Proxy :: Proxy inn) w = 
->            ((identity (Proxy :: Proxy inn) w) :: inn1,
->             (identity (Proxy :: Proxy inn) w) :: inn2)
+>     ((identity (Proxy :: Proxy inn) w) :: inn1,
+>     (identity (Proxy :: Proxy inn) w)  :: inn2)
 >   fan      (Proxy :: Proxy inn) w = 
->            ((fan (Proxy :: Proxy inn) w)      :: inn1,
->             (fan (Proxy :: Proxy inn) w)      :: inn2)
+>     ((fan (Proxy :: Proxy inn) w) :: inn1,
+>     (fan (Proxy :: Proxy inn) w)  :: inn2)
 >   above x y    = ((above x y)    :: inn1, (above x y)    :: inn2)
 >   beside x y   = ((beside x y)   :: inn1, (beside x y)   :: inn2)
 >   stretch xs x = ((stretch xs x) :: inn1, (stretch xs x) :: inn2)

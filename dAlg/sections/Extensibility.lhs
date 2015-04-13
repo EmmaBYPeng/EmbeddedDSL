@@ -10,9 +10,9 @@
 So far we have only talked about extensibility in one dimension, namely, 
 how to add new observation functions in a modular way with algebras for our DSL.
 What if we want to have extensibility in a second dimension, which is to extend our 
-grammer by adding new constructors modularly? To make the problem more interesting,
-these additional constructors may also bring dependencies in their corresponding
-observation functions at the same time. 
+grammer by adding new data constructors modularly? To make the problem more 
+interesting, these additional constructors may also bring dependencies in their 
+corresponding observation functions at the same time. 
 In this section, we will show that our approach of composing algebras while 
 incorporating dependencies works well with the Modular Refiable Matching (MRM) 
 approach, which allows us to add additional constructors modularly. We will present
@@ -97,7 +97,7 @@ Algebras for {\em width} and {\em wellSized} are exactly the same as before:
 > widthAlgB (Beside x y)   = Width2 (gwidth x + gwidth y)
 
 > wsAlgB :: (Width2 :<: r, WellSized2 :<: r) => 
-> CircuitFB r -> WellSized2
+>   CircuitFB r -> WellSized2
 > wsAlgB (Identity w)   = WellSized2 True
 > wsAlgB (Fan w)        = WellSized2 True
 > wsAlgB (Beside x y)   = WellSized2 (gwellSized x && gwellSized y)
@@ -123,7 +123,7 @@ width of a circuit:
 > widthAlgE (Stretch xs x) = Width2 (sum xs)
 
 > wsAlgE :: (Width2 :<: r, WellSized2 :<: r) => 
-> CircuitFE r -> WellSized2
+>   CircuitFE r -> WellSized2
 > wsAlgE (Above x y)    = 
 >   WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
 > wsAlgE (Stretch xs x) = 
@@ -232,9 +232,10 @@ Invidual interpretations can then be retrieved by {\em gwidth} and {\em gwellSiz
 
 They can be used with smart constructors to evaluate a concrete circuit:
 
-> circuit2 = above (beside (fan 2) (fan 2)) 
->                  (above (stretch [2, 2] (fan 2))
->                         (beside (identity 1) (beside (fan 2) (identity 1)))) 
+> circuit2 = 
+>   (fan 2 `beside` fan 2) `above`
+>   stretch [2, 2] (fan 2) `above`
+>   (identity 1 `beside` fan 2 `beside` identity 1)
 
 > test1 = width3 circuit2
 > test2 = wellSized3 circuit2

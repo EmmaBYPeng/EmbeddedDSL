@@ -137,7 +137,7 @@ where r contains both a and b, it gives back a new algebra from type r to type
 
 %endif
 
-Now we can define |cAlg2| that is composed of |widthAlg2| and |wsAlg|:
+Now we can define |cAlg2| that is composed of |widthAlg3| and |wsAlg|:
 
 > cAlg2 = widthAlg3 <+> wsAlg
 

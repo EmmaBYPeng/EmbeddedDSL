@@ -53,10 +53,10 @@ For example, the interpretation for {\em width} can be defined as:
 >   beside x y                      = Width2(gwidth x + gwidth y)
 >   stretch xs x                    = Width2(sum xs)
 
-On the other hand, the interpretation for {\em wellSized} is dependent. For 
-{\em above} and {\em stretch}, the inputs are of type {\em inn} which contains both
-{\em Width2} and {\em WellSized2}. We can retrieve the width of x and y with the help
-of {\em gwidth}:
+On the other hand, the interpretation for {\em wellSized} is dependent. For member 
+functions {\em above} and {\em stretch}, the inputs are of type {\em inn} which 
+contains both {\em Width2} and {\em WellSized2}. We can retrieve the width of 
+x and y with the help of {\em gwidth}:
 
 > instance (Circuit inn WellSized2, 
 >   Width2 :<: inn, WellSized2 :<: inn) => 
@@ -75,16 +75,16 @@ interpretations with composed type:
 > instance (Circuit inn inn1, Circuit inn inn2) => 
 >   Circuit inn (Compose inn1 inn2) where
 >   identity (Proxy :: Proxy inn) w = 
->     ((identity (Proxy :: Proxy inn) w) :: inn1,
->     (identity (Proxy :: Proxy inn) w)  :: inn2)
+>     ((identity (Proxy :: Proxy inn) w), (identity (Proxy :: Proxy inn) w))
 >   fan      (Proxy :: Proxy inn) w = 
->     ((fan (Proxy :: Proxy inn) w) :: inn1,
->     (fan (Proxy :: Proxy inn) w)  :: inn2)
->   above x y    = ((above x y)    :: inn1, (above x y)    :: inn2)
->   beside x y   = ((beside x y)   :: inn1, (beside x y)   :: inn2)
->   stretch xs x = ((stretch xs x) :: inn1, (stretch xs x) :: inn2)
+>     ((fan (Proxy :: Proxy inn) w), (fan (Proxy :: Proxy inn) w))
+>   above x y    = ((above x y), (above x y))
+>   beside x y   = ((beside x y), (beside x y))
+>   stretch xs x = ((stretch xs x), (stretch xs x))
 
-Here we 
+Here we support interpretations with composed type by making the output of member 
+functions a pair. The first element in the pair represents the interpretation for the
+first type {\em inn1}, while the second represents the interpretation for {\em inn2}.
 
 %if False
 

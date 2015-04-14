@@ -45,14 +45,14 @@ instance (Circuit inn WellSized, Width :<: inn, WellSized :<: inn) =>
 instance (Circuit inn inn1, Circuit inn inn2) => 
           Circuit inn (Compose inn1 inn2) where
   identity (Proxy :: Proxy inn) w = 
-           ((identity (Proxy :: Proxy inn) w) :: inn1,
-            (identity (Proxy :: Proxy inn) w) :: inn2)
+           ((identity (Proxy :: Proxy inn) w),
+            (identity (Proxy :: Proxy inn) w))
   fan      (Proxy :: Proxy inn) w = 
-           ((fan (Proxy :: Proxy inn) w)      :: inn1,
-            (fan (Proxy :: Proxy inn) w)      :: inn2)
-  above x y    = ((above x y)    :: inn1, (above x y)    :: inn2)
-  beside x y   = ((beside x y)   :: inn1, (beside x y)   :: inn2)
-  stretch xs x = ((stretch xs x) :: inn1, (stretch xs x) :: inn2)
+           ((fan (Proxy :: Proxy inn) w),
+            (fan (Proxy :: Proxy inn) w))
+  above x y    = ((above x y), (above x y))
+  beside x y   = ((beside x y), (beside x y))
+  stretch xs x = ((stretch xs x), (stretch xs x))
 
 class i :<: e where
   inter :: e -> i

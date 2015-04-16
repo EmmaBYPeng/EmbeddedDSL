@@ -7,6 +7,8 @@
 \subsection{Records}
 \label{sec:records}
 
+Alternatively, circuits can be represented using records. 
+
 %if False
 
 > {-# OPTIONS -XTypeSynonymInstances -XFlexibleInstances -XTypeOperators 
@@ -20,6 +22,9 @@
 
 %endif
 
+\noindent We define the following datatype with record syntax for circuit 
+constructions:
+
 > data Circuit inn out = Circuit {
 >   identity :: Int -> out,
 >   fan      :: Int -> out,
@@ -27,6 +32,10 @@
 >   beside   :: inn -> inn -> out,
 >   stretch  :: [Int] -> inn -> out
 > }
+
+Each interpretation corresponds to a value of the datatype. For example, for 
+{\em width} and {\em wellSized} interpretations, we define two values {\em widthAlg} 
+and {\em wsAlg}:
 
 > widthAlg :: (Width2 :<: inn) => Circuit inn Width2 
 > widthAlg = Circuit {
@@ -48,6 +57,8 @@
 >   stretch  = \xs x -> WellSized2 (gwellSized x && 
 >                                  length xs == gwidth x)
 > }
+
+Circuit composition is also defined as a value of the datatype:
 
 > (<+>) :: (inn1 :<: inn, inn2 :<: inn) => 
 >           Circuit inn inn1 -> Circuit inn inn2 -> 
@@ -85,6 +96,9 @@
 
 %endif
 
+Now we can compose interpretations smoothly. For example, {\em widthAlg} and 
+{\em wsAlg} can be composed together as follows:
+
 > cAlg :: Circuit (Compose Width2 WellSized2) 
 >                 (Compose Width2 WellSized2)
 > cAlg = widthAlg <+> wsAlg
@@ -95,9 +109,10 @@
 > cbeside = beside cAlg
 > cstretch = stretch cAlg
 
-> c = (cfan 2 `cbeside` cfan 2) `cabove`
->     cstretch [2,2] (cfan 2) `cabove`
->     (cidentity 1 `cbeside` cfan 2 `cbeside` cidentity 1)
+> c = 
+>   (cfan 2 `cbeside` cfan 2) `cabove`
+>   cstretch [2,2] (cfan 2) `cabove`
+>   (cidentity 1 `cbeside` cfan 2 `cbeside` cidentity 1)
 
 %if False
 

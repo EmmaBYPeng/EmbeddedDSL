@@ -56,7 +56,7 @@
 %endif
 
 Our first goal is to compose algebras modularly. It will allow us to bring in 
-dependent interpretions in later sections. 
+dependent interpretions later. 
 By composing two algebras together, we can get a new algebra with a carrier
 type containing the types of its components. 
 In this section, we will use algebras for {\em width} and {\em depth} as examples 

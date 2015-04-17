@@ -28,20 +28,43 @@ Such cirucits can be represented by the following data structure:
 >   | Beside Circuit Circuit
 >   | Stretch [Int] Circuit
 
+\begin{figure}[t]
+\includegraphics[width=0.15\textwidth, center]{circuit1}
+\caption{The Brent-Kung parallel prefix circuit of widht 4}
+\label{fig:circuit1}
+\end{figure}
 
 \begin{itemize}
 
 \item{\bf Identity: }
 {\em Identity n} creates a circuit consisting of n parallel wires that copy input to
-output.
+output. {\em Identity} of width 4:
+
+\includegraphics[width=0.15\textwidth, center]{id4}
+
 \item{\bf Fan: }
 {\em Fan n} takes takes n inputs, and adds its first input to each of the others.
-\item{\bf Above: }
-{\em Above x y} is the seires or veritical composotion. It takes two circuits c and d
-of the same width, and connects the outputs of c to the inputs of d. 
+{\em Fan} of width 4:
+
+\includegraphics[width=0.15\textwidth, center]{fan4}
+
 \item{\bf Beside: }
 {\em Beside x y} is the parallel or horizontal composition. It places c beside d, 
 leaving them unconnected. There are no width constraints on c and d.
+
+A 2-Fan beside a 1-Identity:
+
+\includegraphics[width=0.12\textwidth, center]{beside3}
+
+\item{\bf Above: }
+{\em Above x y} is the seires or veritical composotion. It takes two circuits c and d
+of the same width, and connects the outputs of c to the inputs of d. 
+
+Place {\em Beside (Fan 2) (Identity 1)} above {\em Beside (Identity 1) (Fan 2)}. Both
+of the circuits are of width 3:
+
+\includegraphics[width=0.12\textwidth, center]{above3}
+
 \item{\bf Stretch: }
 {\em Stretch ws x} takes a non-empty list of positive widths ws = [w1, ..., wn] of 
 length n, and "stretchs" c out to width {\em sum ws} by interleaving some additional 
@@ -49,6 +72,10 @@ wires. Of the first bundle of w1 inputs, the last is routed to the
 first input of c and the rest pass straight through; of the next bundle of w2 inputs,
 the last is routed to the second input of c and the rest pass straight through; and 
 so on. 
+
+A 3-Fan stretched out by widths [3, 2, 3]
+
+\includegraphics[width=0.2\textwidth, center]{stretch3}
 
 On possible construction of the Brent-Kung parallel prefix circuit in Figure 1 is:
 

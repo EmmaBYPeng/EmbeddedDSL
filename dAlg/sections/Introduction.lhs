@@ -26,7 +26,7 @@ expressivity: sometimes a 'primary' interpretation of the whole depends also on
 'secondary' interpretaions of its parts. 
 
 In the context of Embedded Domain Specific Languages (DSL), 
-Jeremy Gibbons~\cite{Gibbons:14:Folding} proposed two approaches on F-Algebra to 
+Jeremy Gibbons\cite{gibbons14} proposed two approaches on F-Algebra to 
 tackle the problems of compositionality with dependencies. We will examine the two
 approaches in section 4 and show that each of them has its problems.
 In this paper, F-Algebra will also be used as the primary representation of algebras.

@@ -36,6 +36,9 @@
 \usepackage{doubleequals}
 \usepackage{comment}
 \usepackage{url}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {images/} }
 
 %% for comments
 \input{Preamble}
@@ -122,6 +125,10 @@
 \section{Other representations of algebra}
 \label{sec: other-alg}
 
+Apart from functors and F-Algebras, there are other ways to represent and evaluate
+the DSL of parallel prefix circuits. In this section, we will show two other 
+representations, and how they can be used to allow dependent interpretations.
+
 \input{sections/TypeClassAlg}
 
 \input{sections/RecordAlg}
@@ -147,7 +154,35 @@ Acknowledgments, if needed.
 
 % The bibliography should be embedded for final submission.
 
-\bibliography{mrm}
+%\bibliography{mrm}
+
+\begin{thebibliography}{}
+\softraggedright
+
+\bibitem{gibbons14}
+  Gibbons, Jeremy and Wu, Nicolas.
+  Folding Domain-Specific Languages: Deep and Shallow Embeddings.
+  2014.
+
+\bibitem{sheard04}
+  Sheard, Tim and Pasalic, Emir.
+  Two-level types and parameterized modules.
+  \textit{Journal of Functional Programming}.
+  14(5):547-587, September 2014.
+
+\bibitem{fokkinga90}
+  Fokkinga, Maarten M.
+  Tupling and mutumorphisms.
+  1990.
+
+\bibitem{oliveira15}
+  Oliveira, B.C.d.S., Mu, Shin-Cheng and You, Shu-Hung
+  Modular Reifiable Matching: A List-of-Functors Approach to Two-Level Types
+  February 2015.
+
+
+
+\end{thebibliography}
 
 
 

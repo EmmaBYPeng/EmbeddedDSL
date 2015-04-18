@@ -7,17 +7,18 @@
 \section{DSL for parallel prefix circuits}
 \label{sec:scans}
 
-In Jeremy Gibbons's paper, parallel prefix circuit is used as an example of a DSL.
-To make better comparison between his and our approaches, we will also work on top
-of the DSL of circuits. 
+In Jeremy Gibbons's paper\cite{gibbons14}, parallel prefix circuit is used as an 
+example of a DSL. To make better comparison between his and our approaches,
+we will also work on top of the DSL of circuits. 
+
 Given an associative binary operator |.|, a prefix computation of width |n > 0| takes a sequence |x1, x1, ..., xn| of inputs and produces the sequence 
 |x1, x1.x2, ..., x1.x2. ... .xn| of outputs. A parallel prefix circuit performs this
 computation in parallel, in a fixed format independent of the input value |xi|.
 
 Figuire 1 shows an example of a circuit. The inputs are fed in at the top, and the
 outputs fall out at the bottom. Each node represents a local computation, combining
-the values on each its input wires using |.|, in left-to-right order, and providing 
-copies of the result on each its output wires. 
+the values on each of its input wires using |.|, in left-to-right order, 
+and providing copies of the result on each its output wires. 
 
 Such cirucits can be represented by the following data structure:
 

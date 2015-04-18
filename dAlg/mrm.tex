@@ -83,18 +83,20 @@
 \title{Composable Algebra with Dependencies}
 %\subtitle{A List-of-Functors Approach to Two-Level Types}
 
-\authorinfo{Bruno C. d. S. Oliveira}
-           {University of Hong Kong}
-           {bruno@cs.hku.hk}
-\authorinfo{Shin-Cheng Mu}
-           {Academia Sinica}
-           {scm@iis.sinica.edu.tw}
-\authorinfo{Shu-Hung You}
-           {National Taiwan University}
-           {suhorngcsie@gmail.com}
+\authorinfo{Draft}
+           {}
+           {}
+
 \maketitle
 
 \begin{abstract}
+
+This paper presents composable algebra with dependencies: a new approach to compose 
+algebras together to allow dependent interpretations with {\em fold}. 
+For a given datatype represented by two-evel-types\cite{sheard04}, if one of its 
+interpretations depends on a second interpretation, we compose the algebra correponding 
+to this interpretation with the algebra corresponding to the second one, and use the 
+composed algebra with {\em fold} to evaluate the expression. 
 
 \end{abstract}
 
@@ -125,7 +127,7 @@
 \section{Other representations of algebra}
 \label{sec: other-alg}
 
-Apart from functors and F-Algebras, there are other ways to represent and evaluate
+Apart from {\em two-level-types}, there are other ways to represent and evaluate
 the DSL of parallel prefix circuits. In this section, we will show two other 
 representations, and how they can be used to allow dependent interpretations.
 
@@ -159,16 +161,17 @@ Acknowledgments, if needed.
 \begin{thebibliography}{}
 \softraggedright
 
-\bibitem{gibbons14}
-  Gibbons, Jeremy and Wu, Nicolas.
-  Folding Domain-Specific Languages: Deep and Shallow Embeddings.
-  2014.
-
 \bibitem{sheard04}
   Sheard, Tim and Pasalic, Emir.
   Two-level types and parameterized modules.
-  \textit{Journal of Functional Programming}.
+  \emph{Journal of Functional Programming}.
   14(5):547-587, September 2014.
+
+\bibitem{gibbons14}
+  Gibbons, Jeremy and Wu, Nicolas.
+  Folding Domain-Specific Languages: Deep and Shallow Embeddings.
+  \emph{International Conference on Functional Programming}.
+  2014.
 
 \bibitem{fokkinga90}
   Fokkinga, Maarten M.

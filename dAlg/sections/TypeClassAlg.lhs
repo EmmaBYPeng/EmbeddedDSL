@@ -64,7 +64,8 @@ x and y with the help of {\em gwidth}:
 >   identity (Proxy :: Proxy inn) w = WellSized2 True
 >   fan      (Proxy :: Proxy inn) w = WellSized2 True
 >   above x y    = 
->     WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
+>     WellSized2 (gwellSized x && gwellSized y && 
+>     gwidth x == gwidth y)
 >   beside x y   = WellSized2 (gwellSized x && gwellSized y)
 >   stretch xs x =
 >     WellSized2 (gwellSized x && length xs == gwidth x)
@@ -75,9 +76,11 @@ interpretations with composed type:
 > instance (Circuit inn inn1, Circuit inn inn2) => 
 >   Circuit inn (Compose inn1 inn2) where
 >   identity (Proxy :: Proxy inn) w = 
->     ((identity (Proxy :: Proxy inn) w), (identity (Proxy :: Proxy inn) w))
+>     ((identity (Proxy :: Proxy inn) w), 
+>     (identity (Proxy :: Proxy inn) w))
 >   fan      (Proxy :: Proxy inn) w = 
->     ((fan (Proxy :: Proxy inn) w)     , (fan (Proxy :: Proxy inn) w))
+>     ((fan (Proxy :: Proxy inn) w), 
+>     (fan (Proxy :: Proxy inn) w))
 >   above x y    = ((above x y)   , (above x y))
 >   beside x y   = ((beside x y)  , (beside x y))
 >   stretch xs x = ((stretch xs x), (stretch xs x))

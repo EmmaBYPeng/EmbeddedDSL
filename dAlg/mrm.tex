@@ -93,10 +93,11 @@
 
 This paper presents composable algebra with dependencies: a new approach to compose 
 algebras together to allow dependent interpretations with {\em fold}. 
-For a given datatype represented by two-evel-types\cite{sheard04}, if one of its 
-interpretations depends on a second interpretation, we compose the algebra correponding 
-to this interpretation with the algebra corresponding to the second one, and use the 
-composed algebra with {\em fold} to evaluate the expression. 
+For a given datatype represented by two-level-types\cite{sheard04}, if one of its 
+interpretations depends on a second one, we compose the algebra correponding 
+to the first interpretation with the one corresponding to the second, and use the 
+composed algebra with {\em fold} to evaluate the expression. We present our approach 
+on top of the domain specific language for parallel prefix circuits.
 
 \end{abstract}
 
@@ -128,7 +129,7 @@ composed algebra with {\em fold} to evaluate the expression.
 \label{sec: other-alg}
 
 Apart from {\em two-level-types}, there are other ways to represent and evaluate
-the DSL of parallel prefix circuits. In this section, we will show two other 
+the DSL for parallel prefix circuits. In this section, we will show two other 
 representations, and how they can be used to allow dependent interpretations.
 
 \input{sections/TypeClassAlg}

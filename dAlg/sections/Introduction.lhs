@@ -18,7 +18,8 @@
 %format MinusSrc  = "\Varid{Minus_{Src}}"
 %format NegSrc  = "\Varid{Neg_{Src}}"
 
-Algebras can often be used with {\em fold} to evaluate recursive expressions. 
+Algebras can often be used with {\em fold} to evaluate recursive expressions
+\cite{gibbons14}. 
 However, {\em fold} supports only compositional interpretations, meaning that
 an interpretation of a whole is determined solely from the interpretations of its 
 parts. The compositionality of an interpretaion is a significant limitation to 
@@ -36,9 +37,9 @@ corresponding to different interpretations of a datatype modularly.
 Next, we will show how dependent interpretations can be achieved using composable 
 algebras in section 6. We will then show 
 that our approach can be integrated with the Modular Rifiable Matching (MRM)
-\cite{oliveira15} approach to allow dependenvies brought by new datatypes.
+\cite{oliveira15} approach to allow dependencies brought in by new datatypes.
 
-In this paper, F-Algebra will also be used as the primary representation of algebras.
+In this paper, F-Algebra will be used as the primary representation of algebras.
 In section 6, we will show that the problem of dependent interpretation with 
 {\em fold} can be handled using other representations of algebras as well.
 

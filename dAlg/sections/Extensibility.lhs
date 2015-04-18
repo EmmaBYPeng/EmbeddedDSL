@@ -8,7 +8,8 @@
 \label{sec:extensibility}
 
 So far we have only talked about extensibility in one dimension, namely, 
-how to add new observation functions in a modular way with algebras for our DSL.
+how to add dependent observation functions in a modular way with {\em fold} 
+for our DSL.
 What if we want to have extensibility in a second dimension, which is to extend our 
 grammer by adding new data constructors modularly? To make the problem more 
 interesting, these additional constructors may also bring dependencies in their 
@@ -81,10 +82,10 @@ to represent this datatype, where B stands for {\em Base}:
 >   | BesideF r r
 >   deriving Functor
 
-There is no dependencies involved for the algebras of this ciruict, since with only
+There is no dependencies involved for {\em wellSized} of this circuit, since with only
 {\em IdentityF}, {\em FanF} and {\em BesideF}, whether a circuit is well formed or not
 is not dependent on the width of its parts. However, we will keep our 
-representation for dependent algebras to be consistent with algeras we will later
+representation for dependent algebras, to be consistent with algeras we will later
 define for extended datatypes: 
 
 > type GAlgB r a = CircuitFB r -> a
@@ -100,7 +101,8 @@ Algebras for {\em width} and {\em wellSized} are exactly the same as before:
 >   CircuitFB r -> WellSized2
 > wsAlgB (IdentityF w)   = WellSized2 True
 > wsAlgB (FanF w)        = WellSized2 True
-> wsAlgB (BesideF x y)   = WellSized2 (gwellSized x && gwellSized y)
+> wsAlgB (BesideF x y)   = 
+>   WellSized2 (gwellSized x && gwellSized y)
 
 Now suppose we want to extend our circuits by adding new constructs {\em AboveF} and
 {\em StretchF}. We add the datatype constructors as a functor {\em CircuitFE}, where
@@ -211,13 +213,13 @@ for evaluation.
 > compAlgE = widthAlgE <+> wsAlgE
 
 Then we use |(:::)| to combine algebras correspond to different functors together
-~\cite{Gibbons:14:Folding}. Since the algebras in the list constructed by |(:::)|
+\cite{oliveira15}. Since the algebras in the list constructed by |(:::)|
 need to have the same carrier and return type, we compose {\em widthAlgB} and 
 {\em wsAlgB} for {\em CircuitFB} and get {\em compAlgB}:
 
 > compAlgB = widthAlgB <+> wsAlgB
 
-The {\em fold} operator defined in MRM library~\cite{Gibbons:14:Folding} takes an 
+The {\em fold} operator defined in MRM library~\cite{oliveira15} takes an 
 |fs|-algebra and |Fix fs| arguments. We define the evaluation function for our 
 circuit as a fold using the combined algebras:
 

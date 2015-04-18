@@ -52,10 +52,10 @@ and {\em wsAlg}:
 >   identity = \w    -> WellSized2 True,
 >   fan      = \w    -> WellSized2 True,
 >   above    = \x y  -> WellSized2 (gwellSized x && gwellSized y && 
->                                  gwidth x == gwidth y),
+>                                   gwidth x == gwidth y),
 >   beside   = \x y  -> WellSized2 (gwellSized x && gwellSized y),
 >   stretch  = \xs x -> WellSized2 (gwellSized x && 
->                                  length xs == gwidth x)
+>                                   length xs == gwidth x)
 > }
 
 Circuit composition is also defined as a value of the datatype:
@@ -103,11 +103,15 @@ Now we can compose interpretations smoothly. For example, {\em widthAlg} and
 >                 (Compose Width2 WellSized2)
 > cAlg = widthAlg <+> wsAlg
 
+Each construct is associated with the corresponding field in cAlg:
+
 > cidentity = identity cAlg
 > cfan = fan cAlg
 > cabove = above cAlg
 > cbeside = beside cAlg
 > cstretch = stretch cAlg
+
+The Brent-Kung circuit in Figure 1 can be constructed as follows:
 
 > c = 
 >   (cfan 2 `cbeside` cfan 2) `cabove`
@@ -124,6 +128,7 @@ Now we can compose interpretations smoothly. For example, {\em widthAlg} and
 
 %endif
 
+It can be evaluated directly using {\em gwidth} and {\em gwellSized}.
 
 
 

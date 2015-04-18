@@ -9,11 +9,11 @@
 
 In the previous section we talked about how algebras can be composed together to allow
 multiple interpretations. In this section, we will introduce an approach that allows 
-multiple interpretations with dependencies. With our approach, each property we want 
+dependent interpretations. With our approach, each property we want 
 to evaluate has a corresponding algebra. There is no need to construct a pair of 
 interpretations when one depends on the other. 
 For example, unlike |wswAlg| in section 4.1, we have |wsAlg| that corresponds to 
-|wellSized|, where the definition of |widthAlg| is no longer needed. 
+{\em wellSized}, where the definition of |widthAlg| is no longer needed. 
 
 %if False
 
@@ -77,7 +77,8 @@ defined as follows:
 > wsAlg (IdentityF w)   = WellSized2 True
 > wsAlg (FanF w)        = WellSized2 True
 > wsAlg (AboveF x y)    = 
->   WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
+>   WellSized2 (gwellSized x && gwellSized y && 
+>   gwidth x == gwidth y)
 > wsAlg (BesideF x y)   =
 >   WellSized2 (gwellSized x && gwellSized y)
 > wsAlg (StretchF xs x) = 

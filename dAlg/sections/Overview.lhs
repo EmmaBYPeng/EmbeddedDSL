@@ -12,7 +12,8 @@ Jeremy Gibbons proposed two approaches based on F-Algebra.
 One example of a dependent interpretation is to see whether a circuit is well formed 
 or not, as it depends on the widths of the circuit's constituent parts. 
 Since the interpretation is non-compositional\cite{gibbons14}, 
-there is no corresponding {\em CircuitAlg} and {\em fold} can not be used.
+there is no corresponding {\em CircuitAlg} and the circuit cannot be evaluated using
+{\em fold}.
 
 %if False
 

@@ -19,7 +19,7 @@
 %endif
 
 Alternatively, the circuit presented above can be represented using 
-{\em two-level-types}\cite{sheard04} 
+{\em two-level-types}\cite{sheard04}. 
 The shape of the circuit is given by functor {\em CircuitF} as follows:
 
 > data CircuitF r = 
@@ -74,7 +74,7 @@ step:
 > fold :: CircuitAlg a -> Circuit -> a
 > fold alg (In x) = alg (fmap (fold alg) x)
 
-Compositional observation functions for our circuit can be defined as:
+Each observation function for our circuit can be defined as a {\em fold}:
 
 > width :: Circuit -> Width
 > width = fold widthAlg

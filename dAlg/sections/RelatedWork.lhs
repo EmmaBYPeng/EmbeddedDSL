@@ -20,3 +20,4 @@ restricted the usage of the type class to synthesised attributes without general
 it to algebras. Moreover, no dependencies were involved throughout their discussion 
 of attributes. 
 
+

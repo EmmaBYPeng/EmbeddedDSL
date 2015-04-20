@@ -65,6 +65,8 @@ The first step is to change our definition of alegebra from |CircuitAlg| to |GAl
 
 |GAlg| stands for {\em generic algebra}. It consists of two types |r| and |a|, 
 and a function taking |CiruictF| of r-vlaues to an a-value, where |a :<: r|.
+The idea is to distinguish between the uses of carrier types with respect to whether
+they are inputs (|r|) or outputs (|a|)\cite{oliveira13}. 
 For |wsAlg|, the first type |r| represents a collection of types containing
 both |WellSized2| and |Width2| (specified by |(WellSized2 :<: r, Width2 :<: r)|). 
 Since each child of |AboveF|, |BesideF| and |StretchF| is of type r, 

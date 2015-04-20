@@ -139,10 +139,10 @@ type class {\em Comb} and define the corresponding behavior of |<+>|. Since we h
 two functors {\em CircuitFB} and {\em CircuitFE}, we create two instances of 
 {\em Comb} and define |<+>| for each of them:
 
-> class Comb f r a b where
->   (<+>) :: (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
+> class Comb f where
+>   (<+>) :: (a :<: r, b :<: r) => (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
 
-> instance (a :<: r, b :<: r) =>  Comb CircuitFB r a b where
+> instance Comb CircuitFB where
 >   (<+>) a1 a2 (IdentityF w) = 
 >     (a1 (IdentityF w), a2 (IdentityF w))
 >   (<+>) a1 a2 (FanF w)      = 
@@ -150,7 +150,7 @@ two functors {\em CircuitFB} and {\em CircuitFE}, we create two instances of
 >   (<+>) a1 a2 (BesideF x y) = 
 >     (a1 (BesideF (inter x) (inter y)), a2 (BesideF (inter x) (inter y)))
 
-> instance (a :<: r, b :<: r) => Comb CircuitFE r a b where
+> instance Comb CircuitFE where
 >   (<+>) a1 a2 (AboveF x y)     = 
 >     (a1 (AboveF (inter x) (inter y)), a2 (AboveF (inter x) (inter y)))
 >   (<+>) a1 a2 (StretchF xs x)  = 

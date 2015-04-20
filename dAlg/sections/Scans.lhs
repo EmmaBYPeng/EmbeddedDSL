@@ -9,7 +9,7 @@
 
 In Jeremy Gibbons's paper\cite{gibbons14}, parallel prefix circuit is used as an 
 example of a DSL. To make better comparison between his and our approaches,
-we will also work on top of the DSL of circuits. 
+we will also work on top of the DSL for circuits. 
 
 Given an associative binary operator |.|, a prefix computation of width |n > 0| takes a sequence |x1, x1, ..., xn| of inputs and produces the sequence 
 |x1, x1.x2, ..., x1.x2. ... .xn| of outputs. A parallel prefix circuit performs this
@@ -20,7 +20,7 @@ outputs fall out at the bottom. Each node represents a local computation, combin
 the values on each of its input wires using |.|, in left-to-right order, 
 and providing copies of the result on each its output wires. 
 
-Such cirucits can be represented by the following data structure:
+Such cirucits can be represented by the following algebraic datatype: 
 
 > data Circuit = 
 >     Identity Int
@@ -39,13 +39,13 @@ Such cirucits can be represented by the following data structure:
 
 \item{\bf Identity: }
 {\em Identity n} creates a circuit consisting of n parallel wires that copy input to
-output. {\em Identity} of width 4:
+output. e.g. {\em Identity} of width 4:
 
 \includegraphics[width=0.15\textwidth, center]{id4}
 
 \item{\bf Fan: }
 {\em Fan n} takes takes n inputs, and adds its first input to each of the others.
-{\em Fan} of width 4:
+e.g. {\em Fan} of width 4:
 
 \includegraphics[width=0.15\textwidth, center]{fan4}
 
@@ -53,7 +53,7 @@ output. {\em Identity} of width 4:
 {\em Beside x y} is the parallel or horizontal composition. It places c beside d, 
 leaving them unconnected. There are no width constraints on c and d.
 
-A 2-Fan beside a 1-Identity:
+e.g. A 2-{\em Fan} beside a 1-{\em Identity}:
 
 \includegraphics[width=0.12\textwidth, center]{beside3}
 
@@ -61,8 +61,8 @@ A 2-Fan beside a 1-Identity:
 {\em Above x y} is the seires or veritical composotion. It takes two circuits c and d
 of the same width, and connects the outputs of c to the inputs of d. 
 
-Place {\em Beside (Fan 2) (Identity 1)} above {\em Beside (Identity 1) (Fan 2)}. Both
-of the circuits are of width 3:
+e.g. Place {\em Beside (Fan 2) (Identity 1)} above {\em Beside (Identity 1) (Fan 2)}.
+Both of the circuits are of width 3:
 
 \includegraphics[width=0.12\textwidth, center]{above3}
 
@@ -74,7 +74,7 @@ first input of c and the rest pass straight through; of the next bundle of w2 in
 the last is routed to the second input of c and the rest pass straight through; and 
 so on. 
 
-A 3-Fan stretched out by widths [3, 2, 3]
+e.g. A 3-Fan stretched out by widths [3, 2, 3]
 
 \includegraphics[width=0.2\textwidth, center]{stretch3}
 

@@ -24,7 +24,7 @@ printAlg2 (Add e1 e2)   = Print $ print e1 ++ " + " ++ print e2 ++ " = " ++ show
 
 type GAlg r a = ArithF r -> a
 
-(<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (a,b)
+(<+>) :: (a :<: r, b :<: r) => (f r -> a) -> (f r -> b) -> f r -> (a,b)
 (<+>) a1 a2 fa = (a1 fa, a2 fa)
 
 -- test :: (Print :<: r, Eval :<: r) => GAlg r (Eval,Print)

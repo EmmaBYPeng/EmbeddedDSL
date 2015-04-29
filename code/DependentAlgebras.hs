@@ -1,4 +1,4 @@
-{-# OPTIONS -XTypeSynonymInstances -XFlexibleInstances -XTypeOperators -XMultiParamTypeClasses -XFlexibleContexts -XOverlappingInstances -XIncoherentInstances -XNoMonomorphismRestriction -XDeriveFunctor #-}
+{-# OPTIONS -XTypeSynonymInstances -XFlexibleInstances -XTypeOperators -XMultiParamTypeClasses -XFlexibleContexts -XOverlappingInstances -XNoMonomorphismRestriction -XDeriveFunctor #-}
 
 module DependentAlgebras where
 
@@ -25,8 +25,7 @@ printAlg2 (Add e1 e2)   = Print $ print e1 ++ " + " ++ print e2 ++ " = " ++ show
 type GAlg r a = ArithF r -> a
 
 (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (a,b)
-(<+>) a1 a2 (Lit x)       = (a1 (Lit x), a2 (Lit x))
-(<+>) a1 a2 (Add e1 e2)   = (a1 (Add (inter e1) (inter e2)), a2 (Add (inter e1) (inter e2)))
+(<+>) a1 a2 fa = (a1 fa, a2 fa)
 
 -- test :: (Print :<: r, Eval :<: r) => GAlg r (Eval,Print)
 comp = evalAlg <+> printAlg2

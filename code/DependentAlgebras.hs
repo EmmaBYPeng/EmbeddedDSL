@@ -22,6 +22,15 @@ printAlg2 :: (Eval :<: r, Print :<: r) => ArithF r -> Print
 printAlg2 (Lit x)       = Print $ show x
 printAlg2 (Add e1 e2)   = Print $ print e1 ++ " + " ++ print e2 ++ " = " ++ show (eval e1 + eval e2)
 
+inn :: (Fix ArithF :<: r) => ArithF r -> Fix ArithF -- useful for paramorphisms!
+inn = In . fmap inter
+
+evalAlg3 :: (Fix ArithF :<: r, Eval :<: r) => ArithF r -> Eval
+evalAlg3 (Lit x)      = Eval $ x
+evalAlg3 (Add e1 e2)  = case prj e1 of 
+                           (Lit 0) -> Eval $ eval e2
+                           _       -> Eval $ eval e1 + eval e2
+
 type GAlg r a = ArithF r -> a
 
 (<+>) :: (a :<: r, b :<: r) => (f r -> a) -> (f r -> b) -> f r -> (a,b)
@@ -58,3 +67,6 @@ eval = eval' . inter
 
 print :: (Print :<: e) => e -> String -- robust! works as long there is an Eval in e
 print = print' . inter
+
+prj :: (Fix ArithF :<: e) => e -> ArithF (Fix ArithF)
+prj = out . inter

@@ -56,7 +56,7 @@
 %endif
 
 Our first goal is to compose algebras modularly. It will allow us to bring in 
-dependent interpretions in later sections. 
+dependent interpretions later. 
 By composing two algebras together, we can get a new algebra with a carrier
 type containing the types of its components. 
 In this section, we will use algebras for {\em width} and {\em depth} as examples 
@@ -70,7 +70,7 @@ interpretations over the same underlying type:
 > newtype Width2 = Width2 {width :: Int}
 > newtype Depth2 = Depth2 {depth :: Int}
 
-Algebras can be defined in the same way as before:
+Algebras for each interpretation can be defined in the same way as before:
 
 > widthAlg2 :: CircuitAlg Width2
 > widthAlg2 (IdentityF w)   = Width2 w
@@ -87,7 +87,7 @@ Algebras can be defined in the same way as before:
 > depthAlg2 (StretchF xs x) = Depth2 (depth x)
 
 Next we introduce the following type class to state a membership relationship
-between type i and e:
+between type i and e \cite{bahr15}:
 
 > class i :<: e where
 >   inter :: e -> i

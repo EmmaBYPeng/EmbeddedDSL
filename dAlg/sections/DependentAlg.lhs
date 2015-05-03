@@ -9,11 +9,11 @@
 
 In the previous section we talked about how algebras can be composed together to allow
 multiple interpretations. In this section, we will introduce an approach that allows 
-multiple interpretations with dependencies. With our approach, each property we want 
+dependent interpretations. With our approach, each property we want 
 to evaluate has a corresponding algebra. There is no need to construct a pair of 
 interpretations when one depends on the other. 
 For example, unlike |wswAlg| in section 4.1, we have |wsAlg| that corresponds to 
-|wellSized|, where the definition of |widthAlg| is no longer needed. 
+{\em wellSized}, where the definition of |widthAlg| is no longer needed. 
 
 %if False
 
@@ -65,6 +65,8 @@ The first step is to change our definition of alegebra from |CircuitAlg| to |GAl
 
 |GAlg| stands for {\em generic algebra}. It consists of two types |r| and |a|, 
 and a function taking |CiruictF| of r-vlaues to an a-value, where |a :<: r|.
+The idea is to distinguish between the uses of carrier types with respect to whether
+they are inputs (|r|) or outputs (|a|)\cite{oliveira13}. 
 For |wsAlg|, the first type |r| represents a collection of types containing
 both |WellSized2| and |Width2| (specified by |(WellSized2 :<: r, Width2 :<: r)|). 
 Since each child of |AboveF|, |BesideF| and |StretchF| is of type r, 
@@ -77,7 +79,8 @@ defined as follows:
 > wsAlg (IdentityF w)   = WellSized2 True
 > wsAlg (FanF w)        = WellSized2 True
 > wsAlg (AboveF x y)    = 
->   WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
+>   WellSized2 (gwellSized x && gwellSized y && 
+>   gwidth x == gwidth y)
 > wsAlg (BesideF x y)   =
 >   WellSized2 (gwellSized x && gwellSized y)
 > wsAlg (StretchF xs x) = 

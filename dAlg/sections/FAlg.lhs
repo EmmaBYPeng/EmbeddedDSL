@@ -18,9 +18,9 @@
 
 %endif
 
-Alternatively, the circuit presented above can be represented using functors. 
-The shape of the circuit is given by functor {\em CircuitF} as follows, 
-where r marks the recursive spots:
+Alternatively, the circuit presented above can be represented using 
+{\em two-level-types}\cite{sheard04}. 
+The shape of the circuit is given by functor {\em CircuitF} as follows:
 
 > data CircuitF r = 
 >    IdentityF Int
@@ -30,7 +30,8 @@ where r marks the recursive spots:
 >  | StretchF [Int] r
 >  deriving Functor
 
-We can recover the Circuit datatype from its shape functor {\em CircuitF}:
+{\em CircuitF} abstracts the recursive occurrences of the datatype away, using a type
+parameter r. We can then recover the datatype of Circuit:
 
 > data Circuit = In (CircuitF Circuit)
 
@@ -73,7 +74,7 @@ step:
 > fold :: CircuitAlg a -> Circuit -> a
 > fold alg (In x) = alg (fmap (fold alg) x)
 
-Compositional observation functions for our circuit can be defined as:
+Each observation function for our circuit can be defined as a {\em fold}:
 
 > width :: Circuit -> Width
 > width = fold widthAlg

@@ -36,6 +36,9 @@
 \usepackage{doubleequals}
 \usepackage{comment}
 \usepackage{url}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {images/} }
 
 %% for comments
 \input{Preamble}
@@ -77,21 +80,25 @@
 \titlebanner{banner above paper title}        % These are ignored unless
 \preprintfooter{short description of paper}   % 'preprint' option specified.
 
-\title{Composable Algebra with Dependencies}
-%\subtitle{A List-of-Functors Approach to Two-Level Types}
+\title{Modular and Dependent Interpretations for Shallow Embeddings}
+%\title{Composable Algebra with Dependencies}
 
-\authorinfo{Bruno C. d. S. Oliveira}
-           {University of Hong Kong}
-           {bruno@cs.hku.hk}
-\authorinfo{Shin-Cheng Mu}
-           {Academia Sinica}
-           {scm@iis.sinica.edu.tw}
-\authorinfo{Shu-Hung You}
-           {National Taiwan University}
-           {suhorngcsie@gmail.com}
+
+\authorinfo{Draft}
+           {}
+           {}
+
 \maketitle
 
 \begin{abstract}
+
+This paper presents composable algebra with dependencies: a new approach to compose 
+algebras together to allow dependent interpretations with {\em fold}. 
+For a given datatype represented by two-level-types\cite{sheard04}, if one of its 
+interpretations depends on a second one, we compose the algebra correponding 
+to the first interpretation with the one corresponding to the second, and use the 
+composed algebra with {\em fold} to evaluate the expression. We present our approach 
+on top of the domain specific language for parallel prefix circuits.
 
 \end{abstract}
 
@@ -122,6 +129,10 @@
 \section{Other representations of algebra}
 \label{sec: other-alg}
 
+Apart from {\em two-level-types}, there are other ways to represent and evaluate
+the DSL for parallel prefix circuits. In this section, we will show two other 
+representations, and how they can be used to allow dependent interpretations.
+
 \input{sections/TypeClassAlg}
 
 \input{sections/RecordAlg}
@@ -147,7 +158,49 @@ Acknowledgments, if needed.
 
 % The bibliography should be embedded for final submission.
 
-\bibliography{mrm}
+%\bibliography{mrm}
+
+\begin{thebibliography}{}
+\softraggedright
+
+\bibitem{sheard04}
+  Sheard, Tim and Pasalic, Emir.
+  Two-level types and parameterized modules.
+  \emph{Journal of Functional Programming}.
+  14(5):547-587, September 2014.
+
+\bibitem{gibbons14}
+  Gibbons, Jeremy and Wu, Nicolas.
+  Folding Domain-Specific Languages: Deep and Shallow Embeddings.
+  \emph{International Conference on Functional Programming}.
+  2014.
+
+\bibitem{fokkinga90}
+  Fokkinga, Maarten M.
+  Tupling and mutumorphisms.
+  1990.
+
+\bibitem{oliveira15}
+  Oliveira, B.C.d.S., Mu, Shin-Cheng and You, Shu-Hung.
+  Modular Reifiable Matching: A List-of-Functors Approach to Two-Level Types.
+  February 2015.
+
+\bibitem{bahr15}
+  Bahr, Patrick and Axelsson, Emil.
+  Generalising Tree Traversals to DAGs.
+  \emph{Proceedings of the 2015 Workshop on Partial Evaluation and Program Manipulation},
+  pages 27-38.
+  2015
+
+\bibitem{oliveira13}
+  Oliveira, B.C.d.S., Storm, Tijs van der, Loh, Alex and Cook, William R.
+  Feature-Oriented Programming with Object Algebra
+  \emph{ECOOP'13 Proceedings of the 27th European conference on Object-Oriented Programming},
+  pages 27-51.
+  2013
+
+
+\end{thebibliography}
 
 
 

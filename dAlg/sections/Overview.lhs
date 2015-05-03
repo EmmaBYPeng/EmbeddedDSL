@@ -9,6 +9,11 @@
 
 To maintain the compositionality of an interpretation while bringing in dependencies,
 Jeremy Gibbons proposed two approaches based on F-Algebra. 
+One example of a dependent interpretation is to see whether a circuit is well formed 
+or not, as it depends on the widths of the circuit's constituent parts. 
+Since the interpretation is non-compositional\cite{gibbons14}, 
+there is no corresponding {\em CircuitAlg} and the circuit cannot be evaluated using
+{\em fold}.
 
 %if False
 
@@ -23,16 +28,9 @@ Jeremy Gibbons proposed two approaches based on F-Algebra.
 \subsection{Pairs for multiple interpretations with dependencies}
 \label{sec:pair-for-composing-algebras}
 
-While it is straightforward to add additional interpretaions that are independent 
-of previously defined ones~\cite{Gibbons:14:Folding}, adding an interpretaion
-that depends on 'secondary' interpretations of its parts can be tricky.
-
-For example, whether a circuit is well formed or not depends on the widths of its
-constituent parts. Since the interpretation is non-compositional
-~\cite{Gibbons:14:Folding}, there is no corresponding {\em CircuitAlg}. To allow 
-multiple interpretations with dependencies using {\em fold}, 
-Gibbons~\cite{Gibbons:14:Folding} proposed the following {\em zygomorphism}
-~\cite{Fokkinga:90:Tupling}, making the semantic domain of the interpretaion 
+To allow multiple interpretations with dependencies using {\em fold}, 
+Gibbons\cite{gibbons14} proposed the following {\em zygomorphism}
+\cite{fokkinga90}, making the semantic domain of the interpretaion 
 (i.e. the carrier type of an algebra) a pair:
 
 > type WellSized = Bool
@@ -63,7 +61,7 @@ to be revised every time a new interpretation is added. Moreover, for more than
 two interpretations, we have to either create a combination for each pair of 
 interpretations, or use tuples which generally lack good language support.
 
-Therefore, Gibbons~\cite{Gibbons:14:Folding} presented a single parametrized 
+Therefore, Gibbons\cite{gibbons14} presented a single parametrized 
 interpretation, which provides a universal generic interpretation as the 
 {\em Church encoding}: 
 
@@ -83,7 +81,7 @@ It can then specialize to {\em width} and {\em depth}:
 > depth2 :: Circuit1 -> Depth
 > depth2 x = unC1 x depthAlg
 
-However, one big problem with the above church encoding approach is that it does not 
-support dependent interpretations. 
+However, one big problem with the above church encoding approach is that it still
+does not support dependent interpretations. 
 
 

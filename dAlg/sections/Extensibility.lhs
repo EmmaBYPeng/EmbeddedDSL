@@ -8,18 +8,19 @@
 \label{sec:extensibility}
 
 So far we have only talked about extensibility in one dimension, namely, 
-how to add new observation functions in a modular way with algebras for our DSL.
+how to add dependent observation functions in a modular way with {\em fold} 
+for our DSL.
 What if we want to have extensibility in a second dimension, which is to extend our 
 grammer by adding new data constructors modularly? To make the problem more 
 interesting, these additional constructors may also bring dependencies in their 
 corresponding observation functions at the same time. 
 In this section, we will show that our approach of composing algebras while 
 incorporating dependencies works well with the Modular Refiable Matching (MRM) 
-approach, which allows us to add additional constructors modularly. We will present
-a two-level composition of algebras: for each modular component, we compose its
-algebras together if an interpretation is dependent; for different components, we 
-combine their corresponding algebras together to allow evaluation of a composed 
-data structure. 
+approach\cite{oliveira15}, which allows us to add additional constructors modularly. 
+We will present a two-level composition of algebras: for each modular component, 
+we compose its algebras together if an interpretation is dependent; for different 
+components, we combine their corresponding algebras together to allow evaluation of 
+a composed data structure. 
 
 %if False
 
@@ -72,19 +73,19 @@ data structure.
 %endif
 
 For example, say at first we only have three constructs in our DSL of circuits: 
-{\em Identity}, {\em Fan}, and {\em Beside}. We can define a functor {\em CircuitFB}
+{\em IdentityF}, {\em FanF}, and {\em BesideF}. We can define a functor {\em CircuitFB}
 to represent this datatype, where B stands for {\em Base}: 
 
 > data CircuitFB r = 
->     Identity Int
->   | Fan Int
->   | Beside r r
+>     IdentityF Int
+>   | FanF Int
+>   | BesideF r r
 >   deriving Functor
 
-There is no dependencies involved for the algebras of this ciruict, since with only
-{\em Identity}, {\em Fan} and {\em Beside}, whether a circuit is well formed or not
+There is no dependencies involved for {\em wellSized} of this circuit, since with only
+{\em IdentityF}, {\em FanF} and {\em BesideF}, whether a circuit is well formed or not
 is not dependent on the width of its parts. However, we will keep our 
-representation for dependent algebras to be consistent with algeras we will later
+representation for dependent algebras, to be consistent with algeras we will later
 define for extended datatypes: 
 
 > type GAlgB r a = CircuitFB r -> a
@@ -92,23 +93,24 @@ define for extended datatypes:
 Algebras for {\em width} and {\em wellSized} are exactly the same as before:
 
 > widthAlgB :: (Width2 :<: r) => CircuitFB r -> Width2
-> widthAlgB (Identity w)   = Width2 w
-> widthAlgB (Fan w)        = Width2 w
-> widthAlgB (Beside x y)   = Width2 (gwidth x + gwidth y)
+> widthAlgB (IdentityF w)   = Width2 w
+> widthAlgB (FanF w)        = Width2 w
+> widthAlgB (BesideF x y)   = Width2 (gwidth x + gwidth y)
 
 > wsAlgB :: (Width2 :<: r, WellSized2 :<: r) => 
 >   CircuitFB r -> WellSized2
-> wsAlgB (Identity w)   = WellSized2 True
-> wsAlgB (Fan w)        = WellSized2 True
-> wsAlgB (Beside x y)   = WellSized2 (gwellSized x && gwellSized y)
+> wsAlgB (IdentityF w)   = WellSized2 True
+> wsAlgB (FanF w)        = WellSized2 True
+> wsAlgB (BesideF x y)   = 
+>   WellSized2 (gwellSized x && gwellSized y)
 
-Now suppose we want to extend our circuits by adding new constructs {\em Above} and
-{\em Stretch}. We add the datatype constructors as a functor {\em CircuitFE}, where
+Now suppose we want to extend our circuits by adding new constructs {\em AboveF} and
+{\em StretchF}. We add the datatype constructors as a functor {\em CircuitFE}, where
 E stands for {\em Extended}: 
 
 > data CircuitFE r = 
->     Above r r
->   | Stretch [Int] r
+>     AboveF r r
+>   | StretchF [Int] r
 >   deriving Functor
 
 Algebras correspond to this functor are similar to the ones above. The only difference
@@ -119,14 +121,14 @@ width of a circuit:
 > type GAlgE r a = CircuitFE r -> a
 
 > widthAlgE :: (Width2 :<: r) => CircuitFE r -> Width2
-> widthAlgE (Above x y)    = Width2 (gwidth x)
-> widthAlgE (Stretch xs x) = Width2 (sum xs)
+> widthAlgE (AboveF x y)    = Width2 (gwidth x)
+> widthAlgE (StretchF xs x) = Width2 (sum xs)
 
 > wsAlgE :: (Width2 :<: r, WellSized2 :<: r) => 
 >   CircuitFE r -> WellSized2
-> wsAlgE (Above x y)    = 
+> wsAlgE (AboveF x y)    = 
 >   WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
-> wsAlgE (Stretch xs x) = 
+> wsAlgE (StretchF xs x) = 
 >   WellSized2 (gwellSized x && length xs == gwidth x)
 
 Unlike the |<+>| operator defined in previous sections, here we associate it with a
@@ -137,20 +139,22 @@ type class {\em Comb} and define the corresponding behavior of |<+>|. Since we h
 two functors {\em CircuitFB} and {\em CircuitFE}, we create two instances of 
 {\em Comb} and define |<+>| for each of them:
 
-> class Comb f r a b where
->   (<+>) :: (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
+> class Comb f where
+>   (<+>) :: (a :<: r, b :<: r) => (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
 
-> instance (a :<: r, b :<: r) =>  Comb CircuitFB r a b where
->   (<+>) a1 a2 (Identity w)   = (a1 (Identity w), a2 (Identity w))
->   (<+>) a1 a2 (Fan w)        = (a1 (Fan w), a2 (Fan w))
->   (<+>) a1 a2 (Beside x y)   = 
->     (a1 (Beside (inter x) (inter y)), a2 (Beside (inter x) (inter y)))
+> instance Comb CircuitFB where
+>   (<+>) a1 a2 (IdentityF w) = 
+>     (a1 (IdentityF w), a2 (IdentityF w))
+>   (<+>) a1 a2 (FanF w)      = 
+>     (a1 (FanF w), a2 (FanF w))
+>   (<+>) a1 a2 (BesideF x y) = 
+>     (a1 (BesideF (inter x) (inter y)), a2 (BesideF (inter x) (inter y)))
 
-> instance (a :<: r, b :<: r) => Comb CircuitFE r a b where
->   (<+>) a1 a2 (Above x y)    = 
->     (a1 (Above (inter x) (inter y)), a2 (Above (inter x) (inter y)))
->   (<+>) a1 a2 (Stretch xs x) = 
->     (a1 (Stretch xs (inter x)), a2 (Stretch xs (inter x)))
+> instance Comb CircuitFE where
+>   (<+>) a1 a2 (AboveF x y)     = 
+>     (a1 (AboveF (inter x) (inter y)), a2 (AboveF (inter x) (inter y)))
+>   (<+>) a1 a2 (StretchF xs x)  = 
+>     (a1 (StretchF xs (inter x)), a2 (StretchF xs (inter x)))
 
 %if False
 
@@ -175,19 +179,19 @@ two functors {\em CircuitFB} and {\em CircuitFE}, we create two instances of
 > gwellSized = wellSized . inter
 
 > identity :: (CircuitFB :< fs) => Int -> Fix fs
-> identity = inn . Identity
+> identity = inn . IdentityF
 
 > fan :: (CircuitFB :< fs) => Int -> Fix fs
-> fan = inn . Fan
+> fan = inn . FanF
 
 > beside :: (CircuitFB :< fs) => Fix fs -> Fix fs -> Fix fs
-> beside x y = inn (Beside x y)
+> beside x y = inn (BesideF x y)
 
 > above :: (CircuitFE :< fs) => Fix fs -> Fix fs -> Fix fs
-> above x y = inn (Above x y)
+> above x y = inn (AboveF x y)
 
 > stretch :: (CircuitFE :< fs) => [Int] -> Fix fs -> Fix fs
-> stretch xs x = inn (Stretch xs x)
+> stretch xs x = inn (StretchF xs x)
 
 > type Circuit2 = Fix '[CircuitFB, CircuitFE]
 
@@ -198,8 +202,8 @@ we define the type of the circuit:
 
 < type Circuit2 = Fix `[CircuitFB, CircuitFE]
 
-The type {\em Circuit2} denotes circuits that have {\em Identity}, {\em Fan}, 
-{\em Beside}, {\em Above} and {\em Stretch} as their components. 
+The type {\em Circuit2} denotes circuits that have {\em IdentityF}, {\em FanF}, 
+{\em BesideF}, {\em AboveF} and {\em StretchF} as their components. 
 
 Since {\em Width2} needs to be part of the carrier type of wsAlgE such that we can
 retreive the width of a circuit and test if it is well-formed, for {\em CircuitFE},
@@ -209,13 +213,13 @@ for evaluation.
 > compAlgE = widthAlgE <+> wsAlgE
 
 Then we use |(:::)| to combine algebras correspond to different functors together
-~\cite{Gibbons:14:Folding}. Since the algebras in the list constructed by |(:::)|
+\cite{oliveira15}. Since the algebras in the list constructed by |(:::)|
 need to have the same carrier and return type, we compose {\em widthAlgB} and 
 {\em wsAlgB} for {\em CircuitFB} and get {\em compAlgB}:
 
 > compAlgB = widthAlgB <+> wsAlgB
 
-The {\em fold} operator defined in MRM library~\cite{Gibbons:14:Folding} takes an 
+The {\em fold} operator defined in MRM library~\cite{oliveira15} takes an 
 |fs|-algebra and |Fix fs| arguments. We define the evaluation function for our 
 circuit as a fold using the combined algebras:
 

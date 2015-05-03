@@ -17,7 +17,7 @@
 
 One way to represent the circuit is to use a type class. Each interpretation 
 corresponds to an instance of the type class for the type of that interpretation.
-The two class type variables stand for the input and output domains of an 
+The two class type variables stand for input and output domains of an 
 interpretation: 
 
 > class Circuit inn out where
@@ -64,7 +64,8 @@ x and y with the help of {\em gwidth}:
 >   identity (Proxy :: Proxy inn) w = WellSized2 True
 >   fan      (Proxy :: Proxy inn) w = WellSized2 True
 >   above x y    = 
->     WellSized2 (gwellSized x && gwellSized y && gwidth x == gwidth y)
+>     WellSized2 (gwellSized x && gwellSized y && 
+>     gwidth x == gwidth y)
 >   beside x y   = WellSized2 (gwellSized x && gwellSized y)
 >   stretch xs x =
 >     WellSized2 (gwellSized x && length xs == gwidth x)
@@ -75,14 +76,16 @@ interpretations with composed type:
 > instance (Circuit inn inn1, Circuit inn inn2) => 
 >   Circuit inn (Compose inn1 inn2) where
 >   identity (Proxy :: Proxy inn) w = 
->     ((identity (Proxy :: Proxy inn) w), (identity (Proxy :: Proxy inn) w))
+>     ((identity (Proxy :: Proxy inn) w), 
+>     (identity (Proxy :: Proxy inn) w))
 >   fan      (Proxy :: Proxy inn) w = 
->     ((fan (Proxy :: Proxy inn) w), (fan (Proxy :: Proxy inn) w))
->   above x y    = ((above x y), (above x y))
->   beside x y   = ((beside x y), (beside x y))
+>     ((fan (Proxy :: Proxy inn) w), 
+>     (fan (Proxy :: Proxy inn) w))
+>   above x y    = ((above x y)   , (above x y))
+>   beside x y   = ((beside x y)  , (beside x y))
 >   stretch xs x = ((stretch xs x), (stretch xs x))
 
-Here we support interpretations with composed type by making the output of member 
+Here we support interpretations for composed type by making the output of member 
 functions a pair. The first element in the pair represents the interpretation for the
 first type {\em inn1}, while the second represents the interpretation for {\em inn2}.
 
@@ -108,6 +111,11 @@ first type {\em inn1}, while the second represents the interpretation for {\em i
 
 %endif
 
+For example, if we want to have an interpretation for type 
+{\em (Compose Width2 WellSized2)}, we annotate each member function with type 
+{\em ComposedType} to associate it with the instance of interpretation for 
+composed types:
+
 > type ComposedType = Compose Width2 WellSized2
 
 > gfan w        = 
@@ -118,17 +126,17 @@ first type {\em inn1}, while the second represents the interpretation for {\em i
 > gabove x y    = (above x y)    :: ComposedType
 > gstretch xs x = (stretch xs x) :: ComposedType
 
-> c = 
+The Brent-Kung circuit in Figure 1 can be constructed as:
+
+> circuit3 = 
 >   (gfan 2 `gbeside` gfan 2) `gabove`
 >   gstretch [2,2] (gfan 2) `gabove`
 >   (gidentity 1 `gbeside` gfan 2 `gbeside` gidentity 1)
 
-> width4 :: (Width2 :<: e) => e -> Int
-> width4 = gwidth
+We can project individual interpretations out using {\em gwidth} and {\em gwellSized}:
 
-> wellSized4 :: (WellSized2 :<: e) => e -> Bool
-> wellSized4 = gwellSized
-
+> test1 = gwidth circuit3
+> test3 = gwellSized circuit3
 
 
 

@@ -80,8 +80,8 @@
 \titlebanner{banner above paper title}        % These are ignored unless
 \preprintfooter{short description of paper}   % 'preprint' option specified.
 
-\title{Modular and Dependent Interpretations for Shallow Embeddings}
-%\title{Composable Algebra with Dependencies}
+\title{Expressive, Modular and Compositional Embedded DSLs}
+\subtitle{(Functional Pearl)}
 
 
 \authorinfo{Draft}
@@ -91,6 +91,16 @@
 \maketitle
 
 \begin{abstract}
+Compositionality is a desirable characteristic for the semantics of
+DSLs. In functional programming folds are used to enforce
+compositionality. However folds make certain compositional
+interpretations hard to express modularly. This pearl presents a
+simple technique that allows non-trivial, but compositional
+interpretations of DSLs to be expressed in a fully modular way
+using folds.
+
+
+\begin{comment}
 
 This paper presents composable algebra with dependencies: a new approach to compose 
 algebras together to allow dependent interpretations with {\em fold}. 
@@ -99,6 +109,8 @@ interpretations depends on a second one, we compose the algebra correponding
 to the first interpretation with the one corresponding to the second, and use the 
 composed algebra with {\em fold} to evaluate the expression. We present our approach 
 on top of the domain specific language for parallel prefix circuits.
+
+\end{comment}
 
 \end{abstract}
 

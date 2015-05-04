@@ -18,13 +18,13 @@
 %format MinusSrc  = "\Varid{Minus_{Src}}"
 %format NegSrc  = "\Varid{Neg_{Src}}"
 
-Algebras can often be used with {\em fold} to evaluate recursive expressions
-\cite{gibbons14}. 
-However, {\em fold} supports only compositional interpretations, meaning that
-an interpretation of a whole is determined solely from the interpretations of its 
-parts. The compositionality of an interpretaion is a significant limitation to 
-expressivity: sometimes a 'primary' interpretation of the whole depends also on 
-'secondary' interpretaions of its parts. 
+Algebras can often be used with {\em fold} to evaluate recursive
+expressions \cite{gibbons14}.  However, {\em fold} supports only
+compositional interpretations, meaning that an interpretation of a
+whole is determined solely from the interpretations of its parts. The
+compositionality of an interpretaion is a significant limitation to
+expressivity: sometimes a 'primary' interpretation of the whole
+depends also on 'secondary' interpretaions of its parts.
 
 
 In the context of Embedded Domain Specific Languages (DSL), 

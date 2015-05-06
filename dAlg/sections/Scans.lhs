@@ -4,30 +4,38 @@
 %include Formatting.fmt
 %include Paper.fmt
 
-\section{DSL for parallel prefix circuits}
+\section{A DSL for parallel prefix circuits}
 \label{sec:scans}
 
-In Jeremy Gibbons's paper\cite{gibbons14}, parallel prefix circuit is used as an 
-example of a DSL. To make better comparison between his and our approaches,
-we will also work on top of the DSL for circuits. 
+\bruno{I think most of this section needs to be rewriten to avoid 
+plagiarism issues.}
 
-Given an associative binary operator |.|, a prefix computation of width |n > 0| takes a sequence |x1, x1, ..., xn| of inputs and produces the sequence 
-|x1, x1.x2, ..., x1.x2. ... .xn| of outputs. A parallel prefix circuit performs this
-computation in parallel, in a fixed format independent of the input value |xi|.
+%format xi = "x_i"
 
-Figuire 1 shows an example of a circuit. The inputs are fed in at the top, and the
-outputs fall out at the bottom. Each node represents a local computation, combining
-the values on each of its input wires using |.|, in left-to-right order, 
-and providing copies of the result on each its output wires. 
+The running example for this paper is Gibbons and Wu's DSL for
+parallel prefix circuits~\cite{gibbons14}.  Given an associative
+binary operator |.|, a prefix computation of width |n > 0| takes a
+sequence |x1, x1, ..., xn| of inputs and produces the sequence |x1,
+x1.x2, ..., x1.x2. ... .xn| of outputs. A parallel prefix circuit
+performs this computation in parallel, in a fixed format independent
+of the input value |xi|\bruno{This text is essentially plagiarised 
+from Gibbons and Wu paper. Please rewrite!}.
 
-Such cirucits can be represented by the following algebraic datatype: 
+Figure \ref{fig:circuit1} shows an example of a circuit. The inputs
+are fed in at the top, and the outputs fall out at the bottom. Each
+node represents a local computation, combining the values on each of
+its input wires using |.|, in left-to-right order, and providing
+copies of the result on each its output wires.\bruno{large portions 
+of text (full sentences) are just plagiarised.}
+
+Such circuits can be represented by the following algebraic datatype: 
 
 > data Circuit = 
->     Identity Int
->   | Fan Int
->   | Above Circuit Circuit
->   | Beside Circuit Circuit
->   | Stretch [Int] Circuit
+>      Identity Int
+>   |  Fan Int
+>   |  Above Circuit Circuit
+>   |  Beside Circuit Circuit
+>   |  Stretch [Int] Circuit
 
 \begin{figure}[t]
 \includegraphics[width=0.15\textwidth, center]{circuit1}

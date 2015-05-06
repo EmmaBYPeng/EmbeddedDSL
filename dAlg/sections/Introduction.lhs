@@ -101,7 +101,7 @@ that defines |printEval|.
 Using this simple technique Gibbons and Wu~\cite{} have shown that various 
 complex interpretations of DSLs can be defined compositionaly. In particular 
 they illustrate how to model \emph{multiple}, \emph{dependent} and 
-\emph{context-sesitive} interpretations using this technique. 
+\emph{context-sensitive} interpretations using this technique. 
 
 Unfortunatelly there are some problems with using pairs to combine
 together multiple interpretations in an algebra. As Gibbons and Wu note:
@@ -124,10 +124,11 @@ larger tuples, which are difficult to manage.
 
 This functional pearl revisits the examples of Gibbons and Wu and it 
 shows how a simple technique, which can be viewed as a dual to Swiestra's
-``Datatypes \`a la Carte"~\cite{}, can be used to provide modular and 
+``\emph{Datatypes \`a la Carte}"~\cite{}, can be used to provide modular and 
 compositional interpretations that may depend on other interpretations. 
 We also show how the technique applies to other various implementation 
 approaches for embedded DSLs, and discuss a case study usings grammars.  
+
 
 \begin{comment}
 Algebras can often be used with {\em fold} to evaluate recursive

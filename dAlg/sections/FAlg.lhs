@@ -5,7 +5,7 @@
 %include Paper.fmt
 
 
-\section{F-Algebras}
+\section{Circuits using Folds and F-Algebras}
 \label{sec:f-algebra}
 
 %if False
@@ -19,18 +19,18 @@
 %endif
 
 Alternatively, the circuit presented above can be represented using 
-{\em two-level-types}\cite{sheard04}. 
-The shape of the circuit is given by functor {\em CircuitF} as follows:
+{\em two-level-types}~\cite{sheard04}. 
+The shape of the circuit is given by functor |CircuitF| as follows:
 
 > data CircuitF r = 
->    IdentityF Int
->  | FanF Int
->  | AboveF r r 
->  | BesideF r r
->  | StretchF [Int] r
+>     IdentityF Int
+>  |  FanF Int
+>  |  AboveF r r 
+>  |  BesideF r r
+>  |  StretchF [Int] r
 >  deriving Functor
 
-{\em CircuitF} abstracts the recursive occurrences of the datatype away, using a type
+|CircuitF| abstracts the recursive occurrences of the datatype away, using a type
 parameter r. We can then recover the datatype of Circuit:
 
 > data Circuit = In (CircuitF Circuit)

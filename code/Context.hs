@@ -56,6 +56,11 @@ layoutAlg = Circuit {
     Layout (\f -> glayout x (pred . ((scanl1 (+) xs)!!) . f))
 }
 
+lzw :: (a -> a -> a) -> [a] -> [a] -> [a]
+lzw f [] ys         = ys
+lzw f xs []         = xs
+lzw f (x:xs) (y:ys) = f x y : lzw f xs ys
+
 (<+>) :: (inn1 :<: inn, inn2 :<: inn) => 
          Circuit inn inn1 -> Circuit inn inn2 -> Circuit inn (Compose inn1 inn2)
 (<+>) a1 a2 = Circuit {
@@ -65,11 +70,6 @@ layoutAlg = Circuit {
   beside   = \x y  -> (beside a1 (inter x) (inter y), beside a2 (inter x) (inter y)),
   stretch  = \xs x -> (stretch a1 xs (inter x), stretch a2 xs (inter x))
 }
-
-lzw :: (a -> a -> a) -> [a] -> [a] -> [a]
-lzw f [] ys         = ys
-lzw f xs []         = xs
-lzw f (x:xs) (y:ys) = f x y : lzw f xs ys
 
 class i :<: e where
   inter :: e -> i

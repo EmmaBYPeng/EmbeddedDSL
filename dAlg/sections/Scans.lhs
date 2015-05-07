@@ -7,28 +7,40 @@
 \section{A DSL for parallel prefix circuits}
 \label{sec:scans}
 
-\bruno{I think most of this section needs to be rewriten to avoid 
-plagiarism issues.}
-
 %format xi = "x_i"
 
 The running example for this paper is Gibbons and Wu's DSL for
-parallel prefix circuits~\cite{gibbons14}.  Given an associative
-binary operator |.|, a prefix computation of width |n > 0| takes a
-sequence |x1, x1, ..., xn| of inputs and produces the sequence |x1,
-x1.x2, ..., x1.x2. ... .xn| of outputs. A parallel prefix circuit
-performs this computation in parallel, in a fixed format independent
-of the input value |xi|\bruno{This text is essentially plagiarised 
-from Gibbons and Wu paper. Please rewrite!}.
+parallel prefix circuits~\cite{gibbons14}. Paralle prefix computation is an important
+problem in computer science, both theoretically and practically. Its broad 
+applications range from binary addition, processor allocation to the design of 
+efficient sorting and searching algorithms~\cite{blelloch90}. 
 
-Figure \ref{fig:circuit1} shows an example of a circuit. The inputs
-are fed in at the top, and the outputs fall out at the bottom. Each
-node represents a local computation, combining the values on each of
-its input wires using |.|, in left-to-right order, and providing
-copies of the result on each its output wires.\bruno{large portions 
-of text (full sentences) are just plagiarised.}
+For a list of inputs from $x_1$ to $x_n$, a prefix computation computes the product 
+of $x_1$ |.| $x_2$ |.| ... |.| $x_k$ for all integer |k| in |[1,n]|, with an
+arbitrary binary operator |.|. Intuitively, as shown in Figure 1, each product can be 
+computed in a linear way, and can be represented by a serial circuit. 
+With inputs fed in from the top, each node represents an operation that takes inputs
+from its left and top input wires. It generates output to the bottom along the 
+vertical wire as well as the diagonal wire to its right. In Figure 1, the diagonal 
+line from $x_1$ to $x_2$ represents a fork. The width of such a circuit equals the 
+number of inputs, while the depth is determined by the maximum number of operators 
+on a path from input to output. For the linear computation shown in Figure 1, 
+circuit width is 4 and depth is 3. 
 
-Such circuits can be represented by the following algebraic datatype: 
+\begin{figure}
+\includegraphics[width=0.20\textwidth, center]{serial}
+\caption{Linear computation}
+\label{fig:serial}
+\end{figure}
+
+Parallel prefix compuataion performs multiple such computations in parallel. 
+In other words, a parallel prefix circuit can have multiple operators at each given 
+level, which brings parallelism in the resulting computation. For instance, one 
+possible construction of a parallel prefix circuit with width 4 is shown in Figure 2.
+It is straightforward to see that the circuit takes $x_1$, $x_2$, $x_3$, $x_4$ as 
+inputs and produces $x_1$, $x_1$ |.| $x_2$, $x_1$ |.| $x_2$ |.| $x_3$,  
+$x_1$ |.| $x_2$ |.| $x_3$ |.| $x_4$ as outputs.
+We use the following algebraic datatype to construct such circuits:
 
 > data Circuit = 
 >      Identity Int
@@ -37,61 +49,54 @@ Such circuits can be represented by the following algebraic datatype:
 >   |  Beside Circuit Circuit
 >   |  Stretch [Int] Circuit
 
-\begin{figure}[t]
+\begin{figure}
 \includegraphics[width=0.15\textwidth, center]{circuit1}
-\caption{The Brent-Kung parallel prefix circuit of widht 4}
+\caption{Parallel prefix circuit of widht 4}
 \label{fig:circuit1}
 \end{figure}
 
-\begin{itemize}
+The first primitive is {\em Identity}. An {\em Identity} of width n generates n 
+parallel wires. For the other premitive {\em Fan}, it takes n inputs, and combines 
+the first one with each of the rest with the binary operator |.|. 
+To vertically combine two circuits of the same width, 
+{\em Above} places the first input circuit on top of the second one. On the other 
+hand, {\em Beside} combines two circuits horizontally, with no restriction on the
+widths of its input circuits. Lastly, we can stretch out a circuit according to a 
+list of widths {\em ws} = [$w_1$, $w_2$, ..., $w_k$] using the {\em Stretch}
+constructor. While keeping the original flow of operations 
+(i.e. the position of nodes and diagonal wires that connect different nodes), 
+$w_i$ parallel wires are added on the left of the $i^{th}$ input wire for $i$ from 1 
+to $k$, resulting in a circuit of width {\em sum ws}. 
 
-\item{\bf Identity: }
-{\em Identity n} creates a circuit consisting of n parallel wires that copy input to
-output. e.g. {\em Identity} of width 4:
+The circuit shown in Figure 2 has two levels. For the first level, we place two 
+2-fans side by side:
 
-\includegraphics[width=0.15\textwidth, center]{id4}
+\includegraphics[width=0.35\textwidth, center]{beside}
 
-\item{\bf Fan: }
-{\em Fan n} takes takes n inputs, and adds its first input to each of the others.
-e.g. {\em Fan} of width 4:
+The second level consists of a 1-identity beside a 3-fan:
 
-\includegraphics[width=0.15\textwidth, center]{fan4}
+\includegraphics[width=0.35\textwidth, center]{beside2}
 
-\item{\bf Beside: }
-{\em Beside x y} is the parallel or horizontal composition. It places c beside d, 
-leaving them unconnected. There are no width constraints on c and d.
+Then we place the first level on top of the second and get the resulting circuit in
+Figure 1: 
 
-e.g. A 2-{\em Fan} beside a 1-{\em Identity}:
+\includegraphics[width=0.5\textwidth, center]{above}
 
-\includegraphics[width=0.12\textwidth, center]{beside3}
+Alternatively, such a prefix computation of four inputs can be represented by a 
+circuit of three levels. While the first level remains the same as above, the second
+level is made up of a 2-fan stretched out with input widths [2, 2]:
 
-\item{\bf Above: }
-{\em Above x y} is the seires or veritical composotion. It takes two circuits c and d
-of the same width, and connects the outputs of c to the inputs of d. 
+\includegraphics[width=0.3\textwidth, center]{stretch}
 
-e.g. Place {\em Beside (Fan 2) (Identity 1)} above {\em Beside (Identity 1) (Fan 2)}.
-Both of the circuits are of width 3:
+The third layer consists of a 1-identity beside a 2-fan, beside a 1-identity:
 
-\includegraphics[width=0.12\textwidth, center]{above3}
+\includegraphics[width=0.12\textwidth, center]{third}
 
-\item{\bf Stretch: }
-{\em Stretch ws x} takes a non-empty list of positive widths ws = [w1, ..., wn] of 
-length n, and "stretchs" c out to width {\em sum ws} by interleaving some additional 
-wires. Of the first bundle of w1 inputs, the last is routed to the 
-first input of c and the rest pass straight through; of the next bundle of w2 inputs,
-the last is routed to the second input of c and the rest pass straight through; and 
-so on. 
-
-e.g. A 3-Fan stretched out by widths [3, 2, 3]
-
-\includegraphics[width=0.2\textwidth, center]{stretch3}
-
-On possible construction of the Brent-Kung parallel prefix circuit in Figure 1 is:
+Then we can vertically combine the three layers and get the resulting circuit shown 
+in Figure 2. It can be constructed as:
 
 > circuit = 
 >   Above (Beside (Fan 2) (Fan 2)) 
 >   (Above (Stretch [2, 2] (Fan 2))
 >   (Beside (Identity 1) (Beside (Fan 2) (Identity 1))))
 
-
-\end{itemize}

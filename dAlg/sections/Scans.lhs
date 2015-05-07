@@ -51,7 +51,7 @@ We use the following algebraic datatype to construct such circuits:
 
 \begin{figure}
 \includegraphics[width=0.15\textwidth, center]{circuit1}
-\caption{Parallel prefix circuit of widht 4}
+\caption{Parallel prefix circuit of width 4, depth 2}
 \label{fig:circuit1}
 \end{figure}
 
@@ -78,7 +78,7 @@ The second level consists of a 1-identity beside a 3-fan:
 \includegraphics[width=0.35\textwidth, center]{beside2}
 
 Then we place the first level on top of the second and get the resulting circuit in
-Figure 1: 
+Figure 2: 
 
 \includegraphics[width=0.5\textwidth, center]{above}
 
@@ -93,10 +93,15 @@ The third layer consists of a 1-identity beside a 2-fan, beside a 1-identity:
 \includegraphics[width=0.12\textwidth, center]{third}
 
 Then we can vertically combine the three layers and get the resulting circuit shown 
-in Figure 2. It can be constructed as:
+in Figure 3. It can be constructed as following:
 
 > circuit = 
 >   Above (Beside (Fan 2) (Fan 2)) 
 >   (Above (Stretch [2, 2] (Fan 2))
 >   (Beside (Identity 1) (Beside (Fan 2) (Identity 1))))
 
+\begin{figure}
+\includegraphics[width=0.15\textwidth, center]{circuit2}
+\caption{Parallel prefix circuit of width 4, depth 3}
+\label{fig:circuit1}
+\end{figure}

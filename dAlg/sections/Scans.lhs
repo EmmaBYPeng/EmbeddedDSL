@@ -51,7 +51,7 @@ We use the following algebraic datatype to construct such circuits:
 
 \begin{figure}
 \includegraphics[width=0.15\textwidth, center]{circuit1}
-\caption{Parallel prefix circuit of width 4, depth 2}
+\caption{Parallel prefix circuit}
 \label{fig:circuit1}
 \end{figure}
 
@@ -102,6 +102,6 @@ in Figure 3. It can be constructed as following:
 
 \begin{figure}
 \includegraphics[width=0.15\textwidth, center]{circuit2}
-\caption{Parallel prefix circuit of width 4, depth 3}
+\caption{Parallel prefix circuit}
 \label{fig:circuit1}
 \end{figure}

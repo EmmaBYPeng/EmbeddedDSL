@@ -4,11 +4,11 @@
 %include Formatting.fmt
 %include Paper.fmt
 
-\section{Existing Approaches}
+\section{Dependent Algebras}
 \label{sec:overview}
 
 To maintain the compositionality of an interpretation while bringing in dependencies,
-Jeremy Gibbons proposed two approaches based on F-Algebra. 
+Gibbons and Wu proposed two approaches based on F-Algebra. 
 One example of a dependent interpretation is to see whether a circuit is well formed 
 or not, as it depends on the widths of the circuit's constituent parts. 
 Since the interpretation is non-compositional\cite{gibbons14}, 

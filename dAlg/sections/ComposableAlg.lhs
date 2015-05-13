@@ -7,6 +7,7 @@
 %format :- = "\mathbin{\thinspace''" : "}"
 %format PATTERNS = Patterns "\mathbin{\thinspace''" [] "}"
 %format Val = "{\sf Val}" 
+%format <+> = "\oplus"
 
 \section{Composable Algebras}
 \label{sec:composable}

@@ -6,11 +6,13 @@
 
 \section{A DSL for parallel prefix circuits}
 \label{sec:scans}
+\bruno{I think Section 3 and 4 need to be merged. Just one section showing 
+two possible ways to represent circuits: using conventional datatypes; and using F-algebras }
 
 %format xi = "x_i"
 
 The running example for this paper is Gibbons and Wu's DSL for
-parallel prefix circuits~\cite{gibbons14}. Paralle prefix computation is an important
+parallel prefix circuits~\cite{gibbons14}. Parallel prefix computation is an important
 problem in computer science, both theoretically and practically. Its broad 
 applications range from binary addition, processor allocation to the design of 
 efficient sorting and searching algorithms~\cite{blelloch90}. 
@@ -40,6 +42,10 @@ possible construction of a parallel prefix circuit with width 4 is shown in Figu
 It is straightforward to see that the circuit takes $x_1$, $x_2$, $x_3$, $x_4$ as 
 inputs and produces $x_1$, $x_1$ |.| $x_2$, $x_1$ |.| $x_2$ |.| $x_3$,  
 $x_1$ |.| $x_2$ |.| $x_3$ |.| $x_4$ as outputs.
+
+\subsection{A Deep Embedding of Circuits}
+\bruno{Show |width| and |depth|?}
+
 We use the following algebraic datatype to construct such circuits:
 
 > data Circuit = 

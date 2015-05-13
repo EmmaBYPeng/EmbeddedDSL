@@ -77,7 +77,7 @@ For example, given the expression:
 < "((4@4 + 5@5)@9 + 1@1)"
 
 The result of |printEval| does not depend only on the recursive calls
-of to the subexpressions (it also depends on |eval1|).  Thus it seems
+of to the subexpressions (it also depends on |eval1|).  Thus, at first, it seems
 that |printEval| is non-compositional. However, when viewed through
 the right lenses, |printEval| can be considered compositional and it
 is implementable as a fold. The basic idea, which is well-known and has been 

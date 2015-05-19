@@ -4,7 +4,7 @@
 %include Formatting.fmt
 %include Paper.fmt
 
-\section{A DSL for parallel prefix circuits}
+\section{A DSL for Parallel Prefix Circuits}
 \label{sec:scans}
 \bruno{I think Section 3 and 4 need to be merged. Just one section showing 
 two possible ways to represent circuits: using conventional datatypes; and using F-algebras }
@@ -12,10 +12,17 @@ two possible ways to represent circuits: using conventional datatypes; and using
 %format xi = "x_i"
 
 The running example for this paper is Gibbons and Wu's DSL for
-parallel prefix circuits~\cite{gibbons14}. Parallel prefix computation is an important
-problem in computer science, both theoretically and practically. Its broad 
-applications range from binary addition, processor allocation to the design of 
-efficient sorting and searching algorithms~\cite{blelloch90}. 
+parallel prefix circuits~\cite{gibbons14}. We briefly introduce parallel prefix 
+circuits and then illustrate 
+two typical approaches for implementing such DSL in Haskell: 
+a typical deep embedding approach; and an approach using F-Algebras.
+
+%%Parallel prefix computation is an important
+%%problem in computer science, both theoretically and practically. Its broad 
+%%applications range from binary addition, processor allocation to the design of 
+%%efficient sorting and searching algorithms~\cite{blelloch90}.
+ 
+\subsection{Parallel Prefix Circuits}
 
 For a list of inputs from $x_1$ to $x_n$, a prefix computation computes the product 
 of $x_1$ |.| $x_2$ |.| ... |.| $x_k$ for all integer |k| in |[1,n]|, with an
@@ -44,9 +51,9 @@ inputs and produces $x_1$, $x_1$ |.| $x_2$, $x_1$ |.| $x_2$ |.| $x_3$,
 $x_1$ |.| $x_2$ |.| $x_3$ |.| $x_4$ as outputs.
 
 \subsection{A Deep Embedding of Circuits}
-\bruno{Show |width| and |depth|?}
 
-We use the following algebraic datatype to construct such circuits:
+A typical approach to implement circuits in Haskell is to use
+ the following algebraic datatype:
 
 > data Circuit = 
 >      Identity Int

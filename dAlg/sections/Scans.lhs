@@ -10,12 +10,13 @@
 two possible ways to represent circuits: using conventional datatypes; and using F-algebras }
 
 %format xi = "x_i"
-
-The running example for this paper is Gibbons and Wu's DSL for
-parallel prefix circuits~\cite{gibbons14}. We briefly introduce parallel prefix 
-circuits and then illustrate 
-two typical approaches for implementing such DSL in Haskell: 
-a typical deep embedding approach; and an approach using F-Algebras.
+Apart from arithmetic expressions, our technique of providing compositional and 
+modular interpretations can be widely applied in more complex cases. 
+The running example for this section is Gibbons and Wu's DSL for
+parallel prefix circuits~\cite{gibbons14}. 
+We briefly introduce parallel prefix circuits and then illustrate how our approach 
+can provide better solution to each problem Gibbons and Wu discussed in 
+{\em Folding Domain-Specific Languages: Deep and Shallow Embeddings}~\cite{gibbons14}.
 
 %%Parallel prefix computation is an important
 %%problem in computer science, both theoretically and practically. Its broad 
@@ -31,15 +32,15 @@ arbitrary binary operator |.|.
 \begin{figure}
   \centering
 
-  \begin{minipage}[b]{0.22\textwidth} 
-    \includegraphics[width=\textwidth]{circuit1}
-    \caption{Parallel Prefix Circuit (1)}
-    \label{fig:circuit1}
-  \end{minipage}
+  %\begin{minipage}[b]{0.22\textwidth} 
+  %  \includegraphics[width=\textwidth]{circuit1}
+  %  \caption{Parallel Prefix Circuit (1)}
+  %  \label{fig:circuit1}
+  %\end{minipage}
 
   \begin{minipage}[b]{0.22\textwidth} 
     \includegraphics[width=\textwidth]{circuit2}
-    \caption{Parallel Prefix Circuit (2)}
+    \caption{Parallel Prefix Circuit}
     \label{fig:circuit2}
   \end{minipage}
 \end{figure}
@@ -48,7 +49,7 @@ Parallel prefix compuataion performs multiple such computations in parallel.
 In other words, a parallel prefix circuit can have multiple operators at each given 
 level, which brings parallelism in the resulting computation. For instance, one 
 possible construction of a parallel prefix circuit with width 4 is shown in 
-Figure~\ref{fig:circuit1}.
+Figure~\ref{fig:circuit2}.
 With inputs fed in from the top, each node represents an operation that takes inputs
 from its left and top input wires. It generates output to the bottom along the 
 vertical wire as well as the diagonal wire to its right.
@@ -56,6 +57,8 @@ It is straightforward to see that the circuit takes $x_1$, $x_2$, $x_3$, $x_4$ a
 inputs and produces $x_1$, $x_1$ |.| $x_2$, $x_1$ |.| $x_2$ |.| $x_3$,  
 $x_1$ |.| $x_2$ |.| $x_3$ |.| $x_4$ as outputs.
 
+
+\begin{comment}
 \subsection{A Deep Embedding of Circuits}
 
 A typical approach to implement circuits in Haskell is to use
@@ -96,4 +99,5 @@ layer consists of a 1-identity beside a 2-fan, beside a 1-identity:
 >   Above (Beside (Fan 2) (Fan 2)) 
 >   (Above (Stretch [2, 2] (Fan 2))
 >   (Beside (Identity 1) (Beside (Fan 2) (Identity 1))))
+\end{comment}
 

@@ -9,8 +9,8 @@
 %format Val = "{\sf Val}" 
 %format <+> = "\oplus"
 
-\section{Composable Algebras}
-\label{sec:composable}
+\subsection{Multiple Interpretation}
+\label{sec:multiple}
 
 %format In_f
 %format extract_f

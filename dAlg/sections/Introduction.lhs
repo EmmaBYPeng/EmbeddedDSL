@@ -127,13 +127,14 @@ uses |fst| and |snd|.  Moreover, if an interpretation depends on more
 than one other interpretation we may need to use nested pairs or
 larger tuples, which are difficult to manage.
 
+\bruno{Move the following text to some later point:
 This functional pearl revisits the examples of Gibbons and Wu and it 
 shows how a simple technique, which can be viewed as a dual to Swiestra's
 ``\emph{Datatypes \`a la Carte}"~\cite{}, can be used to provide modular and 
 compositional interpretations that may depend on other interpretations. 
 We also show how the technique applies to other various implementation 
 approaches for embedded DSLs, and discuss a case study usings grammars.  
-
+}
 
 \begin{comment}
 Algebras can often be used with {\em fold} to evaluate recursive

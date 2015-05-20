@@ -6,8 +6,6 @@
 
 \section{A DSL for Parallel Prefix Circuits}
 \label{sec:scans}
-\bruno{I think Section 3 and 4 need to be merged. Just one section showing 
-two possible ways to represent circuits: using conventional datatypes; and using F-algebras }
 
 %format xi = "x_i"
 Apart from arithmetic expressions, our technique of providing compositional and 

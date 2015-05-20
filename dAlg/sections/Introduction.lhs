@@ -135,16 +135,17 @@ complex interpretations of DSLs can be defined compositionaly. In particular
 they illustrate how to model \emph{multiple}, \emph{dependent} and 
 \emph{context-sensitive} interpretations using this technique. 
 
-Unfortunatelly there are some problems with using pairs to combine
+\noindent Unfortunatelly there are some problems with using pairs to combine
 together multiple interpretations in an algebra. As Gibbons and Wu note:
 
-\begin{quote}But this is still a bit clumsy: it entails revising existing code
+\begin{quote}
+But this is still a bit clumsy: it entails revising existing code
 each time a new interpretation is added, and wide tuples generally
 lack good language support.
 \end{quote}
 \vspace{5pt}
 
-In other words the technique is \emph{non-modular}: we cannot
+\noindent In other words the technique is \emph{non-modular}: we cannot
 simply reuse |eval1| or |eval2| in the definition of
 |pevalAlg|. Instead evaluation must be redefined together with the new
 interpretation.  If another interpretation would also dependent on
@@ -160,15 +161,6 @@ to Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{}, can be used to provide
 modular and compositional interpretations that may depend on other interpretations. 
 We also show how the technique applies to other various implementation 
 approaches for embedded DSLs, and discuss a case study usings grammars.
-
-\bruno{Move the following text to some later point:
-This functional pearl revisits the examples of Gibbons and Wu and it 
-shows how a simple technique, which can be viewed as a dual to Swiestra's
-``\emph{Datatypes \`a la Carte}"~\cite{}, can be used to provide modular and 
-compositional interpretations that may depend on other interpretations. 
-We also show how the technique applies to other various implementation 
-approaches for embedded DSLs, and discuss a case study usings grammars.  
-}
 
 \begin{comment}
 Algebras can often be used with {\em fold} to evaluate recursive

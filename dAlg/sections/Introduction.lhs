@@ -56,7 +56,11 @@ With |foldExp| another way to define |eval| is:
 matching and general recursion, makes it obvious that the definition
 is compositional.
 
-However certain interpretations are not trivially compositional. 
+\section{Compositionality without Modularity}
+
+Unfortunatelly certain interpretations are not trivially compositional.
+While it is still possible to express those definitions with folds using 
+well-known techniques, a certain degree of modularity is lost. 
 For example, consider the following interpretation of expressions:
 
 > printEval :: Exp -> String
@@ -106,10 +110,11 @@ they illustrate how to model \emph{multiple}, \emph{dependent} and
 Unfortunatelly there are some problems with using pairs to combine
 together multiple interpretations in an algebra. As Gibbons and Wu note:
 
-\begin{quote}\emph{But this is still a bit clumsy: it entails revising existing code
+\begin{quote}But this is still a bit clumsy: it entails revising existing code
 each time a new interpretation is added, and wide tuples generally
-lack good language support.}
+lack good language support.
 \end{quote}
+\vspace{5pt}
 
 In other words the technique is \emph{non-modular}: we cannot
 simply reuse |eval1| or |eval2| in the definition of

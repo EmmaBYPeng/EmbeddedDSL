@@ -126,7 +126,7 @@ composed types:
 > gabove x y    = (above x y)    :: ComposedType
 > gstretch xs x = (stretch xs x) :: ComposedType
 
-The Brent-Kung circuit in Figure 1 can be constructed as:
+The circuit in Figure~\ref{fig:circuit2} can be constructed as:
 
 > circuit3 = 
 >   (gfan 2 `gbeside` gfan 2) `gabove`

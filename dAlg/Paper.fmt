@@ -12,7 +12,7 @@
 %format extends = "{\bf extends}"
 
 %format >:: = "\mathbin{\succ\!\!\!::}"
-%format :+: = "\oplus"
+%format <+> = "\oplus"
 
 %format <<^ = "\mathbin{\ll^{\!\wedge}}"
 %format ^<< = "\mathbin{{}^{\wedge}\!\!\!\ll}"

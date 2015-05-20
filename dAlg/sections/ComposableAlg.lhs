@@ -162,8 +162,8 @@ To retrieve a target evaluation type from a composed type, we define {\em gwidth
 > depth3 :: Circuit -> Int
 > depth3 = gdepth . eval  
 
-They can be used to evaluate the Brent-Kung parallel prefix circuit defined in 
-section 3:
+They can be used to evaluate the parallel prefix circuit defined in 
+section~\ref{sec:f-algebra}:
 
 > test1 = width3 circuit1
 > test2 = depth3 circuit1

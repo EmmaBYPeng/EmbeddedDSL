@@ -111,7 +111,7 @@ Each construct is associated with the corresponding field in cAlg:
 > cbeside = beside cAlg
 > cstretch = stretch cAlg
 
-The Brent-Kung circuit in Figure 1 can be constructed as follows:
+The circuit in Figure~\ref{fig:circuit2} can be constructed as follows:
 
 > c = 
 >   (cfan 2 `cbeside` cfan 2) `cabove`

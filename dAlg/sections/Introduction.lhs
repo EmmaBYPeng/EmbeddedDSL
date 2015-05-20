@@ -4,6 +4,14 @@
 %include Formatting.fmt
 %%include Paper.fmt
 
+%if False
+
+> {-# OPTIONS -XDeriveFunctor #-}
+
+> module Introduction where
+
+%endif
+
 \section{Introduction}
 \label{sec:introduction}
 
@@ -17,13 +25,13 @@ can be used to implement languages in a variety of ways. For example,
 one way to implement a simple language of arithmetic expressions is to 
 use an algebraic datatype to capture the abstract syntax of a language:
 
-> data Exp = Lit Int | Add Exp Exp
+> data AExp = LitA Int | AddA AExp AExp
 
 \noindent Using pattern matching, evaluation is then defined as follows:
 
-> eval1 :: Exp -> Int
-> eval1 (Lit x)      = x
-> eval1 (Add e1 e2)  = eval1 e1 + eval1 e2
+> eval1 :: AExp -> Int
+> eval1 (LitA x)      = x
+> eval1 (AddA e1 e2)  = eval1 e1 + eval1 e2
 
 A desirable property of language semantics is \emph{compositionality}.
 Informally, compositionality means that the semantics of a language
@@ -32,25 +40,46 @@ The definition of |eval| is compositional, since evaluation of an
 expression depends only on evaluation of the subexpressions. 
 
 As nicely illustrated by Gibbons and Wu~\cite{gibbons14}, in functional
-programming \emph{folds} capture compositionality precisely. For example, 
-the fold for |Exp| is:
+programming \emph{folds} capture compositionality precisely.
+One way to define arithmetic expressions using a fold is using F-Algebras.
 
+> data ExpF a = Lit Int | Add a a deriving Functor
+>
+> newtype Exp = In {out :: ExpF Exp}
+
+The first step is to define the functor for arithmetic expressions
+|ExpF|. The second step is to define the recursive type |Exp2| using
+the functor. Finally the fold can be defined as follows:
+
+> type ExpAlg a = ExpF a -> a
+>
+> foldExp :: ExpAlg a -> Exp -> a
+> foldExp alg = alg . fmap (foldExp alg) . out
+
+%if False
+
+For example, the fold for |Exp| is:
+
+> {-
 > type ExpAlg a = (Int -> a, a -> a -> a)
 >
 > foldExp :: ExpAlg a -> Exp -> a 
 > foldExp (l,a) (Lit x)      = l x
 > foldExp (l,a) (Add e1 e2)  = 
 >    a (foldExp (l,a) e1) (foldExp (l,a) e2)  
+> -}
+
+%endif
 
 \noindent The definition of |foldExp| captures a recursion pattern
 where the result of a traversal can only depend on the recursive calls
 of the subexpressions. The type |ExpAlg a| captures the fold-algebra of
-the datatype. The two components of the pair in |ExpAlg a| are used to
-specify how to interpret each constructor of a datatype.
+the datatype.
 With |foldExp| another way to define |eval| is:
 
-> eval2 :: Exp -> Int
-> eval2 = foldExp (id,(+))
+> eval2 :: ExpAlg Int
+> eval2 (Lit x)      = x
+> eval2 (Add e1 e2)  = e1 + e2
 
 \noindent The use of |foldExp| instead of directly using pattern
 matching and general recursion, makes it obvious that the definition
@@ -63,9 +92,9 @@ While it is still possible to express those definitions with folds using
 well-known techniques, a certain degree of modularity is lost. 
 For example, consider the following interpretation of expressions:
 
-> printEval :: Exp -> String
-> printEval (Lit x)      = show x
-> printEval (Add e1 e2)  = 
+> printEval :: AExp -> String
+> printEval (LitA x)      = show x
+> printEval (AddA e1 e2)  = 
 >   "(" ++ peval e1 ++ " + " ++ peval e2 ++ ")" where 
 >       peval e = printEval e ++ "@" ++ show (eval1 e)
 
@@ -90,11 +119,10 @@ define the two interpretations (|printEval| and |eval1|)
 simultaneously as a fold-algebra using pairs:
 
 > pevalAlg :: ExpAlg (String,Int)
-> pevalAlg = (lit,add) where
->   lit x      = (show x, id x)
->   add e1 e2  = (  "(" ++ peval e1 ++ " + " ++ peval e2 ++ ")", 
->                   snd e1 + snd e2) 
->   peval e    = fst e ++ "@" ++ show (snd e)
+> pevalAlg (Lit x)      = (show x, id x)
+> pevalAlg (Add e1 e2)  = (  "(" ++ peval e1 ++ " + " ++ peval e2 ++ ")", 
+>                             snd e1 + snd e2) 
+>   where peval e    = fst e ++ "@" ++ show (snd e)
 
 \noindent Then it is easy to obtain a version of |printEval| by simply 
 applying |foldExp| to the algebra and retrieving the component of the pair 

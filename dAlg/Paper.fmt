@@ -2,7 +2,7 @@
 %format Patterns = "\Varid{Matches}"
 %format MatchesNil = Matches "\mathbin{\thinspace''" [] "}"
 %format SUB = Sub "\mathbin{\thinspace''" [] "}"
-%format <: = "\prec"
+%format :<: = "\prec"
 %%format e1' = "e_{1}\'"
 %format Mem f fs = f " \in " fs
 

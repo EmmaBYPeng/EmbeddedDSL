@@ -26,7 +26,7 @@ use an algebraic datatype to capture the abstract syntax of a language:
 > eval1 (Add e1 e2)  = eval1 e1 + eval1 e2
 
 A desirable property of language semantics is \emph{compositionality}.
-Informally, compositionaly means that the semantics of a language
+Informally, compositionality means that the semantics of a language
 is determined solely from the interpretations of its parts.
 The definition of |eval| is compositional, since evaluation of an 
 expression depends only on evaluation of the subexpressions. 
@@ -126,6 +126,12 @@ of pairs. Instead of using names for the interpretations, |pevalAlg|
 uses |fst| and |snd|.  Moreover, if an interpretation depends on more
 than one other interpretation we may need to use nested pairs or
 larger tuples, which are difficult to manage.
+
+This functional pearl shows how a simple technique, which can be viewed as a dual
+to Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{}, can be used to provide
+modular and compositional interpretations that may depend on other interpretations. 
+We also show how the technique applies to other various implementation 
+approaches for embedded DSLs, and discuss a case study usings grammars.
 
 \bruno{Move the following text to some later point:
 This functional pearl revisits the examples of Gibbons and Wu and it 

@@ -103,16 +103,16 @@ wsAlgD (Stretch xs x) = WellSized (gwellSized x && length xs == gwidth x)
 -}
 
 -- Composing algebras
-class Comb f r a b where
-  (<+>) :: (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
+class Comb f where
+  (<+>) :: (a :<: r, b :<: r) => (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
 
-instance (a :<: r, b :<: r) =>  Comb CircuitFB r a b where
+instance Comb CircuitFB where
   (<+>) a1 a2 (Identity w)   = (a1 (Identity w), a2 (Identity w))
   (<+>) a1 a2 (Fan w)        = (a1 (Fan w), a2 (Fan w))
   (<+>) a1 a2 (Beside x y)   = 
     (a1 (Beside (inter x) (inter y)), a2 (Beside (inter x) (inter y)))
 
-instance (a :<: r, b :<: r) => Comb CircuitFD r a b where
+instance Comb CircuitFD where
   (<+>) a1 a2 (Above x y)    = 
     (a1 (Above (inter x) (inter y)), a2 (Above (inter x) (inter y)))
   (<+>) a1 a2 (Stretch xs x) = 

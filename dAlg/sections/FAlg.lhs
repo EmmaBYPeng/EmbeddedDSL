@@ -32,6 +32,7 @@ The shape of the circuit is given by functor |CircuitF| as follows:
 |CircuitF| abstracts the recursive occurrences of the datatype away, using a type
 parameter r. We can then recover the datatype of Circuit, using a fixpoint:
 \bruno{Why not use |Fix f|? How did Gibbons and Wu did it?}
+\emma{They used this representation}
 
 > data Circuit = In (CircuitF Circuit)
 
@@ -100,7 +101,8 @@ following smart constructos:
 > stretch :: [Int] -> Circuit -> Circuit
 > stretch xs x = In (StretchF xs x)
 
-Therefore, the Brent-Kung parallel prefix circuit in Figure 1 can be constructed as:
+Therefore, the parallel prefix circuit in Figure~\ref{fig:circuit2} can be 
+constructed as:
 
 > circuit1 = 
 >   (fan 2 `beside` fan 2) `above`

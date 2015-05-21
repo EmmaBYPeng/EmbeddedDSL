@@ -46,9 +46,10 @@ arbitrary binary operator |.|.
 
 Parallel prefix compuataion performs multiple such computations in parallel. 
 In other words, a parallel prefix circuit can have multiple operators at each given 
-level, which brings parallelism in the resulting computation. For instance, one 
-possible construction of a parallel prefix circuit with width 4 is shown in 
-Figure~\ref{fig:circuit2}.
+level, which brings parallelism in the resulting computation. 
+
+For instance, one possible construction of a parallel prefix circuit with width 4 is 
+shown in Figure~\ref{fig:circuit2}.
 With inputs fed in from the top, each node represents an operation that takes inputs
 from its left and top input wires. It generates output to the bottom along the 
 vertical wire as well as the diagonal wire to its right.

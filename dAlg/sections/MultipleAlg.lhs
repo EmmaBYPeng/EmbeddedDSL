@@ -26,18 +26,15 @@ simutaneously. Gibbons and Wu showed how such multiple interpretations could be
 acheived with the following algebra~\cite{gibbons14}, by pairing semantics up and 
 projecting desired interpretations from a tuple:
 
-> wd :: (Width, Depth) -> Int
-> wd = unwidth . fst
+> type Width' = Int
+> type Depth' = Int
 
-> dp :: (Width, Depth) -> Int
-> dp = undepth . snd
-
-> wdAlg :: CircuitAlg (Width, Depth)
-> wdAlg (IdentityF w)   = (Width w, Depth 0)
-> wdAlg (FanF w)        = (Width w, Depth 1)
-> wdAlg (AboveF x y)    = (Width (wd x),        Depth (dp x + dp y))
-> wdAlg (BesideF x y)   = (Width (wd x + wd y), Depth (dp x `max` dp y))
-> wdAlg (StretchF ws x) = (Width (sum ws),      Depth (dp x))  
+> wdAlg :: CircuitAlg (Width', Depth')
+> wdAlg (IdentityF w)    = (w, 0)
+> wdAlg (FanF w)         = (w, 1)
+> wdAlg (AboveF x y)     = (fst x, snd x + snd y)
+> wdAlg (BesideF x y)    = (fst x + fst y, snd x `max` snd y)
+> wdAlg (StretchF ws x)  = (sum ws, snd x)  
 
 However, as we mention in section~\ref{sec:introduction}, this approach trades
 modularity for compositionality. On the contrary, multiple interpretations can be
@@ -49,10 +46,10 @@ compositionality:
 > evalM :: Circuit -> Compose Width Depth
 > evalM = fold compAlgM
 
-> widthM :: Circuit -> Int
+> widthM :: Circuit -> Size
 > widthM = gwidth . evalM
 
-> depthM :: Circuit -> Int
+> depthM :: Circuit -> Size
 > depthM = gdepth . evalM
 
 |compAlg| is composed of |widthAlg| and |depthAlg|, using the composition operator 

@@ -25,12 +25,14 @@
 We represent the parallel prefix circuit using folds as F-algebras~\cite{}. 
 The shape functor |CircuitF| is defined as:
 
+> type Size = Int
+
 > data CircuitF r = 
->     IdentityF Int
->  |  FanF Int
+>     IdentityF Size
+>  |  FanF Size
 >  |  AboveF r r 
 >  |  BesideF r r
->  |  StretchF [Int] r
+>  |  StretchF [Size] r
 >  deriving Functor
 
 The algebraic datatype and corresponding constructors of circuits can be 
@@ -40,10 +42,10 @@ recovered as follows:
 
 > data Circuit = In (CircuitF Circuit)
 
-> identity :: Int -> Circuit
+> identity :: Size -> Circuit
 > identity = In . IdentityF
 
-> fan :: Int -> Circuit
+> fan :: Size -> Circuit
 > fan = In . FanF
 
 > above :: Circuit -> Circuit -> Circuit
@@ -52,7 +54,7 @@ recovered as follows:
 > beside :: Circuit -> Circuit -> Circuit
 > beside x y = In (BesideF x y)
 
-> stretch :: [Int] -> Circuit -> Circuit
+> stretch :: [Size] -> Circuit -> Circuit
 > stretch xs x = In (StretchF xs x)
 
 The first primitive is {\em identity}. An {\em identity} of width n generates n 
@@ -78,8 +80,8 @@ as:
 
 The generic algebra type and fold for |CircuitF| are defined as:
 
-> type GAlg r a = CircuitF r -> a
-> type CircuitAlg a = GAlg a a
+> type GAlg r a      = CircuitF r -> a
+> type CircuitAlg a  = GAlg a a
 
 > fold :: CircuitAlg a -> Circuit -> a
 > fold alg (In x) = alg (fmap (fold alg) x)
@@ -105,28 +107,28 @@ The generic algebra type and fold for |CircuitF| are defined as:
 \noindent For example, if we want to obtain the width of a circuit, 
 we can define the algebra for width as follows:
 
-> newtype Width = Width {unwidth :: Int}
+> newtype Width = Width {unwidth :: Size}
 >
 > widthAlg :: (Width :<: r) => GAlg r Width
-> widthAlg (IdentityF w)   = Width w
-> widthAlg (FanF w)        = Width w
-> widthAlg (AboveF x y)    = Width (gwidth x)
-> widthAlg (BesideF x y)   = Width (gwidth x + gwidth y)
-> widthAlg (StretchF xs x) = Width (sum xs)
+> widthAlg (IdentityF w)    = Width w
+> widthAlg (FanF w)         = Width w
+> widthAlg (AboveF x y)     = Width (gwidth x)
+> widthAlg (BesideF x y)    = Width (gwidth x + gwidth y)
+> widthAlg (StretchF xs x)  = Width (sum xs)
 
 > width :: Circuit -> Width
 > width = fold widthAlg
 
 Similarly, the following {\em depthAlg} is defined to obtain the depth of a circuit:
 
-> newtype Depth = Depth {undepth :: Int}
+> newtype Depth = Depth {undepth :: Size}
 >
 > depthAlg :: (Depth :<: r) => GAlg r Depth
-> depthAlg (IdentityF w)    = Depth 0
-> depthAlg (FanF w)         = Depth 1
-> depthAlg (AboveF x y)     = Depth (gdepth x + gdepth y)
-> depthAlg (BesideF x y)    = Depth (gdepth x `max` gdepth y)
-> depthAlg (StretchF xs x)  = Depth (gdepth x)
+> depthAlg (IdentityF w)     = Depth 0
+> depthAlg (FanF w)          = Depth 1
+> depthAlg (AboveF x y)      = Depth (gdepth x + gdepth y)
+> depthAlg (BesideF x y)     = Depth (gdepth x `max` gdepth y)
+> depthAlg (StretchF xs x)   = Depth (gdepth x)
 
 > depth :: Circuit -> Depth
 > depth = fold depthAlg
@@ -134,8 +136,8 @@ Similarly, the following {\em depthAlg} is defined to obtain the depth of a circ
 We need the {\em newtype} wrapper here to allow multiple interpretations over the 
 same underlying type. Helper functions |gwidth| and |gdepth| are defined as:
 
-> gwidth :: (Width :<: e) => e -> Int
+> gwidth :: (Width :<: e) => e -> Size
 > gwidth = unwidth . inter
 
-> gdepth :: (Depth :<: e) => e -> Int
+> gdepth :: (Depth :<: e) => e -> Size
 > gdepth = undepth . inter

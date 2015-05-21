@@ -17,42 +17,39 @@
 > module DependentAlg where
 
 > import FAlg 
+> import MultipleAlg
 
 %endif
 
 Traditional approaches to preserve compositionality for dependent interpretations
 also suffer from the loss of modularity. For instance, |wellSized| captures the 
-property of whether a circuit is well-formed or not. It is non-compositional in that
-it depends on the widths of a circuit's constituent parts. To make the 
+property of whether a circuit is well-formed or not. It is non-compositional in the 
+sense that it depends on the widths of a circuit's constituent parts. To make the 
 dependent interpretation of |wellSized| compositional, Gibbons and Wu again used 
 the fold-algebra with pairs~\cite{gibbons14}:
 
-> newtype WellSized = WellSized {unwellSized :: Bool}
+> type WellSized' = Bool 
 
-> wd :: (Width, WellSized) -> Int
-> wd = unwidth . fst
-
-> ws :: (Width, WellSized) -> Bool
-> ws = unwellSized . snd
-
-> wswAlg :: CircuitAlg (Width, WellSized)
-> wswAlg (IdentityF w)   = (Width w, WellSized True)
-> wswAlg (FanF w)        = (Width w, WellSized True)
-> wswAlg (AboveF x y)    = (Width (wd x), WellSized (ws x && ws y && wd x == wd y))
-> wswAlg (BesideF x y)   = (Width (wd x + wd y), WellSized (ws x && ws y))
-> wswAlg (StretchF xs x) = (Width (sum xs), WellSized (ws x && length xs == wd x))
+> wswAlg :: CircuitAlg (WellSized', Width')
+> wswAlg (IdentityF w)    = (True, w)
+> wswAlg (FanF w)         = (True, w)
+> wswAlg (AboveF x y)     = (fst x && fst y && snd x == snd y, snd x)
+> wswAlg (BesideF x y)    = (fst x && fst y, snd x + snd y)
+> wswAlg (StretchF ws x)  = (fst x && length ws == snd x, sum ws)
 
 Similar to multiple interpretation with pairs, though simple, this approach is 
 clumsy and not modular. On the other hand, using our technique, the algebra for
 |wellSized| can be defined independently. The only restriction is that both 
 |WellSized| and |Width| need to be members of the input type of |wsAlg|:
 
+> newtype WellSized = WellSized {unwellSized :: Bool}
+
 > wsAlg :: (WellSized :<: r, Width :<: r) => GAlg r WellSized
-> wsAlg (IdentityF w)   = WellSized True
-> wsAlg (FanF w)        = WellSized True
-> wsAlg (AboveF x y)    = WellSized (gwellSized x && gwellSized y && gwidth x == gwidth y)
-> wsAlg (BesideF x y)   = WellSized (gwellSized x && gwellSized y)
-> wsAlg (StretchF xs x) = WellSized (gwellSized x && length xs == gwidth x)
+> wsAlg (IdentityF w)    = WellSized True
+> wsAlg (FanF w)         = WellSized True
+> wsAlg (AboveF x y)     = WellSized (gwellSized x && gwellSized y && gwidth x == gwidth y)
+> wsAlg (BesideF x y)    = WellSized (gwellSized x && gwellSized y)
+> wsAlg (StretchF xs x)  = WellSized (gwellSized x && length xs == gwidth x)
 
 > gwellSized :: (Width :<: e, WellSized :<: e) => e -> Bool
 > gwellSized = unwellSized . inter
@@ -63,13 +60,10 @@ compositional interpretation with fold:
 
 > compAlgD = wsAlg <+> widthAlg
 
-> evalD :: Circuit -> Compose Width WellSized
+> evalD :: Circuit -> Compose WellSized Width
 > evalD = fold compAlgD
 
-\noindent Individual interpretations for |width| and |wellSized| are defined as:
-
-> widthD :: Circuit -> Int
-> widthD = gwidth . evalD 
+\noindent Individual interpretation for |wellSized| is defined as:
 
 > wellSized :: Circuit -> Bool
 > wellSized = gwellSized . evalD 

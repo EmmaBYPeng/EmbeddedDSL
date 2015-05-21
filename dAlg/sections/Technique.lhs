@@ -91,8 +91,8 @@ For example, the algebra for evaluation can be defined as follows:
 > type GExpAlg r a = ExpF r -> a
 
 > evalAlg :: (Int :<: r) => GExpAlg r Int
-> evalAlg (Lit x)   = x
-> evalAlg (Add e1 e2) = geval e1 + geval e2
+> evalAlg (Lit x)      = x
+> evalAlg (Add e1 e2)  = geval e1 + geval e2
 
 For non-compositional interpreation like |printEval|, instead of defining |printEval|
 and |eval| together as a fold-algebra using pairs, we simply specify that |Int|
@@ -100,8 +100,8 @@ and |eval| together as a fold-algebra using pairs, we simply specify that |Int|
 the input type of the algebra for |printEval|:
 
 > printEvalAlg :: (Int :<: r, String :<: r) => GExpAlg r String
-> printEvalAlg (Lit x) = show x
-> printEvalAlg (Add e1 e2) = 
+> printEvalAlg (Lit x)      = show x
+> printEvalAlg (Add e1 e2)  = 
 >   "(" ++ peval e1 ++ "+" ++ peval e2 ++ ")" where
 >       peval e = gprint e ++ "@" ++ show (geval e) 
 
@@ -128,8 +128,8 @@ An algebra composed of |evalAlg| and |printEvalAlg| can be defined as:
 
 %if False
 
-> lit = In . Lit
-> add e1 e2 = In (Add e1 e2)
+> lit        = In . Lit
+> add e1 e2  = In (Add e1 e2)
 
 > e1 = add (add (lit 4) (lit 5)) (lit 1)
 
@@ -138,10 +138,10 @@ An algebra composed of |evalAlg| and |printEvalAlg| can be defined as:
 \noindent We can then define the two interpretations |eval| and |printEval| as: 
 
 > eval :: Exp -> Int
-> eval      = geval . (foldExp compAlg)
+> eval       = geval . (foldExp compAlg)
 
 > printEval :: Exp -> String
-> printEval = gprint . (foldExp compAlg)
+> printEval  = gprint . (foldExp compAlg)
 
 As shown above, using our technique, algebras corresponding to different 
 interpretations are defined separately. They are then composed together using the

@@ -22,69 +22,33 @@ For example, unlike |wswAlg| in section 4.1, we have |wsAlg| that corresponds to
 >  -XFlexibleContexts -XOverlappingInstances -XIncoherentInstances 
 >  -XNoMonomorphismRestriction -XDeriveFunctor #-}
 
-> data CircuitF r = 
->    IdentityF Int
->  | FanF Int
->  | AboveF r r 
->  | BesideF r r
->  | StretchF [Int] r
->  deriving Functor
+> module DependentAlg where
 
-> -- Fold and smart constructors
-> type CircuitAlg a = CircuitF a -> a
-> type Compose i1 i2 = (i1, i2)
-
-> data Circuit = In (CircuitF Circuit)
-
-> fold :: CircuitAlg a -> Circuit -> a
-> fold alg (In x) = alg (fmap (fold alg) x)
-
-> identity :: Int -> Circuit
-> identity = In . IdentityF
-
-> fan :: Int -> Circuit
-> fan = In . FanF
-
-> above :: Circuit -> Circuit -> Circuit
-> above x y = In (AboveF x y)
-
-> beside :: Circuit -> Circuit -> Circuit
-> beside x y = In (BesideF x y)
-
-> stretch :: [Int] -> Circuit -> Circuit
-> stretch xs x = In (StretchF xs x)
-
-> newtype Width2 = Width2 {width :: Int}
-> newtype Depth2 = Depth2 {depth :: Int}
+> import FAlg 
 
 %endif
 
-The first step is to change our definition of alegebra from |CircuitAlg| to |GAlg|:
-
-> type GAlg r a = CircuitF r -> a
-
-|GAlg| stands for {\em generic algebra}. It consists of two types |r| and |a|, 
-and a function taking |CiruictF| of r-vlaues to an a-value, where |a :<: r|.
-The idea is to distinguish between the uses of carrier types with respect to whether
-they are inputs (|r|) or outputs (|a|)\cite{oliveira13}. 
 For |wsAlg|, the first type |r| represents a collection of types containing
 both |WellSized2| and |Width2| (specified by |(WellSized2 :<: r, Width2 :<: r)|). 
 Since each child of |AboveF|, |BesideF| and |StretchF| is of type r, 
 |gwidth| can be used to retrieve the width of a circuit. Therefore, |wsAlg| can be
 defined as follows:
 
-> newtype WellSized2 = WellSized2 {wellSized :: Bool}
+> newtype WellSized = WellSized {unwellSized :: Bool}
 
-> wsAlg :: (WellSized2 :<: r, Width2 :<: r) => GAlg r WellSized2
-> wsAlg (IdentityF w)   = WellSized2 True
-> wsAlg (FanF w)        = WellSized2 True
+> wsAlg :: (WellSized :<: r, Width :<: r) => GAlg r WellSized
+> wsAlg (IdentityF w)   = WellSized True
+> wsAlg (FanF w)        = WellSized True
 > wsAlg (AboveF x y)    = 
->   WellSized2 (gwellSized x && gwellSized y && 
+>   WellSized (gwellSized x && gwellSized y && 
 >   gwidth x == gwidth y)
 > wsAlg (BesideF x y)   =
->   WellSized2 (gwellSized x && gwellSized y)
+>   WellSized (gwellSized x && gwellSized y)
 > wsAlg (StretchF xs x) = 
->   WellSized2 (gwellSized x && length xs == gwidth x)
+>   WellSized (gwellSized x && length xs == gwidth x)
+
+> gwellSized :: (Width :<: e, WellSized :<: e) => e -> Bool
+> gwellSized = unwellSized . inter
 
 Since {\em Width2} needs to be part of the carrier type of wsAlg such that we can
 retreive the width of a circuit and test if it is well-formed, we need to compose 
@@ -95,63 +59,9 @@ Given an algebra from type r to type a, and another from type r to type b,
 where r contains both a and b, it gives back a new algebra from type r to type 
 |(Compose a b)|.
   
-> (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> 
->                                GAlg r (Compose a b)
-> (<+>) a1 a2 (IdentityF w)   = 
->   (a1 (IdentityF w), a2 (IdentityF w))
-> (<+>) a1 a2 (FanF w)        = 
->   (a1 (FanF w), a2 (FanF w))
-> (<+>) a1 a2 (AboveF x y)    = 
->   (a1 (AboveF (inter x) (inter y)), a2 (AboveF (inter x) (inter y)))
-> (<+>) a1 a2 (BesideF x y)   = 
->   (a1 (BesideF (inter x) (inter y)), a2 (BesideF (inter x) (inter y)))
-> (<+>) a1 a2 (StretchF xs x) = 
->   (a1 (StretchF xs (inter x)), a2 (StretchF xs (inter x)))
-
-> widthAlg3 :: (Width2 :<: r) => GAlg r Width2
-> widthAlg3 (IdentityF w)   = Width2 w
-> widthAlg3 (FanF w)        = Width2 w
-> widthAlg3 (AboveF x y)    = Width2 (gwidth x)
-> widthAlg3 (BesideF x y)   = Width2 (gwidth x + gwidth y)
-> widthAlg3 (StretchF xs x) = Width2 (sum xs)
-
-%if False
-
-> class i :<: e where
->   inter :: e -> i
-
-> instance i :<: i where
->   inter = id
-
-> instance i :<: (Compose i i2) where
->   inter = fst
-
-> instance (i :<: i2) => i :<: (Compose i1 i2) where
->   inter = inter . snd
- 
-> gwidth :: (Width2 :<: e) => e -> Int
-> gwidth = width . inter
-
-> gdepth :: (Depth2 :<: e) => e -> Int
-> gdepth = depth . inter
-
-> gwellSized :: (WellSized2 :<: e) => e -> Bool 
-> gwellSized = wellSized . inter
-
-%endif
-
 Now we can define |cAlg2| that is composed of |widthAlg3| and |wsAlg|:
 
-> cAlg2 = widthAlg3 <+> wsAlg
-
-%if False
-
-> -- Sample circuit
-> c1 = above (beside (fan 2) (fan 2)) 
->            (above (stretch [2, 2] (fan 2))
->                   (beside (identity 1) (beside (fan 2) (identity 1)))) 
-
-%endif
+> cAlg2 = widthAlg <+> wsAlg
 
 \noindent With observation functions |width2| and |wellSized2| defined as:
 

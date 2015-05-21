@@ -4,7 +4,6 @@
 %include Formatting.fmt
 %include Paper.fmt
 
-
 \subsection{Circuits using Folds and F-Algebras}
 \label{sec:f-algebra}
 
@@ -15,6 +14,11 @@
 >  -XFlexibleContexts -XOverlappingInstances -XIncoherentInstances 
 >  -XNoMonomorphismRestriction -XDeriveFunctor -XExistentialQuantification
 >  -XRankNTypes #-}
+
+> module FAlg where
+
+> (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (Compose a b)
+> (<+>) a1 a2 fa   = (a1 fa, a2 fa)
 
 %endif
 
@@ -29,7 +33,7 @@ The shape functor |CircuitF| is defined as:
 >  |  StretchF [Int] r
 >  deriving Functor
 
-The algebraic datatype and corresponding constructors of the circuit can be 
+The algebraic datatype and corresponding constructors of circuits can be 
 recovered as follows:
 \bruno{Why not use |Fix f|? How did Gibbons and Wu did it?}
 \emma{They used this representation}
@@ -113,7 +117,7 @@ we can define the algebra for width as follows:
 > width :: Circuit -> Width
 > width = fold widthAlg
 
-Similarly, we can define {\em depthAlg} to obtain the depth of a circuit:
+Similarly, the following {\em depthAlg} is defined to obtain the depth of a circuit:
 
 > newtype Depth = Depth {undepth :: Int}
 >
@@ -127,7 +131,7 @@ Similarly, we can define {\em depthAlg} to obtain the depth of a circuit:
 > depth :: Circuit -> Depth
 > depth = fold depthAlg
 
-The {\em newtype} wrapper is needed here to allow multiple interpretations over the 
+We need the {\em newtype} wrapper here to allow multiple interpretations over the 
 same underlying type. Helper functions |gwidth| and |gdepth| are defined as:
 
 > gwidth :: (Width :<: e) => e -> Int

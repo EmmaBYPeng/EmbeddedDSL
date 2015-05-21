@@ -8,8 +8,9 @@
 \label{sec:scans}
 
 %format xi = "x_i"
-Apart from arithmetic expressions, our technique of providing compositional and 
-modular interpretations can be widely applied in more complex cases. 
+Apart from the relatively simple example of arithmetic expressions, 
+our technique of providing compositional and modular interpretations can be widely 
+applied in more complex cases. 
 The running example for this section is Gibbons and Wu's DSL for
 parallel prefix circuits~\cite{gibbons14}. 
 We briefly introduce parallel prefix circuits and then illustrate how our approach 

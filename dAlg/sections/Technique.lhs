@@ -137,7 +137,10 @@ An algebra composed of |evalAlg| and |printEvalAlg| can be defined as:
 
 \noindent We can then define the two interpretations |eval| and |printEval| as: 
 
+> eval :: Exp -> Int
 > eval      = geval . (foldExp compAlg)
+
+> printEval :: Exp -> String
 > printEval = gprint . (foldExp compAlg)
 
 As shown above, using our technique, algebras corresponding to different 

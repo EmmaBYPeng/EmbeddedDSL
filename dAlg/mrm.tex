@@ -104,20 +104,6 @@ interpretations hard to express modularly. This pearl presents a
 simple technique that allows non-trivial, but compositional
 interpretations of DSLs to be expressed in a fully modular way
 using folds.
-
-
-\begin{comment}
-
-This paper presents composable algebra with dependencies: a new approach to compose 
-algebras together to allow dependent interpretations with {\em fold}. 
-For a given datatype represented by two-level-types\cite{sheard04}, if one of its 
-interpretations depends on a second one, we compose the algebra correponding 
-to the first interpretation with the one corresponding to the second, and use the 
-composed algebra with {\em fold} to evaluate the expression. We present our approach 
-on top of the domain specific language for parallel prefix circuits.
-
-\end{comment}
-
 \end{abstract}
 
 %\category{CR-number}{subcategory}{third-level}
@@ -148,18 +134,11 @@ on top of the domain specific language for parallel prefix circuits.
 
 %\input{sections/Extensibility}
 
-\section{Other representations of algebra}
-\label{sec: other-alg}
-
-Apart from {\em two-level-types}, there are other ways to represent and evaluate
-the DSL for parallel prefix circuits. In this section, we will show two other 
-representations, and how they can be used to allow dependent interpretations.
-
 \input{sections/TypeClassAlg}
 
 \input{sections/RecordAlg}
 
-\input{sections/RelatedWork}
+%\input{sections/RelatedWork}
 
 \input{sections/Conclusion}
 

@@ -21,7 +21,7 @@
 
 %endif
 
-Connection between vertical wires of a circuit can be modeled by dividing the circuit
+Connections between vertical wires of a circuit can be modeled by dividing the circuit
 into different layers, with local connections only go rightwards from one layer to 
 the next. Gibbons and Wu modeled such layering layout of a circuit using the 
 following context-sensitive interpretation:
@@ -41,9 +41,14 @@ following context-sensitive interpretation:
 > lzw f xs []         = xs
 > lzw f (x:xs) (y:ys) = f x y : lzw f xs ys
 
+|f| here is an accumulating parameter, which in this case, represents a 
+transformation on wire indices.
 Since the layout of a circuit depends the widths of its constituent parts, the 
 interpretation for layout is dependent and needs to be paired up with the 
 interpretation of width to maintain compositionality. 
+
+\noindent Again, our approach seamlessly models the circuit layout using the 
+following |layoutAlg|, with support for both compositionality and modularity:
 
 > newtype Layout = Layout {unlayout :: (Size -> Size) -> [[(Size, Size)]]}
 

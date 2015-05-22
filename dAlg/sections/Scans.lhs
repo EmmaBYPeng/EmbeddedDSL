@@ -14,7 +14,7 @@ applied in more complex cases.
 The running example for this section is Gibbons and Wu's DSL for
 parallel prefix circuits~\cite{gibbons14}. 
 We briefly introduce parallel prefix circuits and then illustrate how our approach 
-can provide better solution to each problem Gibbons and Wu discussed in 
+can provide better solutions to major problems Gibbons and Wu discussed in 
 {\em Folding Domain-Specific Languages: Deep and Shallow Embeddings}~\cite{gibbons14}.
 
 %%Parallel prefix computation is an important

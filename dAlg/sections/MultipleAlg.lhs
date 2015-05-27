@@ -46,6 +46,8 @@ compositionality:
 > evalM :: Circuit -> Compose Width Depth
 > evalM = fold compAlgM
 
+\bruno{Text about these  2 steps here.}
+
 > widthM :: Circuit -> Size
 > widthM = gwidth . evalM
 
@@ -56,3 +58,6 @@ compositionality:
 |<+>| defined in section~\ref{sec:technique}. 
 From the compositional interpretation |evalM|, it is straightforward to recover 
 individual interpretations to obtain the width and depth of a circuit.
+
+\bruno{Again too succint. Show how to use it on concrete examples? Reiterate
+(some of) the benefits. Finish the section with a punchline.}

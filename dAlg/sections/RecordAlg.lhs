@@ -7,6 +7,10 @@
 \subsection{Records}
 \label{sec:records}
 
+\bruno{Maybe records are not too interesting. Type classes may be nicer to show.
+Could discuss intead: 1) Datatypes a la carte + approach; 2) Simple grammar
+example showing how to deal with binders.}
+
 Alternatively, circuits can be represented using records. 
 
 %if False

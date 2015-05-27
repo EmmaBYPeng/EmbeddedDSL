@@ -36,6 +36,8 @@ following context-sensitive interpretation:
 > tlwAlg (StretchF ws x)  = (\f -> fst x (pred . (vs!!) . f), sum ws) 
 >   where vs = scanl1 (+) ws 
 
+\bruno{text here. Don't present big lumps of code. Mix code with text.}
+
 > lzw :: (a -> a -> a) -> [a] -> [a] -> [a]
 > lzw f [] ys         = ys
 > lzw f xs []         = xs
@@ -70,3 +72,5 @@ following |layoutAlg|, with support for both compositionality and modularity:
 > layout :: Circuit -> ((Size -> Size) -> [[(Size, Size)]])
 > layout = glayout . evalC 
 
+\bruno{lots of text missing here. Explain interesting bits of the code;
+punchline. Observations like: nicer to use |glayout| than |fst| or |snd|.}

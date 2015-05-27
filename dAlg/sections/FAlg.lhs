@@ -37,8 +37,6 @@ The shape functor |CircuitF| is defined as:
 
 The algebraic datatype and corresponding constructors of circuits can be 
 recovered as follows:
-\bruno{Why not use |Fix f|? How did Gibbons and Wu did it?}
-\emma{They used this representation}
 
 > data Circuit = In (CircuitF Circuit)
 
@@ -115,10 +113,14 @@ we can define the algebra for width as follows:
 > widthAlg (AboveF x y)     = Width (gwidth x)
 > widthAlg (BesideF x y)    = Width (gwidth x + gwidth y)
 > widthAlg (StretchF xs x)  = Width (sum xs)
-
+>
 > width :: Circuit -> Width
 > width = fold widthAlg
 
+\bruno{You cannot be so succint. Need to make some remarks to the user. This
+is where you would compare with the usual |width| version: Say something like
+the types are only slightly more complicated, but this will pay off later in terms
+of modularity.}
 Similarly, the following {\em depthAlg} is defined to obtain the depth of a circuit:
 
 > newtype Depth = Depth {undepth :: Size}
@@ -129,10 +131,11 @@ Similarly, the following {\em depthAlg} is defined to obtain the depth of a circ
 > depthAlg (AboveF x y)      = Depth (gdepth x + gdepth y)
 > depthAlg (BesideF x y)     = Depth (gdepth x `max` gdepth y)
 > depthAlg (StretchF xs x)   = Depth (gdepth x)
-
+>
 > depth :: Circuit -> Depth
 > depth = fold depthAlg
 
+\bruno{Too succint. Say at least something about the depthAlg example.}
 We need the {\em newtype} wrapper here to allow multiple interpretations over the 
 same underlying type. Helper functions |gwidth| and |gdepth| are defined as:
 
@@ -141,3 +144,6 @@ same underlying type. Helper functions |gwidth| and |gdepth| are defined as:
 
 > gdepth :: (Depth :<: e) => e -> Size
 > gdepth = undepth . inter
+
+\bruno{So? What is the point? You cannot finish a section like this. You need
+to say what has been accomplished!}

@@ -32,11 +32,11 @@ The two class type variables stand for input and output domains of an
 interpretation: 
 
 > class Circuit inn out where
->   identity :: Proxy inn -> Int -> out
->   fan      :: Proxy inn -> Int -> out
->   above    :: inn       -> inn -> out
->   beside   :: inn       -> inn -> out
->   stretch  :: [Int]     -> inn -> out
+>   identity  :: Proxy inn -> Int -> out
+>   fan       :: Proxy inn -> Int -> out
+>   above     :: inn       -> inn -> out
+>   beside    :: inn       -> inn -> out
+>   stretch   :: [Int]     -> inn -> out
 
 Due to the restriction of Haskell's type classes, all class type variables must be 
 reachable from the free variables of each method type. Therefore, we need the

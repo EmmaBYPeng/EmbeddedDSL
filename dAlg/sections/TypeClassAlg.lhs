@@ -84,7 +84,7 @@ For example, if we want to have an interpretation for type
 composed types:
 
 > type ComposedType = Compose Width WellSized
-
+>
 > gfan w         =  fan (Proxy :: Proxy ComposedType) w       :: ComposedType
 > gidentity w    =  identity (Proxy :: Proxy ComposedType) w  :: ComposedType 
 > gbeside x y    = (beside x y)                               :: ComposedType

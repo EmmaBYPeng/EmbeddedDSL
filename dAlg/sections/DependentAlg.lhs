@@ -29,7 +29,7 @@ dependent interpretation of |wellSized| compositional, Gibbons and Wu again used
 the fold-algebra with pairs~\cite{gibbons14}:
 
 > type WellSized' = Bool 
-
+>
 > wswAlg :: CircuitAlg (WellSized', Width')
 > wswAlg (IdentityF w)    = (True, w)
 > wswAlg (FanF w)         = (True, w)
@@ -43,14 +43,14 @@ clumsy and not modular. On the other hand, using our technique, the algebra for
 |WellSized| and |Width| need to be members of the input type of |wsAlg|:
 
 > newtype WellSized = WellSized {unwellSized :: Bool}
-
+>
 > wsAlg :: (WellSized :<: r, Width :<: r) => GAlg r WellSized
 > wsAlg (IdentityF w)    = WellSized True
 > wsAlg (FanF w)         = WellSized True
 > wsAlg (AboveF x y)     = WellSized (gwellSized x && gwellSized y && gwidth x == gwidth y)
 > wsAlg (BesideF x y)    = WellSized (gwellSized x && gwellSized y)
 > wsAlg (StretchF xs x)  = WellSized (gwellSized x && length xs == gwidth x)
-
+>
 > gwellSized :: (Width :<: e, WellSized :<: e) => e -> Bool
 > gwellSized = unwellSized . inter
 
@@ -60,7 +60,7 @@ now compose |wsAlg| together with |widthAlg| to support compositional interpreta
 with fold:
 
 > compAlgD = wsAlg <+> widthAlg
-
+>
 > evalD :: Circuit -> Compose WellSized Width
 > evalD = fold compAlgD
 

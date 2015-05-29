@@ -89,7 +89,7 @@ member of its intput type |r| (i.e. |a :<: r|).
 For example, the algebra for evaluation can be defined as follows:
 
 > type GExpAlg r a = ExpF r -> a
-
+>
 > evalAlg :: (Int :<: r) => GExpAlg r Int
 > evalAlg (Lit x)      = x
 > evalAlg (Add e1 e2)  = geval e1 + geval e2
@@ -119,8 +119,8 @@ following infix composition operator to compose two algebras together. Given an 
 type |GExpAlg r a| and another one of type |GExpAlg r b|, it gives back a composed
 algebra of type |GExpAlg r (Compose a b)|
 
-> infixr 6 <+>
-
+> infixr <+>
+>
 > (<+>) :: (a :<: r, b :<: r) => GExpAlg r a -> GExpAlg r b -> GExpAlg r (Compose a b)
 > (<+>) a1 a2 fa    = (a1 fa, a2 fa)
 
@@ -132,7 +132,7 @@ An algebra composed of |evalAlg| and |printEvalAlg| can be defined as:
 
 > lit        = In . Lit
 > add e1 e2  = In (Add e1 e2)
-
+>
 > e1 = add (add (lit 4) (lit 5)) (lit 1)
 
 %endif
@@ -141,7 +141,7 @@ An algebra composed of |evalAlg| and |printEvalAlg| can be defined as:
 
 > eval :: Exp -> Int
 > eval       = geval . (foldExp compAlg)
-
+>
 > printEval :: Exp -> String
 > printEval  = gprint . (foldExp compAlg)
 

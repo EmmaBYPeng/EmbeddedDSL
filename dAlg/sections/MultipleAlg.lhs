@@ -27,7 +27,7 @@ acheived with the following algebra~\cite{gibbons14}, by pairing semantics up an
 projecting desired interpretations from a tuple:
 
 > type Depth' = Int
-
+>
 > wdAlg :: CircuitAlg (Width', Depth')
 > wdAlg (IdentityF w)    = (w, 0)
 > wdAlg (FanF w)         = (w, 1)
@@ -57,7 +57,7 @@ interpretations:
 
 > widthM :: Circuit -> Size
 > widthM = gwidth . evalM
-
+>
 > depthM :: Circuit -> Size
 > depthM = gdepth . evalM
 

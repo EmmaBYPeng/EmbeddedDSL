@@ -17,8 +17,8 @@
 
 > module FAlg where
 
-> infixr 6 <+>
-
+> infixr <+>
+>
 > (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (Compose a b)
 > (<+>) a1 a2 fa   = (a1 fa, a2 fa)
 
@@ -28,7 +28,7 @@ We represent the parallel prefix circuit using folds as F-algebras~\cite{}.
 The shape functor |CircuitF| is defined as:
 
 > type Size = Int
-
+>
 > data CircuitF r = 
 >     IdentityF Size
 >  |  FanF Size
@@ -41,19 +41,19 @@ The algebraic datatype and corresponding constructors of circuits can be
 recovered as follows:
 
 > data Circuit = In (CircuitF Circuit)
-
+>
 > identity :: Size -> Circuit
 > identity = In . IdentityF
-
+>
 > fan :: Size -> Circuit
 > fan = In . FanF
-
+>
 > above :: Circuit -> Circuit -> Circuit
 > above x y = In (AboveF x y)
-
+>
 > beside :: Circuit -> Circuit -> Circuit
 > beside x y = In (BesideF x y)
-
+>
 > stretch :: [Size] -> Circuit -> Circuit
 > stretch xs x = In (StretchF xs x)
 
@@ -85,7 +85,7 @@ The generic algebra type for |CircuitF| is defined as:
 Then we can define the fold as follows: 
 
 > type CircuitAlg a  = GAlg a a
-
+>
 > fold :: CircuitAlg a -> Circuit -> a
 > fold alg (In x) = alg (fmap (fold alg) x)
 

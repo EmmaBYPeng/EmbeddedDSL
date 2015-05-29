@@ -7,7 +7,9 @@
 \section{Application: Grammars}
 \label{sec:grammar}
 
-This section shows a concrete example with grammar analysis and transformations.
+This section shows a concrete example of grammar analysis and transformations. We
+present nullability and first set operations on grammars, and show that our 
+technique works also for binders.
 
 %if False
 

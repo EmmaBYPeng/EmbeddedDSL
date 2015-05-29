@@ -37,7 +37,7 @@ a connection from the first wire to the second.
 following context-sensitive interpretation:
 
 > type Layout' = [[(Size, Size)]]
-
+>
 > tlwAlg :: CircuitAlg ((Size -> Size) -> Layout', Width')
 > tlwAlg (IdentityF w)    = (\f -> [], w)
 > tlwAlg (FanF w)         = (\f -> [[(f 0, f i) | i <- [1..w-1]]], w)
@@ -65,7 +65,7 @@ Instead of modeling only the connections between wires, we make the whole
 transformation as a newtype called $Layout$:
 
 > newtype Layout = Layout {unlayout :: (Size -> Size) -> [[(Size, Size)]]}
-
+>
 > layoutAlg :: (Width :<: r, Layout :<: r) => GAlg r Layout
 > layoutAlg (IdentityF w)    = Layout (\f -> [])
 > layoutAlg (FanF w)         = Layout (\f -> [[(f 0, f i) | i <- [1..w-1]]])
@@ -94,10 +94,10 @@ Individual interpretations can then be recovered as:
 
 > layout :: Circuit -> ((Size -> Size) -> [[(Size, Size)]])
 > layout = glayout . evalC 
-
+>
 > wellSizedC :: Circuit -> Bool
 > wellSizedC = gwellSized . evalC
-
+>
 > widthC :: Circuit -> Size
 > widthC = gwidth . evalC
 

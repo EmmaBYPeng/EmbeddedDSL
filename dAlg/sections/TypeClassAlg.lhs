@@ -7,9 +7,8 @@
 \section{Other Implementations for the Circuit DSL}
 
 Apart from using fold as F-Algebras, our technique also applies to various other 
-implementations of the circuit DSL. We present one approach using type classes 
-and another one with records, and show how compositionality and modularity are both
-supported in each case.
+implementations of the circuit DSL. We present one approach using type classes, 
+and show how compositionality and modularity are supported in this case.
 
 \subsection{Type Class with Proxies}
 \label{sec:type-class-proxies}
@@ -94,15 +93,15 @@ composed types:
 
 The circuit in Figure~\ref{fig:circuit2} can be constructed as:
 
-> circuit3 = 
+> c2 = 
 >   (gfan 2 `gbeside` gfan 2) `gabove`
 >   gstretch [2,2] (gfan 2) `gabove`
 >   (gidentity 1 `gbeside` gfan 2 `gbeside` gidentity 1)
 
 We can project individual interpretations out using {\em gwidth} and {\em gwellSized}:
 
-> test1 = gwidth circuit3
-> test3 = gwellSized circuit3
+> test1 = gwidth c2
+> test3 = gwellSized c2
 
 
 

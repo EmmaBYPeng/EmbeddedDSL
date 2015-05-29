@@ -115,9 +115,11 @@ a composed type |e|:
 > gprint = inter
 
 Since |Int| needs to be a member of the input type of |printEvalAlg|, we define the
-following composition operator to compose two algebras together. Given an algebra of
+following infix composition operator to compose two algebras together. Given an algebra of
 type |GExpAlg r a| and another one of type |GExpAlg r b|, it gives back a composed
 algebra of type |GExpAlg r (Compose a b)|
+
+> infixr 6 <+>
 
 > (<+>) :: (a :<: r, b :<: r) => GExpAlg r a -> GExpAlg r b -> GExpAlg r (Compose a b)
 > (<+>) a1 a2 fa    = (a1 fa, a2 fa)

@@ -26,7 +26,6 @@ simutaneously. Gibbons and Wu showed how such multiple interpretations could be
 acheived with the following algebra~\cite{gibbons14}, by pairing semantics up and 
 projecting desired interpretations from a tuple:
 
-> type Width' = Int
 > type Depth' = Int
 
 > wdAlg :: CircuitAlg (Width', Depth')
@@ -43,10 +42,18 @@ compositionality:
 
 > compAlgM = widthAlg <+> depthAlg
 
+|compAlg| is an algebra composed of |widthAlg| and |depthAlg| (defined in 
+section~\ref{sec:f-algebra}), using the composition operator |<+>| defined in 
+section~\ref{sec:technique}. It has a composed type of |Width| and |Depth|. 
+
+\noindent The following |evalM| function is compositional, and will give the 
+interpretation result containing both the width and depth of a circuit: 
+
 > evalM :: Circuit -> Compose Width Depth
 > evalM = fold compAlgM
 
-\bruno{Text about these  2 steps here.}
+From |evalM|, it is straightforward to recover the individual 'width' and 'depth'
+interpretations:
 
 > widthM :: Circuit -> Size
 > widthM = gwidth . evalM
@@ -54,10 +61,9 @@ compositionality:
 > depthM :: Circuit -> Size
 > depthM = gdepth . evalM
 
-|compAlg| is composed of |widthAlg| and |depthAlg|, using the composition operator 
-|<+>| defined in section~\ref{sec:technique}. 
-From the compositional interpretation |evalM|, it is straightforward to recover 
-individual interpretations to obtain the width and depth of a circuit.
+For example, for the circuit $c_1$ defined in section~\ref{sec:f-algebra}, 
+$widthM$ $c_1$ gives us its width and $depthM$ $c_1$ gives its depth. Our technique
+saves us from the tedious work of defining two interpretations as one fold-algebra
+using pairs, and is much more light-weight especially when we want to have more than 
+two interpretations at one time. 
 
-\bruno{Again too succint. Show how to use it on concrete examples? Reiterate
-(some of) the benefits. Finish the section with a punchline.}

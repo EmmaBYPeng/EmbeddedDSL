@@ -17,6 +17,8 @@
 
 > module FAlg where
 
+> infixr 6 <+>
+
 > (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (Compose a b)
 > (<+>) a1 a2 fa   = (a1 fa, a2 fa)
 
@@ -71,18 +73,25 @@ to $k$, resulting in a circuit of width {\em sum ws}.
 \noindent We can construct the parallel prefix circuit in Figure~\ref{fig:circuit2} 
 as:
 
-> circuit1 = 
+> c1 = 
 >   (fan 2 `beside` fan 2) `above`
 >   stretch [2, 2] (fan 2) `above`
 >   (identity 1 `beside` fan 2 `beside` identity 1)
 
-The generic algebra type and fold for |CircuitF| are defined as:
+The generic algebra type for |CircuitF| is defined as:
 
-> type GAlg r a      = CircuitF r -> a
+> type GAlg r a = CircuitF r -> a
+
+Then we can define the fold as follows: 
+
 > type CircuitAlg a  = GAlg a a
 
 > fold :: CircuitAlg a -> Circuit -> a
 > fold alg (In x) = alg (fmap (fold alg) x)
+
+The type |CircuitAlg a| represents the fold-algebra of the circuit datatype.
+Similar to the fold for arithmetic expressions, the fold here captures a recursive 
+pattern, making interpretations for circuits compositional. 
 
 %if False
 
@@ -102,8 +111,21 @@ The generic algebra type and fold for |CircuitF| are defined as:
 
 %endif
 
-\noindent For example, if we want to obtain the width of a circuit, 
-we can define the algebra for width as follows:
+\noindent Traditionally, for example, if we want to obtain the width of a circuit, 
+we would define the algebra for width as:
+
+> type Width' = Int
+>
+> widthAlg' :: CircuitAlg Width'
+> widthAlg' (IdentityF w)    = w
+> widthAlg' (FanF w)         = w
+> widthAlg' (AboveF x y)     = x
+> widthAlg' (BesideF x y)    = x + y
+> widthAlg' (StretchF xs x)  = sum xs
+
+This definition of |widthAlg'| is straightforward, but can not be reused modularly 
+if later some other interpretations depend on it. To allow for modularity, we use 
+the following definition of |widthAlg| instead:
 
 > newtype Width = Width {unwidth :: Size}
 >
@@ -113,15 +135,22 @@ we can define the algebra for width as follows:
 > widthAlg (AboveF x y)     = Width (gwidth x)
 > widthAlg (BesideF x y)    = Width (gwidth x + gwidth y)
 > widthAlg (StretchF xs x)  = Width (sum xs)
->
+
+Here we state that the output type |Width| of |GAlg| is a member of the input type 
+|r| (i.e. |Width :<: r|), and use the helper function |gwidth| to retrieve the 
+target output type from values of type |r| (i.e. x and y):
+
+> gwidth :: (Width :<: e) => e -> Size
+> gwidth = unwidth . inter
+
+The 'width' interpretation is simply:
+
 > width :: Circuit -> Width
 > width = fold widthAlg
 
-\bruno{You cannot be so succint. Need to make some remarks to the user. This
-is where you would compare with the usual |width| version: Say something like
-the types are only slightly more complicated, but this will pay off later in terms
-of modularity.}
-Similarly, the following {\em depthAlg} is defined to obtain the depth of a circuit:
+\noindent In addition, we need the {\em newtype} wrapper here to allow other 
+interpretations over the same underlying type. 
+For instance, we can also have the 'depth' interpretation over integers:
 
 > newtype Depth = Depth {undepth :: Size}
 >
@@ -131,19 +160,18 @@ Similarly, the following {\em depthAlg} is defined to obtain the depth of a circ
 > depthAlg (AboveF x y)      = Depth (gdepth x + gdepth y)
 > depthAlg (BesideF x y)     = Depth (gdepth x `max` gdepth y)
 > depthAlg (StretchF xs x)   = Depth (gdepth x)
->
-> depth :: Circuit -> Depth
-> depth = fold depthAlg
 
-\bruno{Too succint. Say at least something about the depthAlg example.}
-We need the {\em newtype} wrapper here to allow multiple interpretations over the 
-same underlying type. Helper functions |gwidth| and |gdepth| are defined as:
-
-> gwidth :: (Width :<: e) => e -> Size
-> gwidth = unwidth . inter
+Similarly, the output type |Depth| is a member of the input type of the algebra, 
+and |gdepth| is used to retrieve target type |Depth| from values of type |r|:
 
 > gdepth :: (Depth :<: e) => e -> Size
 > gdepth = undepth . inter
 
-\bruno{So? What is the point? You cannot finish a section like this. You need
-to say what has been accomplished!}
+We can then define the 'depth' interpretation as:
+
+> depth :: Circuit -> Depth
+> depth = fold depthAlg
+
+Though the above definition of algbras becomes sligtly more complicated compared 
+with the traditional version, we show that it allows for both modularity and 
+compositionality in terms of multiple and dependent interpretations in later sections.

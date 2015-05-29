@@ -55,16 +55,20 @@ clumsy and not modular. On the other hand, using our technique, the algebra for
 > gwellSized = unwellSized . inter
 
   
-\noindent Now we can compose |wsAlg| together with |widthAlg| to support 
-compositional interpretation with fold:
+\noindent Since |Width| needs to a member of the input type of |wsAlg|, we can 
+now compose |wsAlg| together with |widthAlg| to support compositional interpretation
+with fold:
 
 > compAlgD = wsAlg <+> widthAlg
 
 > evalD :: Circuit -> Compose WellSized Width
 > evalD = fold compAlgD
 
-\noindent Individual interpretation for |wellSized| is defined as:
+\noindent |evalD| gives the interpretation result for both 'width' and 'wellSized', 
+with the individual interpretation for 'wellSized' defined as:
 
 > wellSized :: Circuit -> Bool
 > wellSized = gwellSized . evalD 
 
+Modular definition of algebra followed by composition using |<+>| \textemdash
+modularity and compositionality are at your service!

@@ -49,7 +49,7 @@ interpretations from parts. On the one hand,
 
 Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{} 
 provides a way for one to add new langugae constructs modularly. For the circuit DSL, 
-the idea is to define a functor for each data variant separately. It is
+the idea is to define a functor for each data variant separately, and it is
 straightforward to add new data variants:
 
 > data IdentityF' r  = IdentityF' Size     deriving Functor
@@ -63,7 +63,7 @@ The following binary operator is used to combine different data variants togethe
 > data (f :+: g) e = Inl (f e) | Inr (g e) deriving Functor
 > infixr :+:
 
-By combining the above functors together, we can obtain the composite functor 
+By combining the above functors, we can obtain the composite functor 
 $CircuitF'$, which is equivalent to $CircuitF$ we define in 
 section~\ref{sec:f-algebra}:
 
@@ -76,7 +76,7 @@ The composite circuit datatype $Circuit'$ can be recovered as:
 
 With the following type class expressing a subtyping relationship between functors,
 smart constructors $identity'$, $fan'$, $above'$, $beside'$ and $stretch'$ are 
-defined for convenient definitions of circuits:
+defined for convenient constructions of circuits:
 
 > class (Functor f, Functor g) => f :< g where
 >   inj :: f a -> g a
@@ -86,8 +86,9 @@ For example, the smart constructor for $Identity$ is:
 > identity' :: (IdentityF' :< f) => Size -> Fix f
 > identity' w = In (inj (IdentityF' w))
 
-$c_3$ defines the circuit in Figure~\ref{fig:circuit2}, which is equivalent to 
-$c_1$ we defined in section~\ref{sec:f-algebra}.
+Other smart constructors can be defined in the exact same way.
+One possible construction of the circuit in Figure~\ref{fig:circuit2} is as follows.
+It is equivalent to $c_1$ we defined in section~\ref{sec:f-algebra}.
 
 > c3 :: Circuit'
 > c3 = 
@@ -140,8 +141,8 @@ over functors of composite type:
 >   widthAlg' (Inl x) = widthAlg' x
 >   widthAlg' (Inr y) = widthAlg' y
 
-Interpretations for individual constructors correspond to instances of the
-type class. They are defined in the same way as before. For example, following 
+Interpretations for different constructors correspond to different instances of the
+type class, and are defined in the same way as before. For example, following 
 is the interpretation of 'width' for |IdentityF'|:
 
 > instance (Width :<: r) => WidthAlg IdentityF' r where
@@ -194,8 +195,7 @@ defined:
 Now that we have separate interpretations defined for each functor, one last step
 towards modularity is to have a composition operator that combines algebras 
 together to allow dependent interpertations. In order to accomodate open datatypes,
-composition operation is represented by the following type class of all the 
-constructors:
+composition operation is represented by the following type class:
 
 > class (Functor f) => Comb f where
 >   (<+>) :: (a :<: r, b :<: r) => (f r -> a) -> (f r -> b) -> (f r -> (Compose a b))
@@ -203,7 +203,7 @@ constructors:
 For each functor f that belongs to type class $Comb$, given that type |a| and |b| are
 both members of type |r|, the binary operator |<+>| will compose an algebra of f from 
 type |r| to |a| and another from type |r| to |b|, and returns a composed algebra 
-from type |r| to |Compose a b|.
+from type |r| to |Compose a b|. First we define the operation for composed functors:
 
 > instance (Comb f, Comb g) => Comb (f :+: g) where
 >   (<+>) a1 a2 (Inl f)  = (a1 (Inl f), a2 (Inl f))

@@ -45,10 +45,12 @@
 %endif
 
 For an embedded DSL, it is desirable if one can assemble the language and its 
-interpretations from parts. On the one hand, 
+interpretations from parts. On the one hand, we want to add new cases to a datatype
+without modifying the existing code. On the other hand, we want to define new 
+functions over the datatype modularly.
 
-Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{} 
-provides a way for one to add new langugae constructs modularly. For the circuit DSL, 
+Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{swierstra08} 
+provides a way for one to add new language constructs modularly. For the circuit DSL, 
 the idea is to define a functor for each data variant separately, and it is
 straightforward to add new data variants:
 
@@ -88,7 +90,7 @@ For example, the smart constructor for $Identity$ is:
 
 Other smart constructors can be defined in the exact same way.
 One possible construction of the circuit in Figure~\ref{fig:circuit2} is as follows.
-It is equivalent to $c_1$ we defined in section~\ref{sec:f-algebra}.
+It is equivalent to $c_1$ we defined in section~\ref{sec:f-algebra}:
 
 > c3 :: Circuit'
 > c3 = 
@@ -138,8 +140,8 @@ is a member of the input type |r|. It is straigthforward to lift interpretations
 over functors of composite type:
 
 > instance (Width :<: r, WidthAlg f r, WidthAlg g r) => WidthAlg (f :+: g) r where
->   widthAlg' (Inl x) = widthAlg' x
->   widthAlg' (Inr y) = widthAlg' y
+>   widthAlg' (Inl x)  = widthAlg' x
+>   widthAlg' (Inr y)  = widthAlg' y
 
 Interpretations for different constructors correspond to different instances of the
 type class, and are defined in the same way as before. For example, following 
@@ -164,8 +166,7 @@ is the interpretation of 'width' for |IdentityF'|:
 
 %endif
 
-\noindent The type class for the interpretation of 'wellSized' can be similarly 
-defined:
+\noindent One may also want to have the dependent interpretation for 'wellSized':
 
 > class (Functor f, WellSized :<: r, Width :<: r) => WellSizedAlg f r where
 >   wsAlg' :: f r -> WellSized
@@ -203,15 +204,21 @@ composition operation is represented by the following type class:
 For each functor f that belongs to type class $Comb$, given that type |a| and |b| are
 both members of type |r|, the binary operator |<+>| will compose an algebra of f from 
 type |r| to |a| and another from type |r| to |b|, and returns a composed algebra 
-from type |r| to |Compose a b|. First we define the operation for composed functors:
+from type |r| to |Compose a b|. First we define the operation for composite functors:
 
 > instance (Comb f, Comb g) => Comb (f :+: g) where
 >   (<+>) a1 a2 (Inl f)  = (a1 (Inl f), a2 (Inl f))
 >   (<+>) a1 a2 (Inr g)  = (a1 (Inr g), a2 (Inr g))
->
+
+Composition operation for each data variant corresponds to an instance of the
+type class. For example, in the following instance we define the |<+>| operator for
+$Identity$:
+
 > instance Comb IdentityF' where
 >   (<+>) a1 a2 f = (a1 f, a2 f)
->
+
+%if False
+
 > instance Comb FanF' where
 >   (<+>) a1 a2 f = (a1 f, a2 f)
 >
@@ -224,14 +231,38 @@ from type |r| to |Compose a b|. First we define the operation for composed funct
 > instance Comb StretchF' where
 >   (<+>) a1 a2 f = (a1 f, a2 f)
 
-> compAlg' = widthAlg' <+> wsAlg'
+%endif
 
-> eval' = fold compAlg'
+Finally, we compose |widthAlg'| with |wsAlg'|, and form the compositional 
+interpretation |eval'| with fold:
+
+> compAlg' = widthAlg' <+> wsAlg'
 >
+> eval' = fold compAlg'
+
+The following |width'| and |wellSized'| functions work for any flexibly typed
+cirucits: 
+
 > width'      = gwidth . eval'
 > wellSized'  = gwellSized . eval'
 
+For example, they can be applied to $c_3$ with its type explicitly stated:
+
+%if False
 
 > test1 = width' (c3 :: Circuit')
 > test2 = wellSized' (c3 :: Circuit')
 
+%endif
+
+< >  width' (c3 :: Circuit')
+< 4
+<
+< >  wellSized' (c3 :: Circuit')
+< True
+
+\noindent Therefore, while Swiestra's ``\emph{Datatypes \`a la Carte}"
+~\cite{swierstra08} 
+provides extensibility by allowing modular definition of datatypes, our techique 
+works as its dual, providing a second dimensional extensibility by supporting fully
+modular and compositional interpretations over modularly defined datatypes.

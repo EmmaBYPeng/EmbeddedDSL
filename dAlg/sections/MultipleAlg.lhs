@@ -45,8 +45,7 @@ compositionality:
 |compAlg| is an algebra composed of |widthAlg| and |depthAlg| (defined in 
 section~\ref{sec:f-algebra}), using the composition operator |<+>| defined in 
 section~\ref{sec:technique}. It has a composed type of |Width| and |Depth|. 
-
-\noindent The following |evalM| function is compositional, and will give the 
+The following |evalM| function is compositional, and will give the 
 interpretation result containing both the width and depth of a circuit: 
 
 > evalM :: Circuit -> Compose Width Depth
@@ -61,7 +60,7 @@ interpretations:
 > depthM :: Circuit -> Size
 > depthM = gdepth . evalM
 
-For example, for the circuit $c_1$ defined in section~\ref{sec:f-algebra}, 
+For example, for circuit $c_1$ defined in section~\ref{sec:f-algebra}, 
 $widthM$ $c_1$ gives us its width and $depthM$ $c_1$ gives its depth. Our technique
 saves us from the tedious work of defining two interpretations as one fold-algebra
 using pairs, and is much more light-weight especially when we want to have more than 

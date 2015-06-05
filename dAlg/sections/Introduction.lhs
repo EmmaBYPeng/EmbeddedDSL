@@ -157,7 +157,7 @@ than one other interpretation we may need to use nested pairs or
 larger tuples, which are difficult to manage.
 
 This functional pearl shows how a simple technique, which can be viewed as a dual
-to Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{}, can be used to provide
+to Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{swierstra08}, can be used to provide
 modular and compositional interpretations that may depend on other interpretations. 
 We also show how the technique applies to other various implementation 
 approaches for embedded DSLs, and discuss a case study usings grammars.

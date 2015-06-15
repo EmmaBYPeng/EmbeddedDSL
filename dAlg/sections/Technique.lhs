@@ -51,7 +51,7 @@ output type.
 
 The loss of modularity problem when working with F-algebras has been
 noted before. For example, in the context of Object-Oriented
-Programming (OOP) the problem arizes with Object Algebras~\cite{oliveira12}: an
+Programming (OOP) the problem arises with Object Algebras~\cite{oliveira12}: an
 isomorphic representation of F-Algebras. In OOP languages supporting 
 intersection types a compositional and modular solution is possible~\cite{oliveira13}. 
 However, Haskell (and many other functional languages) do not support intersection 

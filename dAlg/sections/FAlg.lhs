@@ -173,5 +173,6 @@ We can then define the 'depth' interpretation as:
 > depth = fold depthAlg
 
 Though the above definition of algbras becomes sligtly more complicated compared 
-with the traditional version, we show that it allows for both modularity and 
-compositionality in terms of multiple and dependent interpretations in later sections.
+with the traditional version, we show that it allows us to express multiple, dependent
+and context-sensitive interpretations modularly while maintaining compositionality
+in later sections.

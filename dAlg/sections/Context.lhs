@@ -104,7 +104,8 @@ Individual interpretations can then be recovered as:
 \noindent Our approach seamlessly models the circuit layout using the 
 above |layoutAlg|, with full support for compositionality and modularity.
 
-In this section we show that our technique can be used to support modularity 
-and compositionality for multiple, dependent and context-sensitive interpretations. 
+In this section we show that our technique can be used to express multiple, 
+dependent and context-sensitive interpretations in a fully modular way while
+maintaining their compositionality. 
 In the next section, we show how our technique is applied together with 
 ``\emph{Datatypes \`a la Carte}"~\cite{swierstra08} to support two-dimensional extensibility.

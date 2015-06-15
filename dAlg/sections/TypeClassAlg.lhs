@@ -100,8 +100,10 @@ The circuit in Figure~\ref{fig:circuit2} can be constructed as:
 
 We can project individual interpretations out using {\em gwidth} and {\em gwellSized}:
 
-> test1 = gwidth c2
-> test3 = gwellSized c2
+< > gwidth c2
+< 4
+< > gwellSized c2
+< True
 
 
 

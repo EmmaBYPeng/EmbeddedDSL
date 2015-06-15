@@ -107,4 +107,4 @@ above |layoutAlg|, with full support for compositionality and modularity.
 In this section we show that our technique can be used to support modularity 
 and compositionality for multiple, dependent and context-sensitive interpretations. 
 In the next section, we show how our technique is applied together with 
-``\emph{Datatypes \`a la Carte}"~\cite{} to support two-dimensional extensibility.
+``\emph{Datatypes \`a la Carte}"~\cite{swierstra08} to support two-dimensional extensibility.

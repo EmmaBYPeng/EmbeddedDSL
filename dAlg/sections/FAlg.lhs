@@ -111,7 +111,7 @@ pattern, making interpretations for circuits compositional.
 
 %endif
 
-\noindent Traditionally, for example, if we want to obtain the width of a circuit, 
+\noindent Conventionally, for example, if we want to obtain the width of a circuit, 
 we would define the algebra for width as:
 
 > type Width' = Int

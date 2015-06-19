@@ -37,7 +37,7 @@ data GrammarF v r =
   | Alt r r 
   deriving Functor
 
-newtype PatternF r = Hide {reveal :: forall v. GrammarF v r}
+newtype PatternF r = Hide {reveal :: forall v. GrammarF v r} deriving Functor
 
 data Pattern = In (PatternF Pattern)
 
@@ -96,7 +96,6 @@ gFirst = inter
 -- Evaluation
 gAlg = nullF <+> firstF
 
-{-
 eval :: Pattern -> Compose Bool [String]
 eval = sfold gAlg (False, [])
 
@@ -106,10 +105,10 @@ nullable = inter . eval
 firstSet :: Pattern -> [String]
 firstSet = inter . eval
 
+{-
 -- Example
 g = Hide (Mu (\(~(a:_)) -> [Alt (Var a) (Term "x")]))
 
 test1 = nullable g
 test2 = firstSet g
 -}
-

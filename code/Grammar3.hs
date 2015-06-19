@@ -20,9 +20,9 @@ fixVal v f = if v == v' then v else fixVal v' f
   where v' = f v
 
 gfold :: Functor f => (t -> c) -> (([t]->[c]) -> c) -> (f c -> c) -> Pattern -> c
-gfold v l f = trans . reveal where
+gfold v l f (In p) = trans (reveal p) where
   trans (Var x) = v x
-  trans (Mu g)  = l (map (f . fmap trans) . g)
+  trans (Mu g)  = l (map trans . g)
 
 sfold :: (Eq t, Functor f) => (f t -> t) -> t -> Pattern -> t
 sfold alg k = gfold id (head . fixVal (repeat k)) alg

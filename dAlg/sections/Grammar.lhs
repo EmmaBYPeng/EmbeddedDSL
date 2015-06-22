@@ -5,11 +5,11 @@
 %include Paper.fmt
 
 \section{Application: Grammars}
-\label{sec:grammar}
+\label{sec:case_study}
 
-This section shows a concrete example of grammar analysis and transformations. We
-present nullability and first set operations on grammars, and show that our 
-technique works also for binders.
+This section shows how our technique can be applied to grammar analysis and 
+transformations. We present nullability and first set operations on grammars with
+recursive multi-binders.
 
 %if False
 
@@ -25,12 +25,6 @@ technique works also for binders.
 > import Data.Traversable
 > import Data.List
 
-
-> infixr 6 <+>
-
-> (<+>) :: (a :<: r, b :<: r) => PatternAlg r a -> PatternAlg r b ->
->                                PatternAlg r (Compose a b)
-> (<+>) a1 a2 fa   = (a1 fa, a2 fa)
 
 > type Compose i1 i2 = (i1, i2)
 
@@ -53,42 +47,61 @@ technique works also for binders.
 > fixVal v f = if v == v' then v else fixVal v' f 
 >   where v' = f v
 
-> gfold :: Functor f => (t -> c) -> (([t]->[c]) -> c) -> (f c -> c) -> Graph f -> c
-> gfold v l f = trans . reveal where
->   trans (Var x) = v x
->   trans (Mu g)  = l (map (f . fmap trans) . g)
->   trans (In fa) = f (fmap trans fa)
-
-> sfold :: (Eq t, Functor f) => (f t -> t) -> t -> Graph f -> t
-> sfold alg k = gfold id (head . fixVal (repeat k)) alg
+> sfold :: (Eq t) => (GrammarF t -> t) -> t -> Grammar -> t
+> sfold alg k (In p) = trans (reveal p) where
+>   trans (Var x)      = x
+>   trans (Mu g)       = (head . fixVal (repeat k)) (map trans . g)
+>   trans (Term s)     = alg (Hide (Term s))
+>   trans (E)          = alg (Hide (E))
+>   trans (Alt g1 g2)  = alg (fmap (sfold alg k) (Hide (Alt g1 g2)))  
+>   trans (Seq g1 g2)  = alg (fmap (sfold alg k) (Hide (Seq g1 g2)))  
 
 %endif
 
-> data Rec f a = 
->     Var a 
->   | Mu ([a] -> [f (Rec f a)])
->   | In (f (Rec f a))
+\subsection{Grammars}
+\label{sec:grammar}
 
-> newtype Graph f = Hide {reveal :: forall a. Rec f a}
 
-> data PatternF a = Term String | E | Seq a a | Alt a a 
->   deriving (Functor, Foldable, Traversable)
 
-> type PatternAlg r a = PatternF r -> a
+> data PatternF v r = 
+>     Var v
+>   | Mu ([v] -> [PatternF v r])
+>   | Term String
+>   | E
+>   | Seq r r
+>   | Alt r r
+>   deriving Functor
 
-> nullF :: (Bool :<: r) => PatternAlg r Bool
-> nullF (Term s)     = False
-> nullF E            = True
-> nullF (Seq g1 g2)  = gNull g1 && gNull g2
-> nullF (Alt g1 g2)  = gNull g1 || gNull g2
+> newtype GrammarF r = Hide {reveal :: forall v. PatternF v r} deriving Functor
 
-> firstF :: (Bool :<: r, [String] :<: r) => PatternAlg r [String]
-> firstF (Term s)     = [s]
-> firstF E            = []
-> firstF (Seq g1 g2)  = if gNull g1 then union (gFirst g1) (gFirst g2) else (gFirst g2)
-> firstF (Alt g1 g2)  = union (gFirst g1) (gFirst g2)
+> data Grammar = In (GrammarF Grammar)
+
+> type GAlg r a = GrammarF r -> a
+
+> nullF :: (Bool :<: r) => GAlg r Bool
+> nullF (Hide (Term s))     = False
+> nullF (Hide E)            = True
+> nullF (Hide (Seq g1 g2))  = gNull g1 && gNull g2
+> nullF (Hide (Alt g1 g2))  = gNull g1 || gNull g2
+
+> firstF :: (Bool :<: r, [String] :<: r) => GAlg r [String]
+> firstF (Hide (Term s))     = [s]
+> firstF (Hide E)            = []
+> firstF (Hide (Seq g1 g2))  = 
+>   if gNull g1 then union (gFirst g1) (gFirst g2) else (gFirst g2)
+> firstF (Hide (Alt g1 g2))  = union (gFirst g1) (gFirst g2)
 
   
+> infixr <+>
+>
+> (<+>) :: (a :<: r, b :<: r) => GAlg r a -> GAlg r b -> GAlg r (Compose a b)
+> (<+>) a1 a2 (Hide (Term s))     = (a1 (Hide (Term s)), a2 (Hide (Term s)))
+> (<+>) a1 a2 (Hide E)            = (a1 (Hide E), a2 (Hide E))
+> (<+>) a1 a2 (Hide (Seq g1 g2))  = 
+>   (a1 (Hide (Seq (inter g1) (inter g2))), a2 (Hide (Seq (inter g1) (inter g2))))
+> (<+>) a1 a2 (Hide (Alt g1 g2))  = 
+>   (a1 (Hide (Alt (inter g1) (inter g2))), a2 (Hide (Alt (inter g1) (inter g2))))
+
 > gNull :: (Bool :<: r) => r -> Bool
 > gNull = inter
 
@@ -97,19 +110,23 @@ technique works also for binders.
 
 > compAlg = nullF <+> firstF
 
-> eval :: Graph PatternF -> Compose Bool [String]
+> eval :: Grammar -> Compose Bool [String]
 > eval = sfold compAlg (False, [])
 
-> nullable :: Graph PatternF -> Bool
+> nullable :: Grammar -> Bool
 > nullable = inter . eval
 
-> firstSet :: Graph PatternF -> [String]
+> firstSet :: Grammar -> [String]
 > firstSet = inter . eval
 
-> g = Hide (Mu (\(~(a:_)) -> [Alt (Var a) (In (Term "x"))]))
+> term x   = In (Hide (Term x))
+> empty    = In (Hide E)
+> alt x y  = In (Hide (Alt x y))
+> seq x y  = In (Hide (Seq x y))
 
-> test1 = nullable g
-> test2 = firstSet g
+> g1 = alt empty (term "x")
+> test1 = nullable g1
 
+> g2 = In (Hide (Mu (\(~(a:_)) -> [alt (In (Hide (Var a))) (term "x")])))
 
 

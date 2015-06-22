@@ -19,34 +19,30 @@ fixVal :: Eq a => a -> (a -> a) -> a
 fixVal v f = if v == v' then v else fixVal v' f 
   where v' = f v
 
-gfold :: Functor f => (t -> c) -> (([t]->[c]) -> c) -> (f c -> c) -> Pattern -> c
-gfold v l f (In p) = trans (reveal p) where
-  trans (Var x) = v x
-  trans (Mu g)  = l (map trans . g)
-
-sfold :: (Eq t, Functor f) => (f t -> t) -> t -> Pattern -> t
-sfold alg k = gfold id (head . fixVal (repeat k)) alg
+sfold :: (Eq t) => (GrammarF t -> t) -> t -> Grammar -> t
+sfold alg k (In p) = trans (reveal p) where
+  trans (Var x)  = x
+  trans (Mu g)   = (head . fixVal (repeat k)) (map trans . g)
+  trans (Term s) = alg (Hide (Term s))
+  trans (E)      = alg (Hide (E))
+  trans (Alt g1 g2) = alg (fmap (sfold alg k) (Hide (Alt g1 g2)))  
+  trans (Seq g1 g2) = alg (fmap (sfold alg k) (Hide (Seq g1 g2))) 
 
 -- Grammars -- New approach
-data GrammarF v r = 
+data PatternF v r = 
     Var v
-  | Mu ([v] -> [GrammarF v r])
+  | Mu ([v] -> [PatternF v r])
   | Term String 
   | E 
   | Seq r r 
   | Alt r r 
   deriving Functor
 
-newtype PatternF r = Hide {reveal :: forall v. GrammarF v r} deriving Functor
+newtype GrammarF r = Hide {reveal :: forall v. PatternF v r} deriving Functor
 
-data Pattern = In (PatternF Pattern)
+data Grammar = In (GrammarF Grammar)
 
-type GAlg r a = PatternF r -> a
-
-type PatternAlg a = GAlg a a
-
---foldG :: (PatternF a -> a) -> Pattern -> a
---foldG alg (In x) = alg (fmap (fold alg) x)
+type GAlg r a = GrammarF r -> a
 
 nullF :: (Bool :<: r) => GAlg r Bool
 nullF (Hide (Term s))     = False
@@ -91,24 +87,32 @@ gNull = inter
 gFirst :: ([String] :<: r) => r -> [String]
 gFirst = inter
 
+-- Smart constructors
+--var :: GrammarF v r -> Pattern
+--var v = In (Hide (Var v))
 
+term x = In (Hide (Term x))
+empty = In (Hide E)
+alt x y = In (Hide (Alt x y))
+seq x y = In (Hide (Seq x y))
 
 -- Evaluation
 gAlg = nullF <+> firstF
 
-eval :: Pattern -> Compose Bool [String]
+eval :: Grammar -> Compose Bool [String]
 eval = sfold gAlg (False, [])
 
-nullable :: Pattern -> Bool
+nullable :: Grammar -> Bool
 nullable = inter . eval
 
-firstSet :: Pattern -> [String]
+firstSet :: Grammar -> [String]
 firstSet = inter . eval
 
-{-
 -- Example
-g = Hide (Mu (\(~(a:_)) -> [Alt (Var a) (Term "x")]))
+--g1 = Hide (Mu (\(~(a:_)) -> [Alt (Var a) (Term "x")]))
 
-test1 = nullable g
+g = term "x"
+
+test1 = nullable empty 
 test2 = firstSet g
--}
+

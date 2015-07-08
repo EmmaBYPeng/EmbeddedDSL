@@ -55,7 +55,7 @@ clumsy and not modular. On the other hand, using our technique, the algebra for
 > gwellSized = unwellSized . inter
 
   
-\noindent Since |Width| needs to a member of the input type of |wsAlg|, we can 
+\noindent Since |Width| needs to be a member of the input type of |wsAlg|, we can 
 now compose |wsAlg| together with |widthAlg| to support compositional interpretation
 with fold:
 
@@ -70,5 +70,5 @@ with the individual interpretation for 'wellSized' defined as:
 > wellSized :: Circuit -> Bool
 > wellSized = gwellSized . evalD 
 
-Modular definition of algebra followed by composition using |<+>| \textemdash
+Modular definitions of algebra followed by one simple composition using |<+>| \textemdash
 modularity and compositionality are at your service!

@@ -36,9 +36,11 @@ projecting desired interpretations from a tuple:
 > wdAlg (StretchF ws x)  = (sum ws, snd x)  
 
 However, as we mention in section~\ref{sec:introduction}, this approach trades
-modularity for compositionality. On the contrary, multiple interpretations can be
-easily achieved using our technique, with support for both modularity and 
-compositionality:
+modularity for compositionality. Though it makes the overall interpretation 
+compositional, interpretations for $width$ and $depth$ must be defined together and 
+certain modularity is lost.
+On the contrary, multiple interpretations can be easily achieved using our technique, 
+with support for both modularity and compositionality:
 
 > compAlgM = widthAlg <+> depthAlg
 

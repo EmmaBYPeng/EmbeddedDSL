@@ -59,7 +59,7 @@ Gibbons and Wu pointed out:
 
 Since the layout of a circuit depends on the widths of its constituent parts, the 
 interpretation for layout is dependent and needs to be paired up with the 
-interpretation of width to maintain compositionality.  
+interpretation of width so as to maintain compositionality.  
 
 Instead of modeling only the connections between wires, we make the whole
 transformation as a newtype called $Layout$:

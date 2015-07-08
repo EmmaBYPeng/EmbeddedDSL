@@ -163,4 +163,8 @@ follows:
 
 %endif
 
+Our approach works perfectly with the grammar example by providing mudular and
+compositional interpretations for grammar analysis. In particular, it works well 
+with binders, which is not mentioned in Gibbon and Wu's work~\cite{gibbons14}. 
+
 

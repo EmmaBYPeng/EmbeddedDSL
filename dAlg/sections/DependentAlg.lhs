@@ -38,7 +38,7 @@ the fold-algebra with pairs~\cite{gibbons14}:
 > wswAlg (StretchF ws x)  = (fst x && length ws == snd x, sum ws)
 
 Similar to multiple interpretation with pairs, though simple, this approach is 
-clumsy and not modular. On the other hand, using our technique, the algebra for
+clumsy and not modular. On the other hand, with our technique, the algebra for
 |wellSized| can be defined independently. The only restriction is that both 
 |WellSized| and |Width| need to be members of the input type of |wsAlg|:
 
@@ -70,5 +70,5 @@ with the individual interpretation for 'wellSized' defined as:
 > wellSized :: Circuit -> Bool
 > wellSized = gwellSized . evalD 
 
-Modular definitions of algebra followed by one simple composition using |<+>| \textemdash
-modularity and compositionality are at your service!
+Modular definitions of algebras followed by one simple composition with |<+>| 
+\textemdash modularity and compositionality are at your service!

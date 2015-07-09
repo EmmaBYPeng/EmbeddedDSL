@@ -45,10 +45,10 @@ with support for both modularity and compositionality:
 > compAlgM = widthAlg <+> depthAlg
 
 |compAlg| is an algebra composed of |widthAlg| and |depthAlg| (defined in 
-section~\ref{sec:f-algebra}), using the composition operator |<+>| defined in 
+section~\ref{sec:f-algebra}), with the composition operator |<+>| defined in 
 section~\ref{sec:technique}. It has a composed type of |Width| and |Depth|. 
-The following |evalM| function is compositional, and will give the 
-interpretation result containing both the width and depth of a circuit: 
+The following |evalM| function is compositional, and will give a composed 
+interpretation result for both width and depth of a circuit: 
 
 > evalM :: Circuit -> Compose Width Depth
 > evalM = fold compAlgM
@@ -65,6 +65,6 @@ interpretations:
 For example, for circuit $c_1$ defined in section~\ref{sec:f-algebra}, 
 $widthM$ $c_1$ gives us its width and $depthM$ $c_1$ gives its depth. Our technique
 saves us from the tedious work of defining two interpretations as one fold-algebra
-using pairs, and is much more light-weight especially when we want to have more than 
-two interpretations at one time. 
+using pairs, and is much more light-weight especially when we want more than two 
+interpretations at one time. 
 

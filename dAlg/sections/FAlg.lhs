@@ -78,11 +78,14 @@ as:
 >   stretch [2, 2] (fan 2) `above`
 >   (identity 1 `beside` fan 2 `beside` identity 1)
 
-The generic algebra type for |CircuitF| is defined as:
+As in section~\ref{sec:technique}, we define |type GAlg r a = CircuitF r -> a| as our
+generic algebra type for |CircuitF|. Then we can define the fold as follows:
+
+%if False
 
 > type GAlg r a = CircuitF r -> a
 
-Then we can define the fold as follows: 
+%endif
 
 > type CircuitAlg a  = GAlg a a
 >
@@ -124,8 +127,9 @@ we would define the algebra for width as:
 > widthAlg' (StretchF xs x)  = sum xs
 
 This definition of |widthAlg'| is straightforward, but can not be reused modularly 
-if later some other interpretations depend on it. To allow for modularity, we use 
-the following definition of |widthAlg| instead:
+if later some other interpretations depend on it. It will cause the same problem as 
+we discuss in section~\ref{sec:nonmodular} for arithmetic expressions. 
+To allow for modularity, we use the following definition of |widthAlg| instead:
 
 > newtype Width = Width {unwidth :: Size}
 >
@@ -136,9 +140,9 @@ the following definition of |widthAlg| instead:
 > widthAlg (BesideF x y)    = Width (gwidth x + gwidth y)
 > widthAlg (StretchF xs x)  = Width (sum xs)
 
-Here we state that the output type |Width| of |GAlg| is a member of the input type 
+Here we state that the output type |Width| of |GAlg| is a member of its input type 
 |r| (i.e. |Width :<: r|), and use the helper function |gwidth| to retrieve the 
-target output type from values of type |r| (i.e. x and y):
+target value from values of type |r| (i.e. x and y):
 
 > gwidth :: (Width :<: e) => e -> Size
 > gwidth = unwidth . inter
@@ -162,7 +166,7 @@ For instance, we can also have the 'depth' interpretation over integers:
 > depthAlg (StretchF xs x)   = Depth (gdepth x)
 
 Similarly, the output type |Depth| is a member of the input type of the algebra, 
-and |gdepth| is used to retrieve target type |Depth| from values of type |r|:
+and |gdepth| is used to retrieve values of target type |Depth|:
 
 > gdepth :: (Depth :<: e) => e -> Size
 > gdepth = undepth . inter

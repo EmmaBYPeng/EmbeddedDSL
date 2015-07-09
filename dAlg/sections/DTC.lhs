@@ -51,7 +51,7 @@ functions over the datatype modularly.
 
 Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{swierstra08} 
 provides a way for one to add new language constructs modularly. For the circuit DSL, 
-the idea is to define a functor for each data variant separately, and it is
+the idea is to define a functor for each data variant separately, which makes it
 straightforward to add new data variants:
 
 > data IdentityF' r  = IdentityF' Size     deriving Functor
@@ -65,7 +65,7 @@ The following binary operator is used to combine different data variants togethe
 > data (f :+: g) e = Inl (f e) | Inr (g e) deriving Functor
 > infixr :+:
 
-By combining the above functors, we can obtain the composite functor 
+By combining the above functors, we can get the composite functor 
 $CircuitF'$, which is equivalent to $CircuitF$ we define in 
 section~\ref{sec:f-algebra}:
 
@@ -135,16 +135,15 @@ the following type class is defined for the interpretation of 'width':
 > class (Functor f, Width :<: r) => WidthAlg f r where
 >   widthAlg' :: f r -> Width
 
-Restrictions on the input type of |widthAlg'| is explicitly stated such that |width|
-is a member of the input type |r|. It is straigthforward to lift interpretations
-over functors of composite type:
+We explicitly state that |Width| is a member of the input type |r| of |widthAlg'|.
+It is straigthforward to lift interpretations over functors of composite type:
 
 > instance (Width :<: r, WidthAlg f r, WidthAlg g r) => WidthAlg (f :+: g) r where
 >   widthAlg' (Inl x)  = widthAlg' x
 >   widthAlg' (Inr y)  = widthAlg' y
 
 Interpretations for different constructors correspond to different instances of the
-type class, and are defined in the same way as before. For example, following 
+type class, and are defined similarly as before. For example, following 
 is the interpretation of 'width' for |IdentityF'|:
 
 > instance (Width :<: r) => WidthAlg IdentityF' r where

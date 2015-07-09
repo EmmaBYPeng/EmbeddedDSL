@@ -86,6 +86,7 @@ matching and general recursion, makes it obvious that the definition
 is compositional.
 
 \section{Compositionality without Modularity}
+\label{sec:nonmodular}
 
 Unfortunatelly certain interpretations are not trivially compositional.
 While it is still possible to express those definitions with folds using 

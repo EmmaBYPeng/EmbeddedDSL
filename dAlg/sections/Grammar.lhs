@@ -66,7 +66,7 @@ recursive multi-binders.
 \subsection{Grammars}
 \label{sec:grammar}
 
-A grammar is a groups of mutually recursive productions, each associated with a name 
+A grammar is a group of mutually recursive productions, each associated with a name 
 and a pattern. Each pattern belongs to one of the followings: a termimal, the empty 
 string, a sequence of two patterns, or an alternative of two patterns. As a mutually 
 recursive collection of patterns where patterns can refer to themselves or other 
@@ -83,11 +83,19 @@ Here binders are represented by Parmetric Higher-Order Syntax (PHOAS)
 ~\cite{chlipala08}, which include the variable case and recursive multi-binders. 
 For example, a left-recursive grammar can be constructed as: 
 
+~\emma{Our definition of grammar datatype here will cause trouble constructing 
+grammars. In the following example, 'a' on the LHS is not in scope on the RHS 
+inside 'Seq', type check fail. However, another definition of the grammar datatype
+avoids this problem, but it does not work with |:<:| in algebra definitions 
+(see EmbeddedDSL/code/GrammarNew.hs). Generic definition that separately define
+binders and pattern works for both problems (see EmbeddedDSL/code/Grammar2.hs)}
+
+> g = In (Hide (Mu (\(~(a:_)) -> [Seq (In (Hide (Var a))) (In (Hide E))])))
 
 The first operation on grammars is nullability analysis. It checks if a given grammar
 can produce the empty string. Terms are not nullable, the empty string is nullable, 
 while the nullabilities for sequences and alternatives depend on the nullabilities of 
-their parts:
+their constituent patterns:
 
 > type GAlg r a = GrammarF r -> a
 >
@@ -98,7 +106,7 @@ their parts:
 > nullF (Hide (Alt g1 g2))  = gNull g1 || gNull g2
 
 Another operation is the first set analysis. The first set for a pattern is the set
-of terminals that can start sentences produced by the pattern. For a sequence of 
+of terminals that begin the strings derived from the pattern. For a sequence of 
 patterns, its first set is the union of first sets of its two constituent patterns 
 only when the first patttern is nullable. Although the interpretation for first 
 set analysis depends on the interpretation for nullability, we can define its algebra 
@@ -134,7 +142,7 @@ of the primary concern of this paper)~\cite{oliveira12}:
 
 $False$ serves as the starting value for nullability analysis and the empty set |[]| 
 for first set analysis. The compositional evaluation function takes the composed
-algebra as well as a pair of starting values:
+algebra as well as the pair of starting values:
 
 > eval :: Grammar -> Compose Bool [String]
 > eval = sfold compAlg (False, [])
@@ -158,8 +166,8 @@ follows:
 > g1 = alt empty (term "x")
 > test1 = nullable g1
 
-> g = In (Hide (Mu (\(~(a:_)) -> [Var a])))
-> test = nullable g
+> g2 = In (Hide (Mu (\(~(a:_)) -> [Var a])))
+> test2 = nullable g2
 
 %endif
 

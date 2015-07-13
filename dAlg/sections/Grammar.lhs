@@ -83,10 +83,10 @@ Here binders are represented by Parmetric Higher-Order Syntax (PHOAS)
 ~\cite{chlipala08}, which include the variable case and recursive multi-binders. 
 For example, a left-recursive grammar can be constructed as: 
 
-~\emma{Our definition of grammar datatype here will cause trouble constructing 
+~\emma{This definition of grammar datatype will cause some trouble when we construct 
 grammars. In the following example, 'a' on the LHS is not in scope on the RHS 
-inside 'Seq', type check fail. However, another definition of the grammar datatype
-avoids this problem, but it does not work with |:<:| in algebra definitions 
+inside 'Seq', type check will fail. However, another definition of the grammar 
+datatype avoids this problem, but it does not work with |:<:| when defining algebras
 (see EmbeddedDSL/code/GrammarNew.hs). Generic definition that separately define
 binders and pattern works for both problems (see EmbeddedDSL/code/Grammar2.hs)}
 

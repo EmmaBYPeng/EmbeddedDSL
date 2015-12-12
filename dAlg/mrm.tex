@@ -39,6 +39,7 @@
 \usepackage{graphicx}
 \usepackage[export]{adjustbox}
 \graphicspath{ {images/} }
+\usepackage{dirtytalk}
 
 %% for comments
 \input{Preamble}
@@ -104,20 +105,6 @@ interpretations hard to express modularly. This pearl presents a
 simple technique that allows non-trivial, but compositional
 interpretations of DSLs to be expressed in a fully modular way
 using folds.
-
-
-\begin{comment}
-
-This paper presents composable algebra with dependencies: a new approach to compose 
-algebras together to allow dependent interpretations with {\em fold}. 
-For a given datatype represented by two-level-types\cite{sheard04}, if one of its 
-interpretations depends on a second one, we compose the algebra correponding 
-to the first interpretation with the one corresponding to the second, and use the 
-composed algebra with {\em fold} to evaluate the expression. We present our approach 
-on top of the domain specific language for parallel prefix circuits.
-
-\end{comment}
-
 \end{abstract}
 
 %\category{CR-number}{subcategory}{third-level}
@@ -144,20 +131,17 @@ on top of the domain specific language for parallel prefix circuits.
 
 \input{sections/DependentAlg}
 
-\input{sections/Extensibility}
+\input{sections/Context} 
 
-\section{Other representations of algebra}
-\label{sec: other-alg}
-
-Apart from {\em two-level-types}, there are other ways to represent and evaluate
-the DSL for parallel prefix circuits. In this section, we will show two other 
-representations, and how they can be used to allow dependent interpretations.
+\input{sections/DTC}
 
 \input{sections/TypeClassAlg}
 
-\input{sections/RecordAlg}
+%\input{sections/RecordAlg}
 
-\input{sections/RelatedWork}
+\input{sections/Grammar}
+
+%\input{sections/RelatedWork}
 
 \input{sections/Conclusion}
 
@@ -224,6 +208,33 @@ Acknowledgments, if needed.
   \emph{ECOOP'13 Proceedings of the 27th European conference on Object-Oriented Programming},
   pages 27-51.
   2013
+
+\bibitem{gibbons98}
+  Gibbons, Jeremy and Jones, Geraint.
+  The under-appreciated unfold.
+  \emph{International Conference on Functional Programming},
+  pages 273-279.
+  Baltimore, Maryland, September 1998
+
+\bibitem{swierstra08}
+  Swierstra, Wouter.
+  Datatypes \`a la Carte.
+  \emph{Journal of Functional Programming},
+  18(4):423-436,
+  2008
+
+\bibitem{oliveira12}
+  Olivera, B.C.d.S, and Cook, William R.
+  Functional Programming with Structured Graphs.
+  \emph{ICFP '12 Proceedings of the 17th ACM SIGPLAN international conference on Functional programming},
+  Pages 77-88,
+  2012
+
+\bibitem{chlipala08}
+  Chlipala, A.
+  Parametric higher-order abstract syntax for mechanized semantics.
+  \emph{ICFP’08}, 
+  2008.
 
 \end{thebibliography}
 

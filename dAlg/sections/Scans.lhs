@@ -8,13 +8,16 @@
 \label{sec:scans}
 
 %format xi = "x_i"
-Apart from arithmetic expressions, our technique of providing compositional and 
-modular interpretations can be widely applied in more complex cases. 
+Apart from the relatively simple example of arithmetic expressions, 
+our technique of providing compositional and modular interpretations can be widely 
+applied in more complex cases. 
 The running example for this section is Gibbons and Wu's DSL for
 parallel prefix circuits~\cite{gibbons14}. 
 We briefly introduce parallel prefix circuits and then illustrate how our approach 
-can provide better solution to each problem Gibbons and Wu discussed in 
-{\em Folding Domain-Specific Languages: Deep and Shallow Embeddings}~\cite{gibbons14}.
+can provide better solutions to major problems Gibbons and Wu discussed in 
+{\em Folding Domain-Specific Languages: Deep and Shallow Embeddings}~\cite{gibbons14}
+, namely, how to provide modularity and compositionality for multiple, dependent, and 
+context-sensitive interpretations.
 
 %%Parallel prefix computation is an important
 %%problem in computer science, both theoretically and practically. Its broad 
@@ -45,9 +48,10 @@ arbitrary binary operator |.|.
 
 Parallel prefix compuataion performs multiple such computations in parallel. 
 In other words, a parallel prefix circuit can have multiple operators at each given 
-level, which brings parallelism in the resulting computation. For instance, one 
-possible construction of a parallel prefix circuit with width 4 is shown in 
-Figure~\ref{fig:circuit2}.
+level, which brings parallelism in the resulting computation. 
+
+For instance, one possible construction of a parallel prefix circuit with width 4 is 
+shown in Figure~\ref{fig:circuit2}.
 With inputs fed in from the top, each node represents an operation that takes inputs
 from its left and top input wires. It generates output to the bottom along the 
 vertical wire as well as the diagonal wire to its right.

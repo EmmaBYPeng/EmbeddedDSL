@@ -35,21 +35,21 @@ gfold v l f = trans . reveal where
 sfold :: (Eq t, Functor f) => (f t -> t) -> t -> Graph f -> t
 sfold alg k = gfold id (head . fixVal (repeat k)) alg
 
--- Grammars -- Original approach
+-- Grammars -- New approach
 data PatternF a = Term String | E | Seq a a | Alt a a 
   deriving (Functor, Foldable, Traversable)
 
 nullF :: (Bool :<: r) => PatternF r -> Bool
 nullF (Term s)    = False
 nullF E           = True
-nullF (Seq g1 g2) = inter g1 && inter g2
-nullF (Alt g1 g2) = inter g1 || inter g2
+nullF (Seq g1 g2) = gNull g1 && gNull g2
+nullF (Alt g1 g2) = gNull g1 || gNull g2
 
 firstF :: (Bool :<: r, [String] :<: r) => PatternF r -> [String]
 firstF (Term s)    = [s]
 firstF E           = []
-firstF (Seq g1 g2) = if inter g1 then union (inter g1) (inter g2) else (inter g2)
-firstF (Alt g1 g2) = union (inter g1) (inter g2)
+firstF (Seq g1 g2) = if gNull g1 then union (gFirst g1) (gFirst g2) else (gFirst g2)
+firstF (Alt g1 g2) = union (gFirst g1) (gFirst g2)
 
 -- Composition operator
 type GAlg r a = PatternF r -> a
@@ -77,7 +77,13 @@ instance i :<: (Compose i i2) where
 instance (i :<: i2) => i :<: (Compose i1 i2) where
   inter = inter . snd
 
--- Example
+gNull :: (Bool :<: r) => r -> Bool
+gNull = inter
+
+gFirst :: ([String] :<: r) => r -> [String]
+gFirst = inter
+
+-- Evaluation
 gAlg = nullF <+> firstF
 
 eval :: Graph PatternF -> Compose Bool [String]
@@ -89,4 +95,9 @@ nullable = inter . eval
 firstSet :: Graph PatternF -> [String]
 firstSet = inter . eval
 
+-- Example
+g = Hide (Mu (\(~(a:_)) -> [Alt (Var a) (In (Term "x"))]))
+
+test1 = nullable g
+test2 = firstSet g
 

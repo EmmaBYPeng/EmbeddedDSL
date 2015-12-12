@@ -88,6 +88,10 @@ c = (gfan 2 `gbeside` gfan 2) `gabove`
     gstretch [2,2] (gfan 2) `gabove`
     (gidentity 1 `gbeside` gfan 2 `gbeside` gidentity 1)
 
+{-c2 = (fan 2 `beside` fan 2) `above`
+     stretch [2,2] (fan 2) `above`
+     (identity 1 `beside` fan 2 `beside` identity 1)-}
+
 test1 = gwidth c
 test2 = gdepth c
 test3 = gwellSized c

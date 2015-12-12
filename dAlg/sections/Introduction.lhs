@@ -86,6 +86,7 @@ matching and general recursion, makes it obvious that the definition
 is compositional.
 
 \section{Compositionality without Modularity}
+\label{sec:nonmodular}
 
 Unfortunatelly certain interpretations are not trivially compositional.
 While it is still possible to express those definitions with folds using 
@@ -148,7 +149,7 @@ lack good language support.
 \noindent In other words the technique is \emph{non-modular}: we cannot
 simply reuse |eval1| or |eval2| in the definition of
 |pevalAlg|. Instead evaluation must be redefined together with the new
-interpretation.  If another interpretation would also dependent on
+interpretation.  If another interpretation would also dependen on
 evaluation, the definition of evaluation would need to be "copied"
 once again. Other problems are the inconvenience and lack of clarity
 of pairs. Instead of using names for the interpretations, |pevalAlg|
@@ -157,60 +158,8 @@ than one other interpretation we may need to use nested pairs or
 larger tuples, which are difficult to manage.
 
 This functional pearl shows how a simple technique, which can be viewed as a dual
-to Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{}, can be used to provide
+to Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{swierstra08}, can be used to provide
 modular and compositional interpretations that may depend on other interpretations. 
 We also show how the technique applies to other various implementation 
 approaches for embedded DSLs, and discuss a case study usings grammars.
 
-\begin{comment}
-Algebras can often be used with {\em fold} to evaluate recursive
-expressions \cite{gibbons14}.  However, {\em fold} supports only
-compositional interpretations, meaning that an interpretation of a
-whole is determined solely from the interpretations of its parts. The
-compositionality of an interpretaion is a significant limitation to
-expressivity: sometimes a 'primary' interpretation of the whole
-depends also on 'secondary' interpretaions of its parts.
-
-
-In the context of Embedded Domain Specific Languages (DSL), 
-Jeremy Gibbons\cite{gibbons14} proposed two approaches on F-Algebra to 
-tackle the problems of compositionality and dependencies. We will examine the two
-approaches in section 4 and show that each of them has its problems.
-
-In section 5, We will present an approach that allows us to compose algebras 
-corresponding to different interpretations of a datatype modularly. 
-Next, we will show how dependent interpretations can be achieved using composable 
-algebras in section 6. We will then show 
-that our approach can be integrated with the Modular Rifiable Matching (MRM)
-\cite{oliveira15} approach to allow dependencies brought in by new datatypes.
-
-In this paper, F-Algebra will be used as the primary representation of algebras.
-In section 6, we will show that the problem of dependent interpretation with 
-{\em fold} can be handled using other representations of algebras as well.
-
-\paragraph{Contributions} In summary, the contributions of this paper are:
-
-\begin{itemize}
-
-  \item{\bf An approach to compose algebras modularly: }
-  We introduce a type class for membership relations and how it allows us to compose
-  algebras together.
-
-  \item{\bf Incorporating dependencies in composable algebras: }
-  We show how dependent interpretations can be achieved on top of composable algebras.
-
-  \item{\bf Extensibility in both dimensions}
-  We show how our algebras can be integrated with the MRM approach to resolve
-  dependencies brought in by newly-added datatypes.
-
-  \item{\bf Dependent interpretations with type classes}
-  We present another representation of algebras using type classes that also allows
-  dependent interpretations.
-
-  \item{\bf Dependnt interpretations with records}
-  We present another representation of algebras using records that also allows
-  dependent interpretations 
-
-
-\end{itemize}
-\end{comment}

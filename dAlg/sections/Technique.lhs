@@ -51,7 +51,7 @@ output type.
 
 The loss of modularity problem when working with F-algebras has been
 noted before. For example, in the context of Object-Oriented
-Programming (OOP) the problem arizes with Object Algebras~\cite{oliveira12}: an
+Programming (OOP) the problem arises with Object Algebras~\cite{oliveira12}: an
 isomorphic representation of F-Algebras. In OOP languages supporting 
 intersection types a compositional and modular solution is possible~\cite{oliveira13}. 
 However, Haskell (and many other functional languages) do not support intersection 
@@ -71,10 +71,13 @@ following type class to state a membership relationship between type i and e
 
 |i :<: e| means that type i is a component of a larger collection of types 
 represented by e, while the member function |inter| retrieves a value of type i from
-the collection of type e. It gives the corresponding projection functions:
+a value of the composed type e. A composed type is essentially a pair of types, where
+each component can itself be a composed type: 
 
 > type Compose i1 i2 = (i1, i2)
->
+
+The type class gives the following projection functions:
+
 > instance i :<: i where
 >   inter = id
 >
@@ -89,58 +92,69 @@ member of its intput type |r| (i.e. |a :<: r|).
 For example, the algebra for evaluation can be defined as follows:
 
 > type GExpAlg r a = ExpF r -> a
-
+>
 > evalAlg :: (Int :<: r) => GExpAlg r Int
-> evalAlg (Lit x)   = x
-> evalAlg (Add e1 e2) = geval e1 + geval e2
+> evalAlg (Lit x)      = x
+> evalAlg (Add e1 e2)  = geval e1 + geval e2
+>
+> geval :: (Int :<: e) => e -> Int
+> geval = inter
 
+Here |geval| is a helper function that helps us retrieve the target value of type 
+|Int| from a value of the composed type |r|.
 For non-compositional interpreation like |printEval|, instead of defining |printEval|
 and |eval| together as a fold-algebra using pairs, we simply specify that |Int|
 (output type of |eval|) and |String| (output type of |printEval|) are both members of
 the input type of the algebra for |printEval|:
 
 > printEvalAlg :: (Int :<: r, String :<: r) => GExpAlg r String
-> printEvalAlg (Lit x) = show x
-> printEvalAlg (Add e1 e2) = 
+> printEvalAlg (Lit x)      = show x
+> printEvalAlg (Add e1 e2)  = 
 >   "(" ++ peval e1 ++ "+" ++ peval e2 ++ ")" where
 >       peval e = gprint e ++ "@" ++ show (geval e) 
-
-|geval| and |gprint| are helper functions defined for retrieving a target type from 
-a composed type |e|:
-
-> geval :: (Int :<: e) => e -> Int
-> geval = inter
 >
 > gprint :: (String :<: e) => e -> String
 > gprint = inter
 
-Since |Int| needs to be a member of the input type of |printEvalAlg|, we define the
-following composition operator to compose two algebras together. Given an algebra of
-type |GExpAlg r a| and another one of type |GExpAlg r b|, it gives back a composed
-algebra of type |GExpAlg r (Compose a b)|
+Since |Int| needs to be a member of the input type of |printEvalAlg|, when it comes 
+to building compositional interpretations, we first need the following 
+generic composition operator to compose algebras together. 
+Given an algebra of type |GExpAlg r a| and another one of type |GExpAlg r b|, 
+it gives back a composed algebra of type |GExpAlg r (Compose a b)|:
 
+> infixr <+>
+>
 > (<+>) :: (a :<: r, b :<: r) => GExpAlg r a -> GExpAlg r b -> GExpAlg r (Compose a b)
 > (<+>) a1 a2 fa    = (a1 fa, a2 fa)
 
-An algebra composed of |evalAlg| and |printEvalAlg| can be defined as:
+After composing |evalAlg| and |printEvalAlg|, we can then use the composed algebra
+|compAlg| to form the interpretation function |compEval| with $fold$. It is  
+compositionl and provides us with results for both |eval| and |printEval|:
 
 > compAlg = evalAlg <+> printEvalAlg
+> 
+> compEval :: Exp -> Compose Int String
+> compEval = foldExp compAlg
 
 %if False
 
-> lit = In . Lit
-> add e1 e2 = In (Add e1 e2)
-
+> lit        = In . Lit
+> add e1 e2  = In (Add e1 e2)
+>
 > e1 = add (add (lit 4) (lit 5)) (lit 1)
 
 %endif
 
-\noindent We can then define the two interpretations |eval| and |printEval| as: 
+\noindent Target values are retrieved with helper functions |geval| and |gprint|: 
 
-> eval      = geval . (foldExp compAlg)
-> printEval = gprint . (foldExp compAlg)
+> eval :: Exp -> Int
+> eval       = geval . compEval 
+>
+> printEval :: Exp -> String
+> printEval  = gprint . compEval
 
-As shown above, using our technique, algebras corresponding to different 
-interpretations are defined separately. They are then composed together using the
-generic composition operator |<+>| to form compositional interpretations with fold.
-
+As shown above, with our approach, to add any extra interpretation for a given 
+datatype, whether it depends on other interpretations or not, all we need to do is 
+to define its corresponding algebra, compose it with others using |<+>| if 
+dependencies are involved, and compositional interpretations can be formed with 
+$fold$. 

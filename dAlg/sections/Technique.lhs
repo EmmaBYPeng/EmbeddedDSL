@@ -57,7 +57,7 @@ intersection types a compositional and modular solution is possible~\cite{olivei
 However, Haskell (and many other functional languages) do not support intersection 
 types, so that solution cannot be directly ported.
 
-However type classes 
+However type classes offer a possible way out.  
 
 motivated 
 a solution using intersection 

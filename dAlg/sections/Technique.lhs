@@ -17,7 +17,7 @@
 
 %endif
 
-\section{Compositionality with Modularity}
+\section{Compositionality with Modularity of Interpretations}
 \label{sec:technique}
 
 %if False
@@ -49,43 +49,59 @@ output type.
 
 %endif
 
-The loss of modularity problem when working with F-algebras has been
-noted before. For example, in the context of Object-Oriented
-Programming (OOP) the problem arises with Object Algebras~\cite{oliveira12}: an
-isomorphic representation of F-Algebras. In OOP languages supporting 
-intersection types a compositional and modular solution is possible~\cite{oliveira13}. 
-However, Haskell (and many other functional languages) do not support intersection 
-types, so that solution cannot be directly ported.
+The key idea that allows non-trivial compositional interpretations to
+be defined in a modular way is an abstraction over product types,
+supporting projections from a compound state space:
 
-However type classes offer a possible way out.  
+%format inter = "\Varid{pr}"
 
-motivated 
-a solution using intersection 
+> class a :<: b where
+>   inter :: b -> a
+>
+> instance a :<: a where
+>   inter = id
+>
+> instance a :<: (a,b) where
+>   inter = fst
+>
+> instance (c :<: b) => c :<: (a,b) where
+>   inter = inter . snd
+
+\noindent |a :<: b| means that type |a| is a component of a larger
+collection of types represented by |b|. The member function |inter|
+retrieves a value of type |a| from a value of the compound type |b|.
+The three instances, which are defined using overlapping instances, 
+define the behaviour of the projection function by searching for 
+the type being projected in a larger state space that contains 
+a value of that type. 
+
+This type class was introduced by Bahr in his work on \emph{modular 
+tree automata}, where he has used it to define product automata's. 
+However this technique is clearly useful 
+
+The problem of lack of modular interpretations when working with
+F-algebras has been noted before. For example, in the context of
+Object-Oriented Programming (OOP) the problem arises with Object
+Algebras~\cite{oliveira12}: an isomorphic representation of
+F-Algebras. 
+
+In OOP languages supporting intersection types a
+compositional and modular solution is possible~\cite{oliveira13}.
+However, Haskell (and many other functional languages) do not support
+intersection types, so that solution cannot be directly ported.
+However, Haskell offers another way out using type classes. 
  
 Before showing how specific algebras are defined for |Exp|, we introduce the 
 following type class to state a membership relationship between type i and e
 ~\cite{bahr15}:
 
-> class i :<: e where
->   inter :: e -> i
 
-|i :<: e| means that type i is a component of a larger collection of types 
-represented by e, while the member function |inter| retrieves a value of type i from
-a value of the composed type e. A composed type is essentially a pair of types, where
-each component can itself be a composed type: 
 
 > type Compose i1 i2 = (i1, i2)
 
 The type class gives the following projection functions:
 
-> instance i :<: i where
->   inter = id
->
-> instance i :<: (Compose i i2) where
->   inter = fst
->
-> instance (i :<: i2) => i :<: (Compose i1 i2) where
->   inter = inter . snd
+
 
 \noindent For an algebra of type |GExpAlg r a|, its output type |a| needs to be a 
 member of its intput type |r| (i.e. |a :<: r|).

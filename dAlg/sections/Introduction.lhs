@@ -25,6 +25,10 @@ can be used to implement languages in a variety of ways. For example,
 one way to implement a simple language of arithmetic expressions is to 
 use an algebraic datatype to capture the abstract syntax of a language:
 
+%format AExp = "\Varid{Exp_1}"
+%format LitA = "\Varid{Lit_1}"
+%format AddA = "\Varid{Add_1}"
+
 > data AExp = LitA Int | AddA AExp AExp
 
 \noindent Using pattern matching, evaluation is then defined as follows:
@@ -33,19 +37,20 @@ use an algebraic datatype to capture the abstract syntax of a language:
 > eval1 (LitA x)      = x
 > eval1 (AddA e1 e2)  = eval1 e1 + eval1 e2
 
-A desirable property of language semantics is \emph{compositionality}.
-Informally, compositionality means that the semantics of a language
-is determined solely from the interpretations of its parts.
-The definition of |eval| is compositional, since evaluation of an 
-expression depends only on evaluation of the subexpressions. 
+When expressing the semantics of a languages, a desirable property is
+\emph{compositionality}. Informally, compositionality means that the
+semantics of a language is determined solely from the interpretations
+of its parts. The definition of |eval| is compositional, since
+evaluation of an expression depends only on evaluation of the
+subexpressions.
 
 As nicely illustrated by Gibbons and Wu~\cite{gibbons14}, in functional
 programming \emph{folds} capture compositionality precisely.
 One way to define arithmetic expressions using a fold is using F-Algebras.
 
-> data ExpF a = Lit Int | Add a a deriving Functor
+> data ExpF a  = Lit Int | Add a a deriving Functor
 >
-> newtype Exp = In {out :: ExpF Exp}
+> newtype Exp  = In {out :: ExpF Exp}
 
 The first step is to define the functor for arithmetic expressions
 |ExpF|. The second step is to define the recursive type |Exp2| using
@@ -85,19 +90,20 @@ With |foldExp| another way to define |eval| is:
 matching and general recursion, makes it obvious that the definition
 is compositional.
 
-\section{Compositionality without Modularity}
+\section{Compositionality without Modularity of Non-Trivial Interpretations}
 \label{sec:nonmodular}
 
-Unfortunatelly certain interpretations are not trivially compositional.
+Certain interpretations are not trivially compositional.
 While it is still possible to express those definitions with folds using 
 well-known techniques, a certain degree of modularity is lost. 
 For example, consider the following interpretation of expressions:
 
+%%format printEval = "\Varid{printEval_1}"
+
 > printEval :: AExp -> String
 > printEval (LitA x)      = show x
-> printEval (AddA e1 e2)  = 
->   "(" ++ peval e1 ++ " + " ++ peval e2 ++ ")" where 
->       peval e = printEval e ++ "@" ++ show (eval1 e)
+> printEval (AddA e1 e2)  = "(" ++ peval e1 ++ " + " ++ peval e2 ++ ")" 
+>    where peval e = printEval e ++ "@" ++ show (eval1 e)
 
 \noindent The intention is to print a textual representation of the 
 arithmetic expression. However there is a little twist: the values of the 
@@ -111,7 +117,7 @@ For example, given the expression:
 < "((4@4 + 5@5)@9 + 1@1)"
 
 The result of |printEval| does not depend only on the recursive calls
-of to the subexpressions (it also depends on |eval1|).  Thus, at first, it seems
+of to the subexpressions: it also depends on |eval1|.  Thus, at first, it seems
 that |printEval| is non-compositional. However, when viewed through
 the right lenses, |printEval| can be considered compositional and it
 is implementable as a fold. The basic idea, which is well-known and has been 
@@ -119,10 +125,11 @@ widely used in the past, is to
 define the two interpretations (|printEval| and |eval1|)
 simultaneously as a fold-algebra using pairs:
 
+%format pevalAlg = "\Varid{peAlg}"
+
 > pevalAlg :: ExpAlg (String,Int)
 > pevalAlg (Lit x)      = (show x, id x)
-> pevalAlg (Add e1 e2)  = (  "(" ++ peval e1 ++ " + " ++ peval e2 ++ ")", 
->                             snd e1 + snd e2) 
+> pevalAlg (Add e1 e2)  = (  "(" ++ peval e1 ++ " + " ++ peval e2 ++ ")", snd e1 + snd e2) 
 >   where peval e    = fst e ++ "@" ++ show (snd e)
 
 \noindent Then it is easy to obtain a version of |printEval| by simply 
@@ -131,13 +138,18 @@ that defines |printEval|.
 
 > printEval2 = fst . foldExp pevalAlg
 
-Using this simple technique Gibbons and Wu~\cite{} have shown that various 
-complex interpretations of DSLs can be defined compositionaly. In particular 
-they illustrate how to model \emph{multiple}, \emph{dependent} and 
-\emph{context-sensitive} interpretations using this technique. 
+Using this simple technique Gibbons and
+Wu~\cite{} have shown that various types of non-trivial interpretations 
+of DSLs can be defined compositionaly. In particular they illustrate
+how to model \emph{multiple}, \emph{dependent} and
+\emph{context-sensitive} interpretations.
+The function |printEval| is an example of a dependent interpretation:
+the interpretation of subexpressions depends on another interpretation (|eval1|).
 
-\noindent Unfortunatelly there are some problems with using pairs to combine
-together multiple interpretations in an algebra. As Gibbons and Wu note:
+
+Unfortunatelly there are some problems with using pairs to combine
+together multiple interpretations in an algebra. As Gibbons and Wu
+point out:
 
 \begin{quote}
 But this is still a bit clumsy: it entails revising existing code
@@ -149,7 +161,7 @@ lack good language support.
 \noindent In other words the technique is \emph{non-modular}: we cannot
 simply reuse |eval1| or |eval2| in the definition of
 |pevalAlg|. Instead evaluation must be redefined together with the new
-interpretation.  If another interpretation would also dependen on
+interpretation.  If another interpretation would also depend on
 evaluation, the definition of evaluation would need to be "copied"
 once again. Other problems are the inconvenience and lack of clarity
 of pairs. Instead of using names for the interpretations, |pevalAlg|
@@ -157,9 +169,13 @@ uses |fst| and |snd|.  Moreover, if an interpretation depends on more
 than one other interpretation we may need to use nested pairs or
 larger tuples, which are difficult to manage.
 
-This functional pearl shows how a simple technique, which can be viewed as a dual
-to Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{swierstra08}, can be used to provide
-modular and compositional interpretations that may depend on other interpretations. 
-We also show how the technique applies to other various implementation 
-approaches for embedded DSLs, and discuss a case study usings grammars.
+\paragraph{Roadmap} 
+This functional pearl shows how a simple technique, which was
+originally introduced by Bahr~\cite{} in the context of \emph{modular
+tree automata}, enables compositionality and modularity for such
+non-trivial interpretations. The technique can be viewed as a dual to
+Swiestra's ``\emph{Datatypes \`a la Carte}"~\cite{swierstra08} that
+works on products instead of co-products. We also show how the
+technique applies to other various implementation approaches for
+embedded DSLs, and discuss a case study usings grammars.
 
